@@ -1,5 +1,7 @@
 # Compilados
 /bin/
+target/
+*.class
 
 # IDEs
 *.iml
