@@ -4,25 +4,9 @@ import projeto.edu.unichristus.java.model.Prescricao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.InputStream;
-import java.util.Properties;
 
 public class PrescricaoDAOMySQL {
-    private String url;
-    private String user;
-    private String password;
 
-    public PrescricaoDAOMySQL() {
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
-            Properties prop = new Properties();
-            prop.load(input);
-            url = prop.getProperty("db.url");
-            user = prop.getProperty("db.user");
-            password = prop.getProperty("db.password");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public boolean salvar(Prescricao prescricao, int prontuarioId) {
         String sql = "INSERT INTO prescricao (medicamento, posologia, duracao, observacoes, prontuario_id) VALUES (?, ?, ?, ?, ?)";

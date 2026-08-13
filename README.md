@@ -31,6 +31,7 @@ A interface foi criada em Swing porque nao havia camada visual, classes `main`, 
 - navegacao lateral com secao ativa;
 - cabecalhos de modulo com contexto, proposito e acao principal;
 - area principal para tabela e area secundaria para detalhes/formulario;
+- busca local nas listagens carregadas;
 - estados vazios, mensagens de sucesso, erro e confirmacao de remocao;
 - formularios com validacao basica antes de acionar controllers/DAOs;
 - criacao, edicao e remocao integradas aos metodos reais de persistencia.
@@ -62,7 +63,7 @@ DB_USER
 DB_PASSWORD
 ```
 
-As conexoes JDBC foram centralizadas em `DatabaseConnection`, reduzindo repeticao nos DAOs.
+As conexoes JDBC foram centralizadas em `DatabaseConnection`, reduzindo repeticao nos DAOs MySQL e permitindo configurar o banco por arquivo ou variaveis de ambiente.
 
 ## Como Executar
 

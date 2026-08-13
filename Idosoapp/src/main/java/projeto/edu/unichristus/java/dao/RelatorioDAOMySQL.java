@@ -7,25 +7,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.io.InputStream;
-import java.util.Properties;
 
 public class RelatorioDAOMySQL {
-    private String url;
-    private String user;
-    private String password;
 
-    public RelatorioDAOMySQL() {
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
-            Properties prop = new Properties();
-            prop.load(input);
-            url = prop.getProperty("db.url");
-            user = prop.getProperty("db.user");
-            password = prop.getProperty("db.password");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public boolean salvar(Relatorio relatorio, int prontuarioId) {
         String sql = "INSERT INTO relatorio (descricao, tipo, prontuario_id) VALUES (?, ?, ?)";

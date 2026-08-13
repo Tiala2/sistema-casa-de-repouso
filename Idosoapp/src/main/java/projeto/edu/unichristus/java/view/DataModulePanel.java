@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -17,11 +18,17 @@ import javax.swing.SwingUtilities;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 abstract class DataModulePanel<T> extends JPanel {
     private final DefaultTableModel model;
     private final JTable table;
+    private final TableRowSorter<DefaultTableModel> sorter;
+    private final JTextField filterField;
     private final JTextArea details;
     private final JPanel messageHost;
     private final JPanel formHost;
@@ -49,9 +56,36 @@ abstract class DataModulePanel<T> extends JPanel {
             }
         };
         table = new JTable(model);
+        sorter = new TableRowSorter<DefaultTableModel>(model);
+        table.setRowSorter(sorter);
         AppTheme.table(table);
         table.getSelectionModel().addListSelectionListener(e -> updateDetails());
-        left.add(new JScrollPane(table), BorderLayout.CENTER);
+
+        JPanel tableArea = new JPanel(new BorderLayout(0, 10));
+        tableArea.setOpaque(false);
+        filterField = new JTextField();
+        filterField.setFont(AppTheme.BODY);
+        filterField.setToolTipText("Filtrar registros carregados");
+        filterField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                applyFilter();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                applyFilter();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                applyFilter();
+            }
+        });
+        JPanel filterPanel = Ui.inlineField("Buscar", filterField);
+        tableArea.add(filterPanel, BorderLayout.NORTH);
+        tableArea.add(new JScrollPane(table), BorderLayout.CENTER);
+        left.add(tableArea, BorderLayout.CENTER);
 
         JPanel right = new JPanel(new GridLayout(2, 1, 0, 16));
         right.setOpaque(false);
@@ -139,10 +173,14 @@ abstract class DataModulePanel<T> extends JPanel {
             for (T row : rows) {
                 model.addRow(toColumns(row));
             }
+            applyFilter();
             if (rows.isEmpty()) {
                 details.setText("Nenhum registro encontrado.");
                 startNew();
                 showMessage("Nenhum registro encontrado. Confira a conexao com o banco ou cadastre um novo item.", 0);
+            } else if (table.getRowCount() == 0) {
+                details.setText("Nenhum registro corresponde ao filtro atual.");
+                showMessage(rows.size() + " registro(s) carregado(s), sem resultado para a busca.", 0);
             } else {
                 table.setRowSelectionInterval(0, 0);
                 showMessage(rows.size() + " registro(s) carregado(s).", 1);
@@ -228,10 +266,14 @@ abstract class DataModulePanel<T> extends JPanel {
 
     private T selectedValue() {
         int row = table.getSelectedRow();
-        if (row < 0 || row >= rows.size()) {
+        if (row < 0) {
             return null;
         }
-        return rows.get(table.convertRowIndexToModel(row));
+        int modelRow = table.convertRowIndexToModel(row);
+        if (modelRow < 0 || modelRow >= rows.size()) {
+            return null;
+        }
+        return rows.get(modelRow);
     }
 
     protected void showMessage(String text, int type) {
@@ -251,6 +293,18 @@ abstract class DataModulePanel<T> extends JPanel {
 
     private void updateSaveButton() {
         saveButton.setText(editingValue == null ? "Salvar" : "Salvar alteracoes");
+    }
+
+    private void applyFilter() {
+        if (filterField == null) {
+            return;
+        }
+        String text = filterField.getText();
+        if (text == null || text.trim().isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + Pattern.quote(text.trim())));
+        }
     }
 
     protected void require(JTextField field, String name) {

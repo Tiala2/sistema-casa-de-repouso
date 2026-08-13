@@ -2,6 +2,7 @@ package projeto.edu.unichristus.java.view;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -125,6 +126,19 @@ final class Ui {
         JPanel form = new JPanel(new GridBagLayout());
         form.setOpaque(false);
         return form;
+    }
+
+    static JPanel inlineField(String label, JTextField field) {
+        JPanel panel = new JPanel(new BorderLayout(8, 0));
+        panel.setOpaque(false);
+
+        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        labelPanel.setOpaque(false);
+        labelPanel.add(AppTheme.label(label));
+
+        panel.add(labelPanel, BorderLayout.WEST);
+        panel.add(field, BorderLayout.CENTER);
+        return panel;
     }
 
     static JTextArea detailsArea() {

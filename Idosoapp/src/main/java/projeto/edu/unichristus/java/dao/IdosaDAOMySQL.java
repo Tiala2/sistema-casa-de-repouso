@@ -4,25 +4,9 @@ import projeto.edu.unichristus.java.model.Idosa;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.InputStream;
-import java.util.Properties;
 
 public class IdosaDAOMySQL {
-    private String url;
-    private String user;
-    private String password;
 
-    public IdosaDAOMySQL() {
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
-            Properties prop = new Properties();
-            prop.load(input);
-            url = prop.getProperty("db.url");
-            user = prop.getProperty("db.user");
-            password = prop.getProperty("db.password");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public boolean salvar(Idosa idosa) {
         String sql = "INSERT INTO idosa (nome, cpf, data_nascimento, nome_mae, cartao_sus, data_entrada) VALUES (?, ?, ?, ?, ?, ?)";

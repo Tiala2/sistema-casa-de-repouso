@@ -5,25 +5,9 @@ import projeto.edu.unichristus.java.model.TipoEventoSentinela;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.InputStream;
-import java.util.Properties;
 
 public class EventoSentinelaDAOMySQL {
-    private String url;
-    private String user;
-    private String password;
 
-    public EventoSentinelaDAOMySQL() {
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
-            Properties prop = new Properties();
-            prop.load(input);
-            url = prop.getProperty("db.url");
-            user = prop.getProperty("db.user");
-            password = prop.getProperty("db.password");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public boolean salvar(EventoSentinela evento, int prontuarioId) {
         String sql = "INSERT INTO evento_sentinela (tipo, data_ocorrencia, prontuario_id) VALUES (?, ?, ?)";
