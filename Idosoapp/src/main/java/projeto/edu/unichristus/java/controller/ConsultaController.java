@@ -5,7 +5,7 @@ import projeto.edu.unichristus.java.dao.ConsultaDAOMySQL;
 import java.util.List;
 
 public class ConsultaController {
-    private ConsultaDAOMySQL consultaDAO;
+    private final ConsultaDAOMySQL consultaDAO;
 
     public ConsultaController() {
         this.consultaDAO = new ConsultaDAOMySQL();
@@ -15,7 +15,7 @@ public class ConsultaController {
         try {
             return consultaDAO.salvar(consulta);
         } catch (Exception e) {
-            System.err.println("Erro ao adicionar consulta: " + e.getMessage());
+            ControllerErrors.log("Adicionar consulta", e);
             return false;
         }
     }
@@ -24,7 +24,7 @@ public class ConsultaController {
         try {
             return consultaDAO.listarTodos();
         } catch (Exception e) {
-            System.err.println("Erro ao listar consultas: " + e.getMessage());
+            ControllerErrors.log("Listar consultas", e);
             return null;
         }
     }
@@ -33,7 +33,7 @@ public class ConsultaController {
         try {
             return consultaDAO.buscarPorId(id);
         } catch (Exception e) {
-            System.err.println("Erro ao buscar consulta: " + e.getMessage());
+            ControllerErrors.log("Buscar consulta", e);
             return null;
         }
     }
@@ -42,7 +42,7 @@ public class ConsultaController {
         try {
             return consultaDAO.atualizar(consulta);
         } catch (Exception e) {
-            System.err.println("Erro ao atualizar consulta: " + e.getMessage());
+            ControllerErrors.log("Atualizar consulta", e);
             return false;
         }
     }
@@ -51,7 +51,7 @@ public class ConsultaController {
         try {
             return consultaDAO.remover(id);
         } catch (Exception e) {
-            System.err.println("Erro ao remover consulta: " + e.getMessage());
+            ControllerErrors.log("Remover consulta", e);
             return false;
         }
     }

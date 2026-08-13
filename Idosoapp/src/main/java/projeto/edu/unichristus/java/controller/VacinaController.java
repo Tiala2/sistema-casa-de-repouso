@@ -5,7 +5,7 @@ import projeto.edu.unichristus.java.dao.VacinaDAOMySQL;
 import java.util.List;
 
 public class VacinaController {
-    private VacinaDAOMySQL vacinaDAO;
+    private final VacinaDAOMySQL vacinaDAO;
 
     public VacinaController() {
         this.vacinaDAO = new VacinaDAOMySQL();
@@ -15,7 +15,7 @@ public class VacinaController {
         try {
             return vacinaDAO.salvar(vacina, prontuarioId);
         } catch (Exception e) {
-            System.err.println("Erro ao adicionar vacina: " + e.getMessage());
+            ControllerErrors.log("Adicionar vacina", e);
             return false;
         }
     }
@@ -24,7 +24,7 @@ public class VacinaController {
         try {
             return vacinaDAO.listarTodos();
         } catch (Exception e) {
-            System.err.println("Erro ao listar vacinas: " + e.getMessage());
+            ControllerErrors.log("Listar vacinas", e);
             return null;
         }
     }
@@ -33,7 +33,7 @@ public class VacinaController {
         try {
             return vacinaDAO.buscarPorId(id);
         } catch (Exception e) {
-            System.err.println("Erro ao buscar vacina: " + e.getMessage());
+            ControllerErrors.log("Buscar vacina", e);
             return null;
         }
     }
@@ -42,7 +42,7 @@ public class VacinaController {
         try {
             return vacinaDAO.atualizar(vacina);
         } catch (Exception e) {
-            System.err.println("Erro ao atualizar vacina: " + e.getMessage());
+            ControllerErrors.log("Atualizar vacina", e);
             return false;
         }
     }
@@ -51,7 +51,7 @@ public class VacinaController {
         try {
             return vacinaDAO.remover(id);
         } catch (Exception e) {
-            System.err.println("Erro ao remover vacina: " + e.getMessage());
+            ControllerErrors.log("Remover vacina", e);
             return false;
         }
     }

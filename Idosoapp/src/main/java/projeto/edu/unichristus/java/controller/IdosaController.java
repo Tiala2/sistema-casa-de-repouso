@@ -5,7 +5,7 @@ import projeto.edu.unichristus.java.dao.IdosaDAOMySQL;
 import java.util.List;
 
 public class IdosaController {
-    private IdosaDAOMySQL idosaDAO;
+    private final IdosaDAOMySQL idosaDAO;
 
     public IdosaController() {
         this.idosaDAO = new IdosaDAOMySQL();
@@ -15,7 +15,7 @@ public class IdosaController {
         try {
             return idosaDAO.salvar(idosa);
         } catch (Exception e) {
-            System.err.println("Erro ao adicionar idosa: " + e.getMessage());
+            ControllerErrors.log("Adicionar idosa", e);
             return false;
         }
     }
@@ -24,7 +24,7 @@ public class IdosaController {
         try {
             return idosaDAO.listarTodos();
         } catch (Exception e) {
-            System.err.println("Erro ao listar idosas: " + e.getMessage());
+            ControllerErrors.log("Listar idosas", e);
             return null;
         }
     }
@@ -33,7 +33,7 @@ public class IdosaController {
         try {
             return idosaDAO.buscarPorId(id);
         } catch (Exception e) {
-            System.err.println("Erro ao buscar idosa: " + e.getMessage());
+            ControllerErrors.log("Buscar idosa", e);
             return null;
         }
     }
@@ -42,7 +42,7 @@ public class IdosaController {
         try {
             return idosaDAO.atualizar(idosa);
         } catch (Exception e) {
-            System.err.println("Erro ao atualizar idosa: " + e.getMessage());
+            ControllerErrors.log("Atualizar idosa", e);
             return false;
         }
     }
@@ -51,7 +51,7 @@ public class IdosaController {
         try {
             return idosaDAO.remover(id);
         } catch (Exception e) {
-            System.err.println("Erro ao remover idosa: " + e.getMessage());
+            ControllerErrors.log("Remover idosa", e);
             return false;
         }
     }

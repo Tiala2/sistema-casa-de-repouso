@@ -1,14 +1,14 @@
 package projeto.edu.unichristus.java.controller;
 
-import projeto.edu.unichristus.java.model.Relatorio;
-import projeto.edu.unichristus.java.dao.RelatorioDAOMySQL;
-import projeto.edu.unichristus.java.model.TipoEventoSentinela;
 import projeto.edu.unichristus.java.dao.EventoSentinelaDAOMySQL;
+import projeto.edu.unichristus.java.dao.RelatorioDAOMySQL;
+import projeto.edu.unichristus.java.model.Relatorio;
+import projeto.edu.unichristus.java.model.TipoEventoSentinela;
 import java.util.List;
 import java.util.Map;
 
 public class RelatorioController {
-    private RelatorioDAOMySQL relatorioDAO;
+    private final RelatorioDAOMySQL relatorioDAO;
 
     public RelatorioController() {
         this.relatorioDAO = new RelatorioDAOMySQL();
@@ -18,7 +18,7 @@ public class RelatorioController {
         try {
             return relatorioDAO.salvar(relatorio, prontuarioId);
         } catch (Exception e) {
-            System.err.println("Erro ao adicionar relatório: " + e.getMessage());
+            ControllerErrors.log("Adicionar relatorio", e);
             return false;
         }
     }
@@ -27,7 +27,7 @@ public class RelatorioController {
         try {
             return relatorioDAO.listarTodos();
         } catch (Exception e) {
-            System.err.println("Erro ao listar relatórios: " + e.getMessage());
+            ControllerErrors.log("Listar relatorios", e);
             return null;
         }
     }
@@ -36,7 +36,7 @@ public class RelatorioController {
         try {
             return relatorioDAO.buscarPorId(id);
         } catch (Exception e) {
-            System.err.println("Erro ao buscar relatório: " + e.getMessage());
+            ControllerErrors.log("Buscar relatorio", e);
             return null;
         }
     }
@@ -45,7 +45,7 @@ public class RelatorioController {
         try {
             return relatorioDAO.atualizar(relatorio);
         } catch (Exception e) {
-            System.err.println("Erro ao atualizar relatorio: " + e.getMessage());
+            ControllerErrors.log("Atualizar relatorio", e);
             return false;
         }
     }
@@ -54,7 +54,7 @@ public class RelatorioController {
         try {
             return relatorioDAO.remover(id);
         } catch (Exception e) {
-            System.err.println("Erro ao remover relatório: " + e.getMessage());
+            ControllerErrors.log("Remover relatorio", e);
             return false;
         }
     }

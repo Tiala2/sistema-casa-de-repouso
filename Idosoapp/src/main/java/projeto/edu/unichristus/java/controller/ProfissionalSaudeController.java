@@ -5,7 +5,7 @@ import projeto.edu.unichristus.java.dao.ProfissionalSaudeDAOMySQL;
 import java.util.List;
 
 public class ProfissionalSaudeController {
-    private ProfissionalSaudeDAOMySQL profissionalDAO;
+    private final ProfissionalSaudeDAOMySQL profissionalDAO;
 
     public ProfissionalSaudeController() {
         this.profissionalDAO = new ProfissionalSaudeDAOMySQL();
@@ -15,7 +15,7 @@ public class ProfissionalSaudeController {
         try {
             return profissionalDAO.salvar(profissional);
         } catch (Exception e) {
-            System.err.println("Erro ao adicionar profissional: " + e.getMessage());
+            ControllerErrors.log("Adicionar profissional", e);
             return false;
         }
     }
@@ -24,7 +24,7 @@ public class ProfissionalSaudeController {
         try {
             return profissionalDAO.listarTodos();
         } catch (Exception e) {
-            System.err.println("Erro ao listar profissionais: " + e.getMessage());
+            ControllerErrors.log("Listar profissionais", e);
             return null;
         }
     }
@@ -33,7 +33,7 @@ public class ProfissionalSaudeController {
         try {
             return profissionalDAO.buscarPorId(id);
         } catch (Exception e) {
-            System.err.println("Erro ao buscar profissional: " + e.getMessage());
+            ControllerErrors.log("Buscar profissional", e);
             return null;
         }
     }
@@ -42,7 +42,7 @@ public class ProfissionalSaudeController {
         try {
             return profissionalDAO.atualizar(profissional);
         } catch (Exception e) {
-            System.err.println("Erro ao atualizar profissional: " + e.getMessage());
+            ControllerErrors.log("Atualizar profissional", e);
             return false;
         }
     }
@@ -51,7 +51,7 @@ public class ProfissionalSaudeController {
         try {
             return profissionalDAO.remover(id);
         } catch (Exception e) {
-            System.err.println("Erro ao remover profissional: " + e.getMessage());
+            ControllerErrors.log("Remover profissional", e);
             return false;
         }
     }

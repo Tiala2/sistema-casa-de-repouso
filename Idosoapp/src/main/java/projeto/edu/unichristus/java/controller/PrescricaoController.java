@@ -1,11 +1,11 @@
 package projeto.edu.unichristus.java.controller;
 
-import projeto.edu.unichristus.java.model.Prescricao;
 import projeto.edu.unichristus.java.dao.PrescricaoDAOMySQL;
+import projeto.edu.unichristus.java.model.Prescricao;
 import java.util.List;
 
 public class PrescricaoController {
-    private PrescricaoDAOMySQL prescricaoDAO;
+    private final PrescricaoDAOMySQL prescricaoDAO;
 
     public PrescricaoController() {
         this.prescricaoDAO = new PrescricaoDAOMySQL();
@@ -15,7 +15,7 @@ public class PrescricaoController {
         try {
             return prescricaoDAO.salvar(prescricao, prontuarioId);
         } catch (Exception e) {
-            System.err.println("Erro ao adicionar prescrição: " + e.getMessage());
+            ControllerErrors.log("Adicionar prescricao", e);
             return false;
         }
     }
@@ -24,7 +24,7 @@ public class PrescricaoController {
         try {
             return prescricaoDAO.listarTodos();
         } catch (Exception e) {
-            System.err.println("Erro ao listar prescrições: " + e.getMessage());
+            ControllerErrors.log("Listar prescricoes", e);
             return null;
         }
     }
@@ -33,7 +33,7 @@ public class PrescricaoController {
         try {
             return prescricaoDAO.buscarPorId(id);
         } catch (Exception e) {
-            System.err.println("Erro ao buscar prescrição: " + e.getMessage());
+            ControllerErrors.log("Buscar prescricao", e);
             return null;
         }
     }
@@ -42,7 +42,7 @@ public class PrescricaoController {
         try {
             return prescricaoDAO.atualizar(prescricao);
         } catch (Exception e) {
-            System.err.println("Erro ao atualizar prescricao: " + e.getMessage());
+            ControllerErrors.log("Atualizar prescricao", e);
             return false;
         }
     }
@@ -51,7 +51,7 @@ public class PrescricaoController {
         try {
             return prescricaoDAO.remover(id);
         } catch (Exception e) {
-            System.err.println("Erro ao remover prescrição: " + e.getMessage());
+            ControllerErrors.log("Remover prescricao", e);
             return false;
         }
     }

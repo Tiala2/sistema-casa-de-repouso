@@ -1,12 +1,12 @@
 package projeto.edu.unichristus.java.controller;
 
-import projeto.edu.unichristus.java.model.EventoSentinela;
 import projeto.edu.unichristus.java.dao.EventoSentinelaDAOMySQL;
+import projeto.edu.unichristus.java.model.EventoSentinela;
 import projeto.edu.unichristus.java.model.TipoEventoSentinela;
 import java.util.List;
 
 public class EventoSentinelaController {
-    private EventoSentinelaDAOMySQL eventoDAO;
+    private final EventoSentinelaDAOMySQL eventoDAO;
 
     public EventoSentinelaController() {
         this.eventoDAO = new EventoSentinelaDAOMySQL();
@@ -16,7 +16,7 @@ public class EventoSentinelaController {
         try {
             return eventoDAO.salvar(evento, prontuarioId);
         } catch (Exception e) {
-            System.err.println("Erro ao adicionar evento sentinela: " + e.getMessage());
+            ControllerErrors.log("Adicionar evento sentinela", e);
             return false;
         }
     }
@@ -25,7 +25,7 @@ public class EventoSentinelaController {
         try {
             return eventoDAO.listarTodos();
         } catch (Exception e) {
-            System.err.println("Erro ao listar eventos sentinela: " + e.getMessage());
+            ControllerErrors.log("Listar eventos sentinela", e);
             return null;
         }
     }
@@ -34,7 +34,7 @@ public class EventoSentinelaController {
         try {
             return eventoDAO.buscarPorId(id);
         } catch (Exception e) {
-            System.err.println("Erro ao buscar evento sentinela: " + e.getMessage());
+            ControllerErrors.log("Buscar evento sentinela", e);
             return null;
         }
     }
@@ -43,7 +43,7 @@ public class EventoSentinelaController {
         try {
             return eventoDAO.atualizar(evento);
         } catch (Exception e) {
-            System.err.println("Erro ao atualizar evento sentinela: " + e.getMessage());
+            ControllerErrors.log("Atualizar evento sentinela", e);
             return false;
         }
     }
@@ -52,7 +52,7 @@ public class EventoSentinelaController {
         try {
             return eventoDAO.remover(id);
         } catch (Exception e) {
-            System.err.println("Erro ao remover evento sentinela: " + e.getMessage());
+            ControllerErrors.log("Remover evento sentinela", e);
             return false;
         }
     }
@@ -61,7 +61,7 @@ public class EventoSentinelaController {
         try {
             return eventoDAO.listarPorIdosaEPeriodo(prontuarioId, mes, ano);
         } catch (Exception e) {
-            System.err.println("Erro ao listar eventos sentinela por idosa e período: " + e.getMessage());
+            ControllerErrors.log("Listar eventos sentinela por idosa e periodo", e);
             return null;
         }
     }
@@ -70,7 +70,7 @@ public class EventoSentinelaController {
         try {
             return eventoDAO.listarPorTipoEPeriodo(tipo, mes, ano);
         } catch (Exception e) {
-            System.err.println("Erro ao listar eventos sentinela por tipo e período: " + e.getMessage());
+            ControllerErrors.log("Listar eventos sentinela por tipo e periodo", e);
             return null;
         }
     }

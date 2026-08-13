@@ -1,11 +1,11 @@
 package projeto.edu.unichristus.java.controller;
 
-import projeto.edu.unichristus.java.model.ProntuarioMedico;
 import projeto.edu.unichristus.java.dao.ProntuarioMedicoDAOMySQL;
+import projeto.edu.unichristus.java.model.ProntuarioMedico;
 import java.util.List;
 
 public class ProntuarioController {
-    private ProntuarioMedicoDAOMySQL prontuarioDAO;
+    private final ProntuarioMedicoDAOMySQL prontuarioDAO;
 
     public ProntuarioController() {
         this.prontuarioDAO = new ProntuarioMedicoDAOMySQL();
@@ -15,7 +15,7 @@ public class ProntuarioController {
         try {
             return prontuarioDAO.salvar(prontuario);
         } catch (Exception e) {
-            System.err.println("Erro ao adicionar prontuário: " + e.getMessage());
+            ControllerErrors.log("Adicionar prontuario", e);
             return false;
         }
     }
@@ -24,7 +24,7 @@ public class ProntuarioController {
         try {
             return prontuarioDAO.listarTodos();
         } catch (Exception e) {
-            System.err.println("Erro ao listar prontuários: " + e.getMessage());
+            ControllerErrors.log("Listar prontuarios", e);
             return null;
         }
     }
@@ -33,7 +33,7 @@ public class ProntuarioController {
         try {
             return prontuarioDAO.buscarPorId(id);
         } catch (Exception e) {
-            System.err.println("Erro ao buscar prontuário: " + e.getMessage());
+            ControllerErrors.log("Buscar prontuario", e);
             return null;
         }
     }
@@ -42,7 +42,7 @@ public class ProntuarioController {
         try {
             return prontuarioDAO.atualizar(prontuario);
         } catch (Exception e) {
-            System.err.println("Erro ao atualizar prontuario: " + e.getMessage());
+            ControllerErrors.log("Atualizar prontuario", e);
             return false;
         }
     }
@@ -51,7 +51,7 @@ public class ProntuarioController {
         try {
             return prontuarioDAO.remover(id);
         } catch (Exception e) {
-            System.err.println("Erro ao remover prontuário: " + e.getMessage());
+            ControllerErrors.log("Remover prontuario", e);
             return false;
         }
     }
