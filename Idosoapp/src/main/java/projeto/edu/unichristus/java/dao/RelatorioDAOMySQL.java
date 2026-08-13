@@ -46,6 +46,7 @@ public class RelatorioDAOMySQL {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
         return lista;
     }
@@ -99,11 +100,17 @@ public class RelatorioDAOMySQL {
 
     public Map<TipoEventoSentinela, Double> percentualIdosasPorEvento(List<Integer> idsIdosas, int mes, int ano, EventoSentinelaDAOMySQL eventoDAO) {
         Map<TipoEventoSentinela, Double> percentualPorTipo = new java.util.EnumMap<>(TipoEventoSentinela.class);
+        if (idsIdosas == null) {
+            return percentualPorTipo;
+        }
         int totalIdosas = idsIdosas.size();
         for (TipoEventoSentinela tipo : TipoEventoSentinela.values()) {
             int count = 0;
             for (Integer prontuarioId : idsIdosas) {
                 List<EventoSentinela> eventos = eventoDAO.listarPorIdosaEPeriodo(prontuarioId, mes, ano);
+                if (eventos == null) {
+                    throw new IllegalStateException("Nao foi possivel consultar eventos sentinela para o relatorio.");
+                }
                 boolean idosaTeveEvento = false;
                 for (EventoSentinela evento : eventos) {
                     if (tipo.equals(evento.getTipo())) {

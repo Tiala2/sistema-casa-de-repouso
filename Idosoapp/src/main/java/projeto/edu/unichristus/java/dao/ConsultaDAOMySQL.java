@@ -56,6 +56,7 @@ public class ConsultaDAOMySQL {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
         return consultas;
     }

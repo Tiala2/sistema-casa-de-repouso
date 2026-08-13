@@ -44,6 +44,7 @@ public class ProfissionalSaudeDAOMySQL {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
         return lista;
     }

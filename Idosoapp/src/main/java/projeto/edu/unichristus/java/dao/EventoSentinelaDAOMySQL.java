@@ -44,6 +44,7 @@ public class EventoSentinelaDAOMySQL {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
         return lista;
     }
@@ -115,6 +116,7 @@ public class EventoSentinelaDAOMySQL {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
         return lista;
     }
@@ -139,6 +141,7 @@ public class EventoSentinelaDAOMySQL {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
         return lista;
     }

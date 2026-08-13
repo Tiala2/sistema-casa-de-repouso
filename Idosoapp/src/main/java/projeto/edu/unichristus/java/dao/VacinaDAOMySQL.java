@@ -43,6 +43,7 @@ public class VacinaDAOMySQL {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
         return lista;
     }

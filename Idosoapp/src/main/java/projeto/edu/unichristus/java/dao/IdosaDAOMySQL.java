@@ -50,6 +50,7 @@ public class IdosaDAOMySQL {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
         return lista;
     }
