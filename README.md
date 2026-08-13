@@ -106,3 +106,5 @@ Validado com:
 ..\maven\mvn\bin\mvn.cmd -q test
 ..\maven\mvn\bin\mvn.cmd -q package
 ```
+
+A suite cobre os models principais e os DAOs em memoria para salvar com ID gerado, buscar, atualizar e remover.
