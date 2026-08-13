@@ -5,7 +5,6 @@ import projeto.edu.unichristus.java.model.TipoEventoSentinela;
 import projeto.edu.unichristus.java.model.EventoSentinela;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.InputStream;
@@ -28,16 +27,17 @@ public class RelatorioDAOMySQL {
         }
     }
 
-    public void salvar(Relatorio relatorio, int prontuarioId) {
+    public boolean salvar(Relatorio relatorio, int prontuarioId) {
         String sql = "INSERT INTO relatorio (descricao, tipo, prontuario_id) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, relatorio.getDescricao());
             stmt.setString(2, relatorio.getTipo());
             stmt.setInt(3, prontuarioId);
-            stmt.executeUpdate();
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -109,17 +109,21 @@ public class RelatorioDAOMySQL {
     }
 
     public Map<TipoEventoSentinela, Double> percentualIdosasPorEvento(List<Integer> idsIdosas, int mes, int ano, EventoSentinelaDAOMySQL eventoDAO) {
-        Map<TipoEventoSentinela, Integer> contagemPorTipo = new HashMap<>();
-        Map<TipoEventoSentinela, Double> percentualPorTipo = new HashMap<>();
+        Map<TipoEventoSentinela, Double> percentualPorTipo = new java.util.EnumMap<>(TipoEventoSentinela.class);
         int totalIdosas = idsIdosas.size();
         for (TipoEventoSentinela tipo : TipoEventoSentinela.values()) {
             int count = 0;
-            for (Integer idProntuario : idsIdosas) {
-                List<EventoSentinela> eventos = eventoDAO.listarPorTipoEPeriodo(tipo, mes, ano);
-                boolean idosaTeveEvento = eventos.stream().anyMatch(e -> e.getId() == idProntuario);
+            for (Integer prontuarioId : idsIdosas) {
+                List<EventoSentinela> eventos = eventoDAO.listarPorIdosaEPeriodo(prontuarioId, mes, ano);
+                boolean idosaTeveEvento = false;
+                for (EventoSentinela evento : eventos) {
+                    if (tipo.equals(evento.getTipo())) {
+                        idosaTeveEvento = true;
+                        break;
+                    }
+                }
                 if (idosaTeveEvento) count++;
             }
-            contagemPorTipo.put(tipo, count);
             percentualPorTipo.put(tipo, totalIdosas > 0 ? (count * 100.0) / totalIdosas : 0.0);
         }
         return percentualPorTipo;

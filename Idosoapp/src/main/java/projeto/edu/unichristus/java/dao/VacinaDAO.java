@@ -7,8 +7,9 @@ import java.util.List;
 public class VacinaDAO {
     private static List<Vacina> vacinas = new ArrayList<>();
 
-    public void salvar(Vacina vacina) {
+    public boolean salvar(Vacina vacina) {
         vacinas.add(vacina);
+        return true;
     }
 
     public List<Vacina> listarTodos() {

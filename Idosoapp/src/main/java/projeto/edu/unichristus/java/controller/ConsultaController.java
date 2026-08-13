@@ -11,11 +11,12 @@ public class ConsultaController {
         this.consultaDAO = new ConsultaDAOMySQL();
     }
 
-    public void adicionarConsulta(Consulta consulta) {
+    public boolean adicionarConsulta(Consulta consulta) {
         try {
-            consultaDAO.salvar(consulta);
+            return consultaDAO.salvar(consulta);
         } catch (Exception e) {
             System.err.println("Erro ao adicionar consulta: " + e.getMessage());
+            return false;
         }
     }
 

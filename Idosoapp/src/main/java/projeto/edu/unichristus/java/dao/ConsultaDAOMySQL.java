@@ -25,7 +25,7 @@ public class ConsultaDAOMySQL {
         }
     }
 
-    public void salvar(Consulta consulta) {
+    public boolean salvar(Consulta consulta) {
         String sql = "INSERT INTO consulta (data_hora, profissional_id, tipo, motivo, diagnostico, prontuario_id) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -35,9 +35,10 @@ public class ConsultaDAOMySQL {
             stmt.setString(4, consulta.getMotivo());
             stmt.setString(5, consulta.getDiagnostico());
             stmt.setNull(6, Types.INTEGER); // prontuario_id
-            stmt.executeUpdate();
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 

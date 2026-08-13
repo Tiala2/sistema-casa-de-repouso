@@ -24,7 +24,7 @@ public class IdosaDAOMySQL {
         }
     }
 
-    public void salvar(Idosa idosa) {
+    public boolean salvar(Idosa idosa) {
         String sql = "INSERT INTO idosa (nome, cpf, data_nascimento, nome_mae, cartao_sus, data_entrada) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -34,9 +34,10 @@ public class IdosaDAOMySQL {
             stmt.setString(4, idosa.getNomeMae());
             stmt.setString(5, idosa.getCartaoSUS());
             stmt.setDate(6, idosa.getDataEntrada() != null ? Date.valueOf(idosa.getDataEntrada()) : null);
-            stmt.executeUpdate();
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 

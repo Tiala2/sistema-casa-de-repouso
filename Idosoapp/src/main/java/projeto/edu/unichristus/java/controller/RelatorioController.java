@@ -14,11 +14,12 @@ public class RelatorioController {
         this.relatorioDAO = new RelatorioDAOMySQL();
     }
 
-    public void adicionarRelatorio(Relatorio relatorio, int prontuarioId) {
+    public boolean adicionarRelatorio(Relatorio relatorio, int prontuarioId) {
         try {
-            relatorioDAO.salvar(relatorio, prontuarioId);
+            return relatorioDAO.salvar(relatorio, prontuarioId);
         } catch (Exception e) {
             System.err.println("Erro ao adicionar relatório: " + e.getMessage());
+            return false;
         }
     }
 

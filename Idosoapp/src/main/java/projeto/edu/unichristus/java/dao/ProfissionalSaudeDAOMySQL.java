@@ -24,16 +24,17 @@ public class ProfissionalSaudeDAOMySQL {
         }
     }
 
-    public void salvar(ProfissionalSaude prof) {
+    public boolean salvar(ProfissionalSaude prof) {
         String sql = "INSERT INTO profissional_saude (nome, especialidade, registro_profissional) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, prof.getNome());
             stmt.setString(2, prof.getEspecialidade());
             stmt.setString(3, prof.getRegistroProfissional());
-            stmt.executeUpdate();
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 

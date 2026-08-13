@@ -11,11 +11,12 @@ public class PrescricaoController {
         this.prescricaoDAO = new PrescricaoDAOMySQL();
     }
 
-    public void adicionarPrescricao(Prescricao prescricao, int prontuarioId) {
+    public boolean adicionarPrescricao(Prescricao prescricao, int prontuarioId) {
         try {
-            prescricaoDAO.salvar(prescricao, prontuarioId);
+            return prescricaoDAO.salvar(prescricao, prontuarioId);
         } catch (Exception e) {
             System.err.println("Erro ao adicionar prescrição: " + e.getMessage());
+            return false;
         }
     }
 

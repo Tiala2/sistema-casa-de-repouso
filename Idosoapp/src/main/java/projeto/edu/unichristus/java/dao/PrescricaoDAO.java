@@ -7,8 +7,9 @@ import java.util.List;
 public class PrescricaoDAO {
     private static List<Prescricao> prescricoes = new ArrayList<>();
 
-    public void salvar(Prescricao prescricao) {
+    public boolean salvar(Prescricao prescricao) {
         prescricoes.add(prescricao);
+        return true;
     }
 
     public List<Prescricao> listarTodos() {

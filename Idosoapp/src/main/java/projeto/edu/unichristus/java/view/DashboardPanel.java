@@ -66,16 +66,16 @@ class DashboardPanel extends JPanel {
         add(Ui.message("Os valores acima sao exibidos apenas quando retornam do banco configurado.", 0), BorderLayout.SOUTH);
     }
 
-    private int count(List<?> values) {
-        return values == null ? 0 : values.size();
+    private String count(List<?> values) {
+        return values == null ? "Erro" : String.valueOf(values.size());
     }
 
-    private void addMetric(JPanel parent, String label, int value) {
+    private void addMetric(JPanel parent, String label, String value) {
         JPanel card = new JPanel(new BorderLayout(0, 4));
         card.setBackground(AppTheme.SURFACE_ALT);
         card.setBorder(BorderFactory.createEmptyBorder(14, 14, 14, 14));
 
-        JLabel number = new JLabel(String.valueOf(value));
+        JLabel number = new JLabel(value);
         number.setFont(AppTheme.TITLE);
         number.setForeground(AppTheme.PRIMARY_DARK);
         JLabel name = new JLabel(label);

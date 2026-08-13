@@ -11,11 +11,12 @@ public class ProfissionalSaudeController {
         this.profissionalDAO = new ProfissionalSaudeDAOMySQL();
     }
 
-    public void adicionarProfissional(ProfissionalSaude profissional) {
+    public boolean adicionarProfissional(ProfissionalSaude profissional) {
         try {
-            profissionalDAO.salvar(profissional);
+            return profissionalDAO.salvar(profissional);
         } catch (Exception e) {
             System.err.println("Erro ao adicionar profissional: " + e.getMessage());
+            return false;
         }
     }
 

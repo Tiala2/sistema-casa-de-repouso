@@ -24,7 +24,7 @@ public class PrescricaoDAOMySQL {
         }
     }
 
-    public void salvar(Prescricao prescricao, int prontuarioId) {
+    public boolean salvar(Prescricao prescricao, int prontuarioId) {
         String sql = "INSERT INTO prescricao (medicamento, posologia, duracao, observacoes, prontuario_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -33,9 +33,10 @@ public class PrescricaoDAOMySQL {
             stmt.setString(3, prescricao.getDuracao());
             stmt.setString(4, prescricao.getObservacoes());
             stmt.setInt(5, prontuarioId);
-            stmt.executeUpdate();
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 

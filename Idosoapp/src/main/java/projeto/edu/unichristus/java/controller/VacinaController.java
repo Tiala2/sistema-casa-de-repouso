@@ -11,11 +11,12 @@ public class VacinaController {
         this.vacinaDAO = new VacinaDAOMySQL();
     }
 
-    public void adicionarVacina(Vacina vacina, int prontuarioId) {
+    public boolean adicionarVacina(Vacina vacina, int prontuarioId) {
         try {
-            vacinaDAO.salvar(vacina, prontuarioId);
+            return vacinaDAO.salvar(vacina, prontuarioId);
         } catch (Exception e) {
             System.err.println("Erro ao adicionar vacina: " + e.getMessage());
+            return false;
         }
     }
 

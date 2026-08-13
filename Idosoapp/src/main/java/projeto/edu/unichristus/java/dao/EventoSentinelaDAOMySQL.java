@@ -25,16 +25,17 @@ public class EventoSentinelaDAOMySQL {
         }
     }
 
-    public void salvar(EventoSentinela evento, int prontuarioId) {
+    public boolean salvar(EventoSentinela evento, int prontuarioId) {
         String sql = "INSERT INTO evento_sentinela (tipo, data_ocorrencia, prontuario_id) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, evento.getTipo().name());
             stmt.setDate(2, evento.getDataOcorrencia() != null ? Date.valueOf(evento.getDataOcorrencia()) : null);
             stmt.setInt(3, prontuarioId);
-            stmt.executeUpdate();
+            return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 

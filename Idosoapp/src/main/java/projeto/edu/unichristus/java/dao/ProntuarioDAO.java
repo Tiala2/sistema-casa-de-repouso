@@ -7,8 +7,9 @@ import java.util.List;
 public class ProntuarioDAO {
     private static List<ProntuarioMedico> prontuarios = new ArrayList<>();
 
-    public void salvar(ProntuarioMedico prontuario) {
+    public boolean salvar(ProntuarioMedico prontuario) {
         prontuarios.add(prontuario);
+        return true;
     }
 
     public List<ProntuarioMedico> listarTodos() {

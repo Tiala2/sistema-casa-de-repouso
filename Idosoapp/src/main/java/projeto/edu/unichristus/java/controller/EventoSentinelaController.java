@@ -12,11 +12,12 @@ public class EventoSentinelaController {
         this.eventoDAO = new EventoSentinelaDAOMySQL();
     }
 
-    public void adicionarEvento(EventoSentinela evento, int prontuarioId) {
+    public boolean adicionarEvento(EventoSentinela evento, int prontuarioId) {
         try {
-            eventoDAO.salvar(evento, prontuarioId);
+            return eventoDAO.salvar(evento, prontuarioId);
         } catch (Exception e) {
             System.err.println("Erro ao adicionar evento sentinela: " + e.getMessage());
+            return false;
         }
     }
 

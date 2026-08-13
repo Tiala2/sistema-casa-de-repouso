@@ -11,11 +11,12 @@ public class ProntuarioController {
         this.prontuarioDAO = new ProntuarioMedicoDAOMySQL();
     }
 
-    public void adicionarProntuario(ProntuarioMedico prontuario) {
+    public boolean adicionarProntuario(ProntuarioMedico prontuario) {
         try {
-            prontuarioDAO.salvar(prontuario);
+            return prontuarioDAO.salvar(prontuario);
         } catch (Exception e) {
             System.err.println("Erro ao adicionar prontuário: " + e.getMessage());
+            return false;
         }
     }
 

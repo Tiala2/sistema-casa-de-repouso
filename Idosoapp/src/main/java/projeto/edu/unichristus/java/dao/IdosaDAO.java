@@ -7,8 +7,9 @@ import java.util.List;
 public class IdosaDAO {
     private static List<Idosa> idosas = new ArrayList<>();
 
-    public void salvar(Idosa idosa) {
+    public boolean salvar(Idosa idosa) {
         idosas.add(idosa);
+        return true;
     }
 
     public List<Idosa> listarTodos() {

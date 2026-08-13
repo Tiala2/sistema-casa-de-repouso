@@ -7,8 +7,9 @@ import java.util.List;
 public class ConsultaDAO {
     private static List<Consulta> consultas = new ArrayList<>();
 
-    public void salvar(Consulta consulta) {
+    public boolean salvar(Consulta consulta) {
         consultas.add(consulta);
+        return true;
     }
 
     public List<Consulta> listarTodos() {

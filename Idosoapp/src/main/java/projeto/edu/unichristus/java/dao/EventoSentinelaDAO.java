@@ -7,8 +7,9 @@ import java.util.List;
 public class EventoSentinelaDAO {
     private static List<EventoSentinela> eventos = new ArrayList<>();
 
-    public void salvar(EventoSentinela evento) {
+    public boolean salvar(EventoSentinela evento) {
         eventos.add(evento);
+        return true;
     }
 
     public List<EventoSentinela> listarTodos() {

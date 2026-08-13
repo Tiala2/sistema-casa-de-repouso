@@ -109,7 +109,7 @@ abstract class DataModulePanel<T> extends JPanel {
 
     protected abstract T readForm();
 
-    protected abstract void save(T value);
+    protected abstract boolean save(T value);
 
     protected abstract boolean update(T value);
 
@@ -131,7 +131,10 @@ abstract class DataModulePanel<T> extends JPanel {
     final void refreshData() {
         try {
             List<T> loaded = loadRows();
-            rows = loaded == null ? new ArrayList<T>() : loaded;
+            if (loaded == null) {
+                throw new IllegalStateException("A consulta retornou erro. Verifique a configuracao do banco de dados.");
+            }
+            rows = loaded;
             model.setRowCount(0);
             for (T row : rows) {
                 model.addRow(toColumns(row));
@@ -167,15 +170,16 @@ abstract class DataModulePanel<T> extends JPanel {
         try {
             boolean wasEditing = editingValue != null;
             T value = readForm();
+            boolean changed;
             if (!wasEditing) {
-                save(value);
+                changed = save(value);
             } else {
                 setId(value, idOf(editingValue));
-                boolean changed = update(value);
-                if (!changed) {
-                    showMessage("Nenhum registro foi atualizado.", 0);
-                    return;
-                }
+                changed = update(value);
+            }
+            if (!changed) {
+                showMessage(wasEditing ? "Nenhum registro foi atualizado." : "Nenhum registro foi salvo.", 0);
+                return;
             }
             afterSave();
             refreshData();

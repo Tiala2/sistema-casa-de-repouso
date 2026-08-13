@@ -11,11 +11,12 @@ public class IdosaController {
         this.idosaDAO = new IdosaDAOMySQL();
     }
 
-    public void adicionarIdosa(Idosa idosa) {
+    public boolean adicionarIdosa(Idosa idosa) {
         try {
-            idosaDAO.salvar(idosa);
+            return idosaDAO.salvar(idosa);
         } catch (Exception e) {
             System.err.println("Erro ao adicionar idosa: " + e.getMessage());
+            return false;
         }
     }
 
