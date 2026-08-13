@@ -17,6 +17,7 @@ public class MainFrame extends JFrame {
     private final CardLayout cards = new CardLayout();
     private final JPanel content = new JPanel(cards);
     private final Map<String, JButton> navButtons = new LinkedHashMap<String, JButton>();
+    private final DashboardPanel dashboardPanel;
 
     public MainFrame() {
         super("Sistema de Gestao de Casa de Repouso");
@@ -29,7 +30,8 @@ public class MainFrame extends JFrame {
         root.add(buildNavigation(), BorderLayout.WEST);
 
         content.setBackground(AppTheme.BACKGROUND);
-        addModule("dashboard", "Inicio", new DashboardPanel(this));
+        dashboardPanel = new DashboardPanel(this);
+        addModule("dashboard", "Inicio", dashboardPanel);
         addModule("idosas", "Idosas", new IdosasPanel());
         addModule("consultas", "Consultas", new ConsultasPanel());
         addModule("prontuarios", "Prontuarios", new ProntuariosPanel());
@@ -47,6 +49,9 @@ public class MainFrame extends JFrame {
     }
 
     void select(String key) {
+        if ("dashboard".equals(key)) {
+            dashboardPanel.refreshMetrics();
+        }
         cards.show(content, key);
         for (Map.Entry<String, JButton> entry : navButtons.entrySet()) {
             boolean active = entry.getKey().equals(key);

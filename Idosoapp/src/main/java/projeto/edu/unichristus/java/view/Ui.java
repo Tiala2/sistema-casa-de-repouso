@@ -86,6 +86,13 @@ final class Ui {
     }
 
     static JPanel message(String text, int type) {
+        JLabel label = new JLabel(text);
+        label.setForeground(AppTheme.TEXT);
+        label.setFont(AppTheme.BODY);
+        return messagePanel(label, type);
+    }
+
+    static JPanel messagePanel(JLabel label, int type) {
         JPanel panel = new JPanel(new BorderLayout());
         ColorChoice choice = colorFor(type);
         panel.setBackground(choice.background);
@@ -93,9 +100,7 @@ final class Ui {
             BorderFactory.createLineBorder(choice.line),
             BorderFactory.createEmptyBorder(10, 12, 10, 12)
         ));
-        JLabel label = new JLabel(text);
         label.setForeground(AppTheme.TEXT);
-        label.setFont(AppTheme.BODY);
         panel.add(label, BorderLayout.CENTER);
         return panel;
     }
