@@ -26,7 +26,7 @@ public class ProfissionalSaudeDAOMySQL {
 
     public void salvar(ProfissionalSaude prof) {
         String sql = "INSERT INTO profissional_saude (nome, especialidade, registro_profissional) VALUES (?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, prof.getNome());
             stmt.setString(2, prof.getEspecialidade());
@@ -40,7 +40,7 @@ public class ProfissionalSaudeDAOMySQL {
     public List<ProfissionalSaude> listarTodos() {
         List<ProfissionalSaude> lista = new ArrayList<>();
         String sql = "SELECT * FROM profissional_saude";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -60,7 +60,7 @@ public class ProfissionalSaudeDAOMySQL {
 
     public ProfissionalSaude buscarPorId(int id) {
         String sql = "SELECT * FROM profissional_saude WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -81,7 +81,7 @@ public class ProfissionalSaudeDAOMySQL {
 
     public boolean remover(int id) {
         String sql = "DELETE FROM profissional_saude WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int rows = stmt.executeUpdate();

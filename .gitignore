@@ -1,5 +1,6 @@
 # Compilados
 /bin/
+Idosoapp/target/
 
 # IDEs
 *.iml

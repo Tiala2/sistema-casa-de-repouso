@@ -26,7 +26,7 @@ public class VacinaDAOMySQL {
 
     public void salvar(Vacina vacina, int prontuarioId) {
         String sql = "INSERT INTO vacina (nome, data_ocorrencia, prontuario_id) VALUES (?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, vacina.getNome());
             stmt.setDate(2, vacina.getDataOcorrencia() != null ? Date.valueOf(vacina.getDataOcorrencia()) : null);
@@ -40,7 +40,7 @@ public class VacinaDAOMySQL {
     public List<Vacina> listarTodos() {
         List<Vacina> lista = new ArrayList<>();
         String sql = "SELECT * FROM vacina";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -59,7 +59,7 @@ public class VacinaDAOMySQL {
 
     public Vacina buscarPorId(int id) {
         String sql = "SELECT * FROM vacina WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -79,7 +79,7 @@ public class VacinaDAOMySQL {
 
     public boolean remover(int id) {
         String sql = "DELETE FROM vacina WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int rows = stmt.executeUpdate();

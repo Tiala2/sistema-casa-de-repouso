@@ -28,7 +28,7 @@ public class ProntuarioMedicoDAOMySQL {
 
     public void salvar(ProntuarioMedico prontuario) {
         String sql = "INSERT INTO prontuario_medico (data_hora_idosa, idosa_id) VALUES (?, ?)";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setTimestamp(1, prontuario.getDataHoraIdosa() != null ? Timestamp.valueOf(prontuario.getDataHoraIdosa()) : null);
             stmt.setInt(2, prontuario.getIdosa().getId());
@@ -41,7 +41,7 @@ public class ProntuarioMedicoDAOMySQL {
     public List<ProntuarioMedico> listarTodos() {
         List<ProntuarioMedico> lista = new ArrayList<>();
         String sql = "SELECT p.*, i.nome, i.cpf FROM prontuario_medico p JOIN idosa i ON p.idosa_id = i.id";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -64,7 +64,7 @@ public class ProntuarioMedicoDAOMySQL {
 
     public ProntuarioMedico buscarPorId(int id) {
         String sql = "SELECT p.*, i.nome, i.cpf FROM prontuario_medico p JOIN idosa i ON p.idosa_id = i.id WHERE p.id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -89,7 +89,7 @@ public class ProntuarioMedicoDAOMySQL {
 
     public boolean remover(int id) {
         String sql = "DELETE FROM prontuario_medico WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int rows = stmt.executeUpdate();

@@ -30,7 +30,7 @@ public class RelatorioDAOMySQL {
 
     public void salvar(Relatorio relatorio, int prontuarioId) {
         String sql = "INSERT INTO relatorio (descricao, tipo, prontuario_id) VALUES (?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, relatorio.getDescricao());
             stmt.setString(2, relatorio.getTipo());
@@ -44,7 +44,7 @@ public class RelatorioDAOMySQL {
     public List<Relatorio> listarTodos() {
         List<Relatorio> lista = new ArrayList<>();
         String sql = "SELECT * FROM relatorio";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -63,7 +63,7 @@ public class RelatorioDAOMySQL {
 
     public Relatorio buscarPorId(int id) {
         String sql = "SELECT * FROM relatorio WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -83,7 +83,7 @@ public class RelatorioDAOMySQL {
 
     public boolean remover(int id) {
         String sql = "DELETE FROM relatorio WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int rows = stmt.executeUpdate();

@@ -26,7 +26,7 @@ public class PrescricaoDAOMySQL {
 
     public void salvar(Prescricao prescricao, int prontuarioId) {
         String sql = "INSERT INTO prescricao (medicamento, posologia, duracao, observacoes, prontuario_id) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, prescricao.getMedicamento());
             stmt.setString(2, prescricao.getPosologia());
@@ -42,7 +42,7 @@ public class PrescricaoDAOMySQL {
     public List<Prescricao> listarTodos() {
         List<Prescricao> lista = new ArrayList<>();
         String sql = "SELECT * FROM prescricao";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -63,7 +63,7 @@ public class PrescricaoDAOMySQL {
 
     public Prescricao buscarPorId(int id) {
         String sql = "SELECT * FROM prescricao WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -85,7 +85,7 @@ public class PrescricaoDAOMySQL {
 
     public boolean remover(int id) {
         String sql = "DELETE FROM prescricao WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int rows = stmt.executeUpdate();

@@ -1,119 +1,98 @@
-# Sistema de Gestão de Casa de Repouso
+# Sistema de Gestao de Casa de Repouso
 
+Aplicacao desktop em Java para apoiar a gestao de uma casa de repouso. O sistema organiza cadastros, prontuarios, consultas, prescricoes, vacinas, eventos sentinela e relatorios operacionais em uma interface Swing com navegacao clara e blocos de informacao.
 
+## Arquitetura
 
-Aplicação desktop desenvolvida em **Java** para apoiar a gestão de uma casa de repouso, com organização de cadastros, eventos e informações operacionais.
+- `Idosoapp/src/main/java/projeto/edu/unichristus/java/model`: entidades do dominio.
+- `Idosoapp/src/main/java/projeto/edu/unichristus/java/dao`: persistencia JDBC/MySQL.
+- `Idosoapp/src/main/java/projeto/edu/unichristus/java/controller`: servicos de aplicacao usados pela interface.
+- `Idosoapp/src/main/java/projeto/edu/unichristus/java/view`: interface desktop Swing.
+- `Idosoapp/src/main/resources/application.properties`: configuracao local de banco, sem credenciais pessoais.
 
+O projeto permanece em Java 8, Maven, JDBC e MVC. A modernizacao visual nao muda o dominio nem transforma a aplicacao em web.
 
+## Modulos
 
-## Objetivo
+- Cadastro de idosas
+- Agenda de consultas
+- Prontuarios medicos
+- Prescricoes e medicacoes
+- Profissionais de saude
+- Vacinas
+- Eventos sentinela
+- Relatorios operacionais
 
+## Modernizacao Visual
 
+A interface foi criada em Swing porque nao havia camada visual, classes `main`, Swing, JavaFX ou FXML no branch analisado. A nova apresentacao traduz a referencia editorial para um produto desktop tecnico:
 
-Projeto acadêmico desenvolvido como prática de desenvolvimento de software, modelagem de dados e organização de uma aplicação desktop com arquitetura baseada em MVC.
+- dashboard com resumo vindo das listagens reais;
+- navegacao lateral com secao ativa;
+- cabecalhos de modulo com contexto, proposito e acao principal;
+- area principal para tabela e area secundaria para detalhes/formulario;
+- estados vazios, mensagens de sucesso, erro e confirmacao de remocao;
+- formularios com validacao basica antes de acionar controllers/DAOs.
 
+Nao foram adicionados graficos, metricas hardcoded ou dados ficticios.
 
+## Banco de Dados
 
-## Tecnologias
+Crie o banco MySQL executando:
 
+```bash
+mysql -u root -p < criar_banco_idosoapp.sql
+```
 
+Configure `Idosoapp/src/main/resources/application.properties` ou use variaveis de ambiente:
 
-- Java
-- 
-- Maven
-- 
-- MySQL
-- 
-- JDBC
-- 
-- Arquitetura MVC
-- 
-- Shell e scripts auxiliares
-- 
+```properties
+db.url=jdbc:mysql://localhost:3306/idosoapp
+db.user=root
+db.password=
+```
 
+Variaveis aceitas:
 
-## Destaques técnicos
+```bash
+DB_URL
+DB_USER
+DB_PASSWORD
+```
 
+As conexoes JDBC foram centralizadas em `DatabaseConnection`, reduzindo repeticao nos DAOs.
 
+## Como Executar
 
-- Separação entre camadas de modelo, visão e controle.
-- 
-- Persistência e consultas em banco de dados MySQL.
-- 
-- Operações CRUD e classes DAO.
-- 
-- Organização do projeto com Maven.
-- 
-- Relatórios técnicos e scripts SQL para criação do banco de dados.
-- 
+No Windows, usando o Maven incluido no repositorio:
 
+```bash
+cd Idosoapp
+..\maven\mvn\bin\mvn.cmd test
+..\maven\mvn\bin\mvn.cmd package
+..\maven\mvn\bin\mvn.cmd exec:java
+```
 
-## Estrutura do repositório
+Se Maven estiver no PATH, tambem funciona:
 
+```bash
+cd Idosoapp
+mvn test
+mvn package
+mvn exec:java
+```
 
+## Limitacoes Reais
 
-- `Idosoapp/`: aplicação principal.
-- 
-- `maven/`: configuração e dependências Maven.
-- 
-- `criar_banco_idosoapp.sql`: script de criação do banco de dados.
-- 
-- `RELATORIO TECNICO.md` e `Relatorio.md`: documentação técnica.
-- 
+- Os DAOs atuais oferecem salvar, listar, buscar por ID e remover. Por isso a interface implementa cadastro, listagem, detalhes e remocao, mas nao simula edicao sem suporte de `UPDATE`.
+- Consultas, prescricoes, vacinas, eventos e relatorios dependem de IDs existentes de profissional, prontuario ou idosa conforme as chaves estrangeiras do banco.
+- Sem MySQL configurado, a interface abre, mas as listagens ficam vazias ou exibem feedback de conexao.
 
+## Testes
 
-## Como executar
+Validado com:
 
-
-
-1. Clone este repositório.
-2. 
-2. Configure uma instância MySQL local.
-3. 
-3. Execute `criar_banco_idosoapp.sql`.
-4. 
-4. Atualize as credenciais de conexão no projeto.
-5. 
-5. Abra o projeto em uma IDE compatível com Java e Maven.
-6. 
-6. Compile e execute a aplicação.
-7. 
-
-
-> Projeto acadêmico desenvolvido por Tiala Nobre durante a graduação em Análise e Desenvolvimento de Sistemas.
-> 
-
-
-## Autora
-
-
-
-**Tiala Nobre** — estudante de ADS, com foco em Java, JavaScript, React, Node.js, APIs REST e SQL.
-
-
-
-- GitHub: https://github.com/Tiala2
-- 
-- LinkedIn: https://www.linkedin.com/in/tiala-nobre-49840b212/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```bash
+..\maven\mvn\bin\mvn.cmd -q test
+..\maven\mvn\bin\mvn.cmd -q package
+```

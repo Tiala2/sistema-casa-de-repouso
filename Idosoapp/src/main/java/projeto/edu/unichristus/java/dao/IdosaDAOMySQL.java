@@ -26,7 +26,7 @@ public class IdosaDAOMySQL {
 
     public void salvar(Idosa idosa) {
         String sql = "INSERT INTO idosa (nome, cpf, data_nascimento, nome_mae, cartao_sus, data_entrada) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, idosa.getNome());
             stmt.setString(2, idosa.getCpf());
@@ -43,7 +43,7 @@ public class IdosaDAOMySQL {
     public List<Idosa> listarTodos() {
         List<Idosa> lista = new ArrayList<>();
         String sql = "SELECT * FROM idosa";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -66,7 +66,7 @@ public class IdosaDAOMySQL {
 
     public Idosa buscarPorId(int id) {
         String sql = "SELECT * FROM idosa WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -90,7 +90,7 @@ public class IdosaDAOMySQL {
 
     public boolean remover(int id) {
         String sql = "DELETE FROM idosa WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             int rows = stmt.executeUpdate();

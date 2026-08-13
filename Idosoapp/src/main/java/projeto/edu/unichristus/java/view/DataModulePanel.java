@@ -1,0 +1,215 @@
+package projeto.edu.unichristus.java.view;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
+
+abstract class DataModulePanel<T> extends JPanel {
+    private final DefaultTableModel model;
+    private final JTable table;
+    private final JTextArea details;
+    private final JPanel messageHost;
+    private final JPanel formHost;
+    private List<T> rows = new ArrayList<T>();
+
+    DataModulePanel(String context, String title, String description, String[] columns) {
+        super(new BorderLayout(0, 16));
+        setBackground(AppTheme.BACKGROUND);
+        setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
+
+        JButton refresh = AppTheme.secondaryButton("Atualizar");
+        refresh.addActionListener(e -> refreshData());
+        add(Ui.moduleHeader(context, title, description, refresh), BorderLayout.NORTH);
+
+        JPanel main = new JPanel(new BorderLayout(16, 0));
+        main.setOpaque(false);
+
+        JPanel left = Ui.block("Conteudo principal", "Registros carregados das consultas existentes.");
+        model = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        table = new JTable(model);
+        AppTheme.table(table);
+        table.getSelectionModel().addListSelectionListener(e -> updateDetails());
+        left.add(new JScrollPane(table), BorderLayout.CENTER);
+
+        JPanel right = new JPanel(new GridLayout(2, 1, 0, 16));
+        right.setOpaque(false);
+
+        JPanel detailBlock = Ui.block("Detalhes do registro", "Selecione uma linha para revisar o contexto.");
+        details = Ui.detailsArea();
+        detailBlock.add(new JScrollPane(details), BorderLayout.CENTER);
+
+        formHost = Ui.block("Acao principal", "Preencha os campos obrigatorios e salve.");
+        formHost.add(buildForm(), BorderLayout.CENTER);
+
+        JPanel actions = new JPanel();
+        actions.setOpaque(false);
+        actions.setLayout(new BoxLayout(actions, BoxLayout.X_AXIS));
+        JButton save = AppTheme.primaryButton("Salvar");
+        save.addActionListener(e -> saveCurrent());
+        JButton remove = AppTheme.dangerButton("Remover selecionado");
+        remove.addActionListener(e -> removeSelected());
+        actions.add(save);
+        actions.add(Box.createHorizontalStrut(8));
+        actions.add(remove);
+        actions.add(Box.createHorizontalGlue());
+        formHost.add(actions, BorderLayout.SOUTH);
+
+        right.add(detailBlock);
+        right.add(formHost);
+
+        main.add(left, BorderLayout.CENTER);
+        main.add(right, BorderLayout.EAST);
+        add(main, BorderLayout.CENTER);
+
+        messageHost = new JPanel(new BorderLayout());
+        messageHost.setOpaque(false);
+        add(messageHost, BorderLayout.SOUTH);
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                refreshData();
+            }
+        });
+    }
+
+    protected abstract JPanel buildForm();
+
+    protected abstract List<T> loadRows();
+
+    protected abstract Object[] toColumns(T value);
+
+    protected abstract String details(T value);
+
+    protected abstract T readForm();
+
+    protected abstract void save(T value);
+
+    protected abstract boolean remove(T value);
+
+    protected abstract String entityName();
+
+    protected void afterSave() {
+    }
+
+    final void refreshData() {
+        try {
+            List<T> loaded = loadRows();
+            rows = loaded == null ? new ArrayList<T>() : loaded;
+            model.setRowCount(0);
+            for (T row : rows) {
+                model.addRow(toColumns(row));
+            }
+            if (rows.isEmpty()) {
+                details.setText("Nenhum registro encontrado.");
+                showMessage("Nenhum registro encontrado. Confira a conexao com o banco ou cadastre um novo item.", 0);
+            } else {
+                table.setRowSelectionInterval(0, 0);
+                showMessage(rows.size() + " registro(s) carregado(s).", 1);
+            }
+        } catch (Exception e) {
+            rows = new ArrayList<T>();
+            model.setRowCount(0);
+            details.setText("Nao foi possivel carregar os dados.");
+            showMessage("Erro ao carregar " + entityName() + ": " + e.getMessage(), 2);
+        }
+    }
+
+    private void updateDetails() {
+        T selected = selectedValue();
+        details.setText(selected == null ? "Selecione um registro para ver os detalhes." : details(selected));
+        details.setCaretPosition(0);
+    }
+
+    private void saveCurrent() {
+        try {
+            T value = readForm();
+            save(value);
+            afterSave();
+            refreshData();
+            showMessage(entityName() + " salvo com sucesso.", 1);
+        } catch (IllegalArgumentException e) {
+            showMessage(e.getMessage(), 2);
+        } catch (Exception e) {
+            showMessage("Erro ao salvar " + entityName() + ": " + e.getMessage(), 2);
+        }
+    }
+
+    private void removeSelected() {
+        T selected = selectedValue();
+        if (selected == null) {
+            showMessage("Selecione um registro antes de remover.", 0);
+            return;
+        }
+        int answer = JOptionPane.showConfirmDialog(
+            this,
+            "Remover o registro selecionado?",
+            "Confirmar remocao",
+            JOptionPane.YES_NO_OPTION
+        );
+        if (answer != JOptionPane.YES_OPTION) {
+            return;
+        }
+        try {
+            boolean removed = remove(selected);
+            refreshData();
+            showMessage(removed ? "Registro removido com sucesso." : "Nenhum registro foi removido.", removed ? 1 : 0);
+        } catch (Exception e) {
+            showMessage("Erro ao remover " + entityName() + ": " + e.getMessage(), 2);
+        }
+    }
+
+    private T selectedValue() {
+        int row = table.getSelectedRow();
+        if (row < 0 || row >= rows.size()) {
+            return null;
+        }
+        return rows.get(table.convertRowIndexToModel(row));
+    }
+
+    protected void showMessage(String text, int type) {
+        messageHost.removeAll();
+        messageHost.add(Ui.message(text, type), BorderLayout.CENTER);
+        messageHost.revalidate();
+        messageHost.repaint();
+    }
+
+    protected Component formHost() {
+        return formHost;
+    }
+
+    protected void require(JTextField field, String name) {
+        if (field.getText() == null || field.getText().trim().isEmpty()) {
+            throw new IllegalArgumentException(name + " e obrigatorio.");
+        }
+    }
+
+    protected int parseInt(JTextField field, String name) {
+        require(field, name);
+        try {
+            return Integer.parseInt(field.getText().trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(name + " deve ser um numero inteiro.");
+        }
+    }
+}
