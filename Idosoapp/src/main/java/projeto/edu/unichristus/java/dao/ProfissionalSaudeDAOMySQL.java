@@ -22,7 +22,7 @@ public class ProfissionalSaudeDAOMySQL {
             }
             return saved;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }
@@ -43,7 +43,7 @@ public class ProfissionalSaudeDAOMySQL {
                 lista.add(prof);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return null;
         }
         return lista;
@@ -65,7 +65,7 @@ public class ProfissionalSaudeDAOMySQL {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
         }
         return null;
     }
@@ -80,7 +80,7 @@ public class ProfissionalSaudeDAOMySQL {
             stmt.setInt(4, prof.getId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }
@@ -93,7 +93,7 @@ public class ProfissionalSaudeDAOMySQL {
             int rows = stmt.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }

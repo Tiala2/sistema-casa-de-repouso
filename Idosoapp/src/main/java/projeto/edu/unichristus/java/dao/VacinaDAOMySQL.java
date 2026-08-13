@@ -22,7 +22,7 @@ public class VacinaDAOMySQL {
             }
             return saved;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }
@@ -42,7 +42,7 @@ public class VacinaDAOMySQL {
                 lista.add(vacina);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return null;
         }
         return lista;
@@ -63,7 +63,7 @@ public class VacinaDAOMySQL {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
         }
         return null;
     }
@@ -77,7 +77,7 @@ public class VacinaDAOMySQL {
             stmt.setInt(3, vacina.getId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }
@@ -90,7 +90,7 @@ public class VacinaDAOMySQL {
             int rows = stmt.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }

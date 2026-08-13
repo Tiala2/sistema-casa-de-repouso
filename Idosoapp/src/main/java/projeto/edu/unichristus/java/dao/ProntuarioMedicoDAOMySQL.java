@@ -23,7 +23,7 @@ public class ProntuarioMedicoDAOMySQL {
             }
             return saved;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }
@@ -47,7 +47,7 @@ public class ProntuarioMedicoDAOMySQL {
                 lista.add(prontuario);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return null;
         }
         return lista;
@@ -73,7 +73,7 @@ public class ProntuarioMedicoDAOMySQL {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
         }
         return null;
     }
@@ -87,7 +87,7 @@ public class ProntuarioMedicoDAOMySQL {
             stmt.setInt(3, prontuario.getId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }
@@ -100,7 +100,7 @@ public class ProntuarioMedicoDAOMySQL {
             int rows = stmt.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }

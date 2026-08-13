@@ -26,7 +26,7 @@ public class ConsultaDAOMySQL {
             }
             return saved;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }
@@ -55,7 +55,7 @@ public class ConsultaDAOMySQL {
                 consultas.add(consulta);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return null;
         }
         return consultas;
@@ -85,7 +85,7 @@ public class ConsultaDAOMySQL {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
         }
         return null;
     }
@@ -102,7 +102,7 @@ public class ConsultaDAOMySQL {
             stmt.setInt(6, consulta.getId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }
@@ -115,7 +115,7 @@ public class ConsultaDAOMySQL {
             int rows = stmt.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }

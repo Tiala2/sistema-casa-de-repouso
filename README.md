@@ -94,6 +94,7 @@ mvn exec:java
 - Insercoes MySQL capturam o ID gerado pelo banco e atualizam o objeto salvo.
 - DAOs em memoria atribuem ID incremental quando o objeto e salvo sem identificador.
 - Listagens MySQL retornam erro para a interface quando a consulta falha, evitando mascarar falha de conexao como lista vazia.
+- Erros SQL dos DAOs MySQL sao registrados por um utilitario comum, com SQLState e codigo do banco, sem espalhar `printStackTrace()` pela camada de persistencia.
 - Campos de texto sao normalizados antes da persistencia, reduzindo valores compostos apenas por espacos.
 - O calculo percentual de eventos sentinela considera os eventos do prontuario no periodo informado antes de calcular o percentual por tipo.
 - Consultas, prontuarios, prescricoes, vacinas, eventos e relatorios validam IDs relacionados antes da gravacao para exibir mensagens claras quando profissional, prontuario ou idosa nao existem.

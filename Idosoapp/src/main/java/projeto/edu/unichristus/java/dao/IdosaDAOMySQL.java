@@ -25,7 +25,7 @@ public class IdosaDAOMySQL {
             }
             return saved;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }
@@ -49,7 +49,7 @@ public class IdosaDAOMySQL {
                 lista.add(idosa);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return null;
         }
         return lista;
@@ -74,7 +74,7 @@ public class IdosaDAOMySQL {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
         }
         return null;
     }
@@ -92,7 +92,7 @@ public class IdosaDAOMySQL {
             stmt.setInt(7, idosa.getId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }
@@ -105,7 +105,7 @@ public class IdosaDAOMySQL {
             int rows = stmt.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            DaoErrors.log("Erro de persistencia", e);
             return false;
         }
     }
