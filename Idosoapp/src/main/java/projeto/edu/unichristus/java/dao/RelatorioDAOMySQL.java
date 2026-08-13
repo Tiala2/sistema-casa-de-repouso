@@ -27,7 +27,7 @@ public class RelatorioDAOMySQL {
 
     public List<Relatorio> listarTodos() {
         List<Relatorio> lista = new ArrayList<>();
-        String sql = "SELECT * FROM relatorio";
+        String sql = "SELECT * FROM relatorio ORDER BY id DESC";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

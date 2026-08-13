@@ -25,7 +25,7 @@ public class ProntuarioMedicoDAOMySQL {
 
     public List<ProntuarioMedico> listarTodos() {
         List<ProntuarioMedico> lista = new ArrayList<>();
-        String sql = "SELECT p.*, i.nome, i.cpf FROM prontuario_medico p JOIN idosa i ON p.idosa_id = i.id";
+        String sql = "SELECT p.*, i.nome, i.cpf FROM prontuario_medico p JOIN idosa i ON p.idosa_id = i.id ORDER BY p.data_hora_idosa DESC, p.id DESC";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

@@ -25,7 +25,7 @@ public class EventoSentinelaDAOMySQL {
 
     public List<EventoSentinela> listarTodos() {
         List<EventoSentinela> lista = new ArrayList<>();
-        String sql = "SELECT * FROM evento_sentinela";
+        String sql = "SELECT * FROM evento_sentinela ORDER BY data_ocorrencia DESC, id DESC";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

@@ -24,7 +24,7 @@ public class VacinaDAOMySQL {
 
     public List<Vacina> listarTodos() {
         List<Vacina> lista = new ArrayList<>();
-        String sql = "SELECT * FROM vacina";
+        String sql = "SELECT * FROM vacina ORDER BY data_ocorrencia DESC, id DESC";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

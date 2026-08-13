@@ -24,7 +24,7 @@ public class ProfissionalSaudeDAOMySQL {
 
     public List<ProfissionalSaude> listarTodos() {
         List<ProfissionalSaude> lista = new ArrayList<>();
-        String sql = "SELECT * FROM profissional_saude";
+        String sql = "SELECT * FROM profissional_saude ORDER BY nome, id";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

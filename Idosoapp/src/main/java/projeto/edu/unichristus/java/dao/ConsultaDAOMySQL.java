@@ -28,7 +28,7 @@ public class ConsultaDAOMySQL {
 
     public List<Consulta> listarTodos() {
         List<Consulta> consultas = new ArrayList<>();
-        String sql = "SELECT c.*, p.id as prof_id, p.nome, p.especialidade, p.registro_profissional FROM consulta c JOIN profissional_saude p ON c.profissional_id = p.id";
+        String sql = "SELECT c.*, p.id as prof_id, p.nome, p.especialidade, p.registro_profissional FROM consulta c JOIN profissional_saude p ON c.profissional_id = p.id ORDER BY c.data_hora DESC, c.id DESC";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

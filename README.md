@@ -32,6 +32,7 @@ A interface foi criada em Swing porque nao havia camada visual, classes `main`, 
 - cabecalhos de modulo com contexto, proposito e acao principal;
 - area principal para tabela e area secundaria para detalhes/formulario;
 - busca local nas listagens carregadas;
+- listagens ordenadas de forma previsivel por nome, data ou identificador conforme o modulo;
 - estados vazios, mensagens de sucesso, erro e confirmacao de remocao;
 - formularios com validacao basica antes de acionar controllers/DAOs;
 - criacao, edicao e remocao integradas aos metodos reais de persistencia.
@@ -89,6 +90,7 @@ mvn exec:java
 
 - Os DAOs oferecem salvar, listar, buscar por ID, atualizar e remover para os fluxos principais.
 - Operacoes de salvar, atualizar e remover retornam sucesso/falha ate a interface.
+- Campos de texto sao normalizados antes da persistencia, reduzindo valores compostos apenas por espacos.
 - O calculo percentual de eventos sentinela considera os eventos do prontuario no periodo informado antes de calcular o percentual por tipo.
 - Consultas, prescricoes, vacinas, eventos e relatorios dependem de IDs existentes de profissional, prontuario ou idosa conforme as chaves estrangeiras do banco.
 - Em registros vinculados a prontuario, a interface usa o ID do prontuario na criacao. Na edicao, atualiza os campos proprios do registro, porque os models atuais nao carregam `prontuario_id` na listagem.

@@ -313,6 +313,15 @@ abstract class DataModulePanel<T> extends JPanel {
         }
     }
 
+    protected String text(JTextField field) {
+        return field.getText() == null ? "" : field.getText().trim();
+    }
+
+    protected String optionalText(JTextField field) {
+        String value = text(field);
+        return value.isEmpty() ? null : value;
+    }
+
     protected int parseInt(JTextField field, String name) {
         require(field, name);
         try {

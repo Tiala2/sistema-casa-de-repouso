@@ -176,6 +176,14 @@ final class Ui {
         }
     }
 
+    static LocalDate parseRequiredDate(String value, String fieldName) {
+        LocalDate parsed = parseDate(value, fieldName);
+        if (parsed == null) {
+            throw new IllegalArgumentException(fieldName + " e obrigatorio.");
+        }
+        return parsed;
+    }
+
     static LocalDateTime parseDateTime(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
             return null;
@@ -185,6 +193,14 @@ final class Ui {
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException(fieldName + " deve usar o formato yyyy-MM-dd HH:mm.");
         }
+    }
+
+    static LocalDateTime parseRequiredDateTime(String value, String fieldName) {
+        LocalDateTime parsed = parseDateTime(value, fieldName);
+        if (parsed == null) {
+            throw new IllegalArgumentException(fieldName + " e obrigatorio.");
+        }
+        return parsed;
     }
 
     private static ColorChoice colorFor(int type) {

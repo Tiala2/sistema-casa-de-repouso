@@ -26,7 +26,7 @@ public class PrescricaoDAOMySQL {
 
     public List<Prescricao> listarTodos() {
         List<Prescricao> lista = new ArrayList<>();
-        String sql = "SELECT * FROM prescricao";
+        String sql = "SELECT * FROM prescricao ORDER BY id DESC";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

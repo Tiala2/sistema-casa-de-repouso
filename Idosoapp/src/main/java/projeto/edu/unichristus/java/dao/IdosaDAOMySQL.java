@@ -27,7 +27,7 @@ public class IdosaDAOMySQL {
 
     public List<Idosa> listarTodos() {
         List<Idosa> lista = new ArrayList<>();
-        String sql = "SELECT * FROM idosa";
+        String sql = "SELECT * FROM idosa ORDER BY nome, id";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
