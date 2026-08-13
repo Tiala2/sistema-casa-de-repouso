@@ -96,7 +96,7 @@ mvn exec:java
 - Listagens MySQL retornam erro para a interface quando a consulta falha, evitando mascarar falha de conexao como lista vazia.
 - Campos de texto sao normalizados antes da persistencia, reduzindo valores compostos apenas por espacos.
 - O calculo percentual de eventos sentinela considera os eventos do prontuario no periodo informado antes de calcular o percentual por tipo.
-- Consultas, prescricoes, vacinas, eventos e relatorios dependem de IDs existentes de profissional, prontuario ou idosa conforme as chaves estrangeiras do banco.
+- Consultas, prontuarios, prescricoes, vacinas, eventos e relatorios validam IDs relacionados antes da gravacao para exibir mensagens claras quando profissional, prontuario ou idosa nao existem.
 - Em registros vinculados a prontuario, a interface usa o ID do prontuario na criacao. Na edicao, atualiza os campos proprios do registro, porque os models atuais nao carregam `prontuario_id` na listagem.
 - Sem MySQL configurado, a interface abre, mas as listagens ficam vazias ou exibem feedback de conexao.
 
