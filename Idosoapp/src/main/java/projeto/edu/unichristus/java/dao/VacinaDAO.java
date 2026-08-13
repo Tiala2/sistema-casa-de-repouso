@@ -6,8 +6,12 @@ import java.util.List;
 
 public class VacinaDAO {
     private static List<Vacina> vacinas = new ArrayList<>();
+    private static int nextId = 1;
 
     public boolean salvar(Vacina vacina) {
+        if (vacina.getId() == 0) {
+            vacina.setId(nextId++);
+        }
         vacinas.add(vacina);
         return true;
     }

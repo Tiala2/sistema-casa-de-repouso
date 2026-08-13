@@ -11,11 +11,16 @@ public class ProfissionalSaudeDAOMySQL {
     public boolean salvar(ProfissionalSaude prof) {
         String sql = "INSERT INTO profissional_saude (nome, especialidade, registro_profissional) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, prof.getNome());
             stmt.setString(2, prof.getEspecialidade());
             stmt.setString(3, prof.getRegistroProfissional());
-            return stmt.executeUpdate() > 0;
+            boolean saved = stmt.executeUpdate() > 0;
+            Integer id = DatabaseConnection.generatedId(stmt);
+            if (id != null) {
+                prof.setId(id);
+            }
+            return saved;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

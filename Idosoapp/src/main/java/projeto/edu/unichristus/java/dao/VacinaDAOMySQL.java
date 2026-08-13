@@ -11,11 +11,16 @@ public class VacinaDAOMySQL {
     public boolean salvar(Vacina vacina, int prontuarioId) {
         String sql = "INSERT INTO vacina (nome, data_ocorrencia, prontuario_id) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, vacina.getNome());
             stmt.setDate(2, vacina.getDataOcorrencia() != null ? Date.valueOf(vacina.getDataOcorrencia()) : null);
             stmt.setInt(3, prontuarioId);
-            return stmt.executeUpdate() > 0;
+            boolean saved = stmt.executeUpdate() > 0;
+            Integer id = DatabaseConnection.generatedId(stmt);
+            if (id != null) {
+                vacina.setId(id);
+            }
+            return saved;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

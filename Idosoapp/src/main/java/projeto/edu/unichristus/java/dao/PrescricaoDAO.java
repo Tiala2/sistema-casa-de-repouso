@@ -6,8 +6,12 @@ import java.util.List;
 
 public class PrescricaoDAO {
     private static List<Prescricao> prescricoes = new ArrayList<>();
+    private static int nextId = 1;
 
     public boolean salvar(Prescricao prescricao) {
+        if (prescricao.getId() == 0) {
+            prescricao.setId(nextId++);
+        }
         prescricoes.add(prescricao);
         return true;
     }

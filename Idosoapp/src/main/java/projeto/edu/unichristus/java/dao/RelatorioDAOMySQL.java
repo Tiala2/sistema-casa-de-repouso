@@ -14,11 +14,16 @@ public class RelatorioDAOMySQL {
     public boolean salvar(Relatorio relatorio, int prontuarioId) {
         String sql = "INSERT INTO relatorio (descricao, tipo, prontuario_id) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, relatorio.getDescricao());
             stmt.setString(2, relatorio.getTipo());
             stmt.setInt(3, prontuarioId);
-            return stmt.executeUpdate() > 0;
+            boolean saved = stmt.executeUpdate() > 0;
+            Integer id = DatabaseConnection.generatedId(stmt);
+            if (id != null) {
+                relatorio.setId(id);
+            }
+            return saved;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

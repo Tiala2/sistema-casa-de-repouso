@@ -90,6 +90,8 @@ mvn exec:java
 
 - Os DAOs oferecem salvar, listar, buscar por ID, atualizar e remover para os fluxos principais.
 - Operacoes de salvar, atualizar e remover retornam sucesso/falha ate a interface.
+- Insercoes MySQL capturam o ID gerado pelo banco e atualizam o objeto salvo.
+- DAOs em memoria atribuem ID incremental quando o objeto e salvo sem identificador.
 - Campos de texto sao normalizados antes da persistencia, reduzindo valores compostos apenas por espacos.
 - O calculo percentual de eventos sentinela considera os eventos do prontuario no periodo informado antes de calcular o percentual por tipo.
 - Consultas, prescricoes, vacinas, eventos e relatorios dependem de IDs existentes de profissional, prontuario ou idosa conforme as chaves estrangeiras do banco.

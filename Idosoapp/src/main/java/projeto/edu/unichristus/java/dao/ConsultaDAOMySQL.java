@@ -12,14 +12,19 @@ public class ConsultaDAOMySQL {
     public boolean salvar(Consulta consulta) {
         String sql = "INSERT INTO consulta (data_hora, profissional_id, tipo, motivo, diagnostico, prontuario_id) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setTimestamp(1, Timestamp.valueOf(consulta.getDataHora()));
             stmt.setInt(2, consulta.getProfissional().getId());
             stmt.setString(3, consulta.getTipo());
             stmt.setString(4, consulta.getMotivo());
             stmt.setString(5, consulta.getDiagnostico());
             stmt.setNull(6, Types.INTEGER); // prontuario_id
-            return stmt.executeUpdate() > 0;
+            boolean saved = stmt.executeUpdate() > 0;
+            Integer id = DatabaseConnection.generatedId(stmt);
+            if (id != null) {
+                consulta.setId(id);
+            }
+            return saved;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

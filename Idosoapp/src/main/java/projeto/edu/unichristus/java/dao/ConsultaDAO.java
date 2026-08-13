@@ -6,8 +6,12 @@ import java.util.List;
 
 public class ConsultaDAO {
     private static List<Consulta> consultas = new ArrayList<>();
+    private static int nextId = 1;
 
     public boolean salvar(Consulta consulta) {
+        if (consulta.getId() == 0) {
+            consulta.setId(nextId++);
+        }
         consultas.add(consulta);
         return true;
     }

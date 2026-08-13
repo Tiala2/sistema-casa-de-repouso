@@ -11,13 +11,18 @@ public class PrescricaoDAOMySQL {
     public boolean salvar(Prescricao prescricao, int prontuarioId) {
         String sql = "INSERT INTO prescricao (medicamento, posologia, duracao, observacoes, prontuario_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, prescricao.getMedicamento());
             stmt.setString(2, prescricao.getPosologia());
             stmt.setString(3, prescricao.getDuracao());
             stmt.setString(4, prescricao.getObservacoes());
             stmt.setInt(5, prontuarioId);
-            return stmt.executeUpdate() > 0;
+            boolean saved = stmt.executeUpdate() > 0;
+            Integer id = DatabaseConnection.generatedId(stmt);
+            if (id != null) {
+                prescricao.setId(id);
+            }
+            return saved;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

@@ -13,10 +13,15 @@ public class ProntuarioMedicoDAOMySQL {
     public boolean salvar(ProntuarioMedico prontuario) {
         String sql = "INSERT INTO prontuario_medico (data_hora_idosa, idosa_id) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setTimestamp(1, prontuario.getDataHoraIdosa() != null ? Timestamp.valueOf(prontuario.getDataHoraIdosa()) : null);
             stmt.setInt(2, prontuario.getIdosa().getId());
-            return stmt.executeUpdate() > 0;
+            boolean saved = stmt.executeUpdate() > 0;
+            Integer id = DatabaseConnection.generatedId(stmt);
+            if (id != null) {
+                prontuario.setId(id);
+            }
+            return saved;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

@@ -6,8 +6,12 @@ import java.util.List;
 
 public class IdosaDAO {
     private static List<Idosa> idosas = new ArrayList<>();
+    private static int nextId = 1;
 
     public boolean salvar(Idosa idosa) {
+        if (idosa.getId() == 0) {
+            idosa.setId(nextId++);
+        }
         idosas.add(idosa);
         return true;
     }

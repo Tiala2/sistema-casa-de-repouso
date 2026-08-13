@@ -3,6 +3,8 @@ package projeto.edu.unichristus.java.dao;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -18,6 +20,15 @@ public final class DatabaseConnection {
         String user = read("DB_USER", "db.user", "root");
         String password = read("DB_PASSWORD", "db.password", "");
         return DriverManager.getConnection(url, user, password);
+    }
+
+    public static Integer generatedId(PreparedStatement statement) throws SQLException {
+        try (ResultSet rs = statement.getGeneratedKeys()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return null;
     }
 
     private static String read(String envName, String propertyName, String fallback) {
