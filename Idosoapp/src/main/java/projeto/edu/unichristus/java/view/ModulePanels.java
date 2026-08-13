@@ -65,8 +65,27 @@ class IdosasPanel extends DataModulePanel<Idosa> {
         return new Idosa(0, nome.getText().trim(), cpf.getText().trim(), Ui.parseDate(nascimento.getText(), "Nascimento"), mae.getText().trim(), sus.getText().trim(), Ui.parseDate(entrada.getText(), "Entrada"));
     }
     protected void save(Idosa value) { controller.adicionarIdosa(value); }
+    protected boolean update(Idosa value) { return controller.atualizarIdosa(value); }
     protected boolean remove(Idosa value) { return controller.removerIdosa(value.getId()); }
     protected String entityName() { return "Idosa"; }
+    protected int idOf(Idosa value) { return value.getId(); }
+    protected void setId(Idosa value, int id) { value.setId(id); }
+    protected void populateForm(Idosa i) {
+        nome.setText(Ui.value(i.getNome()));
+        cpf.setText(Ui.value(i.getCpf()));
+        nascimento.setText(Ui.formatDate(i.getDataNascimento()));
+        mae.setText(Ui.value(i.getNomeMae()));
+        sus.setText(Ui.value(i.getCartaoSUS()));
+        entrada.setText(Ui.formatDate(i.getDataEntrada()));
+    }
+    protected void clearForm() {
+        nome.setText("");
+        cpf.setText("");
+        nascimento.setText("");
+        mae.setText("");
+        sus.setText("");
+        entrada.setText("");
+    }
 }
 
 class ConsultasPanel extends DataModulePanel<Consulta> {
@@ -108,8 +127,25 @@ class ConsultasPanel extends DataModulePanel<Consulta> {
         return new Consulta(0, Ui.parseDateTime(dataHora.getText(), "Data/hora"), prof, tipo.getText().trim(), motivo.getText().trim(), diagnostico.getText().trim());
     }
     protected void save(Consulta value) { controller.adicionarConsulta(value); }
+    protected boolean update(Consulta value) { return controller.atualizarConsulta(value); }
     protected boolean remove(Consulta value) { return controller.removerConsulta(value.getId()); }
     protected String entityName() { return "Consulta"; }
+    protected int idOf(Consulta value) { return value.getId(); }
+    protected void setId(Consulta value, int id) { value.setId(id); }
+    protected void populateForm(Consulta c) {
+        dataHora.setText(Ui.formatDateTime(c.getDataHora()));
+        profissionalId.setText(c.getProfissional() != null ? String.valueOf(c.getProfissional().getId()) : "");
+        tipo.setText(Ui.value(c.getTipo()));
+        motivo.setText(Ui.value(c.getMotivo()));
+        diagnostico.setText(Ui.value(c.getDiagnostico()));
+    }
+    protected void clearForm() {
+        dataHora.setText("");
+        profissionalId.setText("");
+        tipo.setText("");
+        motivo.setText("");
+        diagnostico.setText("");
+    }
 }
 
 class ProntuariosPanel extends DataModulePanel<ProntuarioMedico> {
@@ -145,8 +181,19 @@ class ProntuariosPanel extends DataModulePanel<ProntuarioMedico> {
         return prontuario;
     }
     protected void save(ProntuarioMedico value) { controller.adicionarProntuario(value); }
+    protected boolean update(ProntuarioMedico value) { return controller.atualizarProntuario(value); }
     protected boolean remove(ProntuarioMedico value) { return controller.removerProntuario(value.getId()); }
     protected String entityName() { return "Prontuario"; }
+    protected int idOf(ProntuarioMedico value) { return value.getId(); }
+    protected void setId(ProntuarioMedico value, int id) { value.setId(id); }
+    protected void populateForm(ProntuarioMedico p) {
+        dataHora.setText(Ui.formatDateTime(p.getDataHoraIdosa()));
+        idosaId.setText(p.getIdosa() != null ? String.valueOf(p.getIdosa().getId()) : "");
+    }
+    protected void clearForm() {
+        dataHora.setText("");
+        idosaId.setText("");
+    }
 }
 
 class PrescricoesPanel extends DataModulePanel<Prescricao> {
@@ -180,10 +227,27 @@ class PrescricoesPanel extends DataModulePanel<Prescricao> {
     protected List<Prescricao> loadRows() { return controller.listarPrescricoes(); }
     protected Object[] toColumns(Prescricao p) { return new Object[] {p.getId(), p.getMedicamento(), p.getPosologia(), p.getDuracao()}; }
     protected String details(Prescricao p) { return "ID: " + p.getId() + "\nMedicamento: " + Ui.value(p.getMedicamento()) + "\nPosologia: " + Ui.value(p.getPosologia()) + "\nDuracao: " + Ui.value(p.getDuracao()) + "\nObservacoes: " + Ui.value(p.getObservacoes()); }
-    protected Prescricao readForm() { require(prontuarioId, "ID prontuario"); require(medicamento, "Medicamento"); return new Prescricao(0, medicamento.getText().trim(), posologia.getText().trim(), duracao.getText().trim(), observacoes.getText().trim()); }
+    protected Prescricao readForm() { if (!isEditing()) { require(prontuarioId, "ID prontuario"); } require(medicamento, "Medicamento"); return new Prescricao(0, medicamento.getText().trim(), posologia.getText().trim(), duracao.getText().trim(), observacoes.getText().trim()); }
     protected void save(Prescricao value) { controller.adicionarPrescricao(value, parseInt(prontuarioId, "ID prontuario")); }
+    protected boolean update(Prescricao value) { return controller.atualizarPrescricao(value); }
     protected boolean remove(Prescricao value) { return controller.removerPrescricao(value.getId()); }
     protected String entityName() { return "Prescricao"; }
+    protected int idOf(Prescricao value) { return value.getId(); }
+    protected void setId(Prescricao value, int id) { value.setId(id); }
+    protected void populateForm(Prescricao p) {
+        prontuarioId.setText("");
+        medicamento.setText(Ui.value(p.getMedicamento()));
+        posologia.setText(Ui.value(p.getPosologia()));
+        duracao.setText(Ui.value(p.getDuracao()));
+        observacoes.setText(Ui.value(p.getObservacoes()));
+    }
+    protected void clearForm() {
+        prontuarioId.setText("");
+        medicamento.setText("");
+        posologia.setText("");
+        duracao.setText("");
+        observacoes.setText("");
+    }
 }
 
 class ProfissionaisPanel extends DataModulePanel<ProfissionalSaude> {
@@ -213,8 +277,21 @@ class ProfissionaisPanel extends DataModulePanel<ProfissionalSaude> {
     protected String details(ProfissionalSaude p) { return "ID: " + p.getId() + "\nNome: " + Ui.value(p.getNome()) + "\nEspecialidade: " + Ui.value(p.getEspecialidade()) + "\nRegistro: " + Ui.value(p.getRegistroProfissional()); }
     protected ProfissionalSaude readForm() { require(nome, "Nome"); return new ProfissionalSaude(0, nome.getText().trim(), especialidade.getText().trim(), registro.getText().trim()); }
     protected void save(ProfissionalSaude value) { controller.adicionarProfissional(value); }
+    protected boolean update(ProfissionalSaude value) { return controller.atualizarProfissional(value); }
     protected boolean remove(ProfissionalSaude value) { return controller.removerProfissional(value.getId()); }
     protected String entityName() { return "Profissional"; }
+    protected int idOf(ProfissionalSaude value) { return value.getId(); }
+    protected void setId(ProfissionalSaude value, int id) { value.setId(id); }
+    protected void populateForm(ProfissionalSaude p) {
+        nome.setText(Ui.value(p.getNome()));
+        especialidade.setText(Ui.value(p.getEspecialidade()));
+        registro.setText(Ui.value(p.getRegistroProfissional()));
+    }
+    protected void clearForm() {
+        nome.setText("");
+        especialidade.setText("");
+        registro.setText("");
+    }
 }
 
 class VacinasPanel extends DataModulePanel<Vacina> {
@@ -242,10 +319,23 @@ class VacinasPanel extends DataModulePanel<Vacina> {
     protected List<Vacina> loadRows() { return controller.listarVacinas(); }
     protected Object[] toColumns(Vacina v) { return new Object[] {v.getId(), v.getNome(), Ui.value(v.getDataOcorrencia())}; }
     protected String details(Vacina v) { return "ID: " + v.getId() + "\nNome: " + Ui.value(v.getNome()) + "\nData: " + Ui.value(v.getDataOcorrencia()); }
-    protected Vacina readForm() { require(prontuarioId, "ID prontuario"); require(nome, "Nome"); return new Vacina(0, nome.getText().trim(), Ui.parseDate(data.getText(), "Data")); }
+    protected Vacina readForm() { if (!isEditing()) { require(prontuarioId, "ID prontuario"); } require(nome, "Nome"); return new Vacina(0, nome.getText().trim(), Ui.parseDate(data.getText(), "Data")); }
     protected void save(Vacina value) { controller.adicionarVacina(value, parseInt(prontuarioId, "ID prontuario")); }
+    protected boolean update(Vacina value) { return controller.atualizarVacina(value); }
     protected boolean remove(Vacina value) { return controller.removerVacina(value.getId()); }
     protected String entityName() { return "Vacina"; }
+    protected int idOf(Vacina value) { return value.getId(); }
+    protected void setId(Vacina value, int id) { value.setId(id); }
+    protected void populateForm(Vacina v) {
+        prontuarioId.setText("");
+        nome.setText(Ui.value(v.getNome()));
+        data.setText(Ui.formatDate(v.getDataOcorrencia()));
+    }
+    protected void clearForm() {
+        prontuarioId.setText("");
+        nome.setText("");
+        data.setText("");
+    }
 }
 
 class EventosPanel extends DataModulePanel<EventoSentinela> {
@@ -273,10 +363,23 @@ class EventosPanel extends DataModulePanel<EventoSentinela> {
     protected List<EventoSentinela> loadRows() { return controller.listarEventos(); }
     protected Object[] toColumns(EventoSentinela e) { return new Object[] {e.getId(), Ui.value(e.getTipo()), Ui.value(e.getDataOcorrencia())}; }
     protected String details(EventoSentinela e) { return "ID: " + e.getId() + "\nTipo: " + Ui.value(e.getTipo()) + "\nData: " + Ui.value(e.getDataOcorrencia()); }
-    protected EventoSentinela readForm() { require(prontuarioId, "ID prontuario"); return new EventoSentinela(0, (TipoEventoSentinela) tipo.getSelectedItem(), Ui.parseDate(data.getText(), "Data")); }
+    protected EventoSentinela readForm() { if (!isEditing()) { require(prontuarioId, "ID prontuario"); } return new EventoSentinela(0, (TipoEventoSentinela) tipo.getSelectedItem(), Ui.parseDate(data.getText(), "Data")); }
     protected void save(EventoSentinela value) { controller.adicionarEvento(value, parseInt(prontuarioId, "ID prontuario")); }
+    protected boolean update(EventoSentinela value) { return controller.atualizarEvento(value); }
     protected boolean remove(EventoSentinela value) { return controller.removerEvento(value.getId()); }
     protected String entityName() { return "Evento"; }
+    protected int idOf(EventoSentinela value) { return value.getId(); }
+    protected void setId(EventoSentinela value, int id) { value.setId(id); }
+    protected void populateForm(EventoSentinela e) {
+        prontuarioId.setText("");
+        tipo.setSelectedItem(e.getTipo());
+        data.setText(Ui.formatDate(e.getDataOcorrencia()));
+    }
+    protected void clearForm() {
+        prontuarioId.setText("");
+        tipo.setSelectedIndex(0);
+        data.setText("");
+    }
 }
 
 class RelatoriosPanel extends DataModulePanel<Relatorio> {
@@ -304,8 +407,21 @@ class RelatoriosPanel extends DataModulePanel<Relatorio> {
     protected List<Relatorio> loadRows() { return controller.listarRelatorios(); }
     protected Object[] toColumns(Relatorio r) { return new Object[] {r.getId(), r.getTipo(), r.getDescricao()}; }
     protected String details(Relatorio r) { return "ID: " + r.getId() + "\nTipo: " + Ui.value(r.getTipo()) + "\nDescricao: " + Ui.value(r.getDescricao()); }
-    protected Relatorio readForm() { require(prontuarioId, "ID prontuario"); require(tipo, "Tipo"); require(descricao, "Descricao"); return new Relatorio(0, descricao.getText().trim(), tipo.getText().trim()); }
+    protected Relatorio readForm() { if (!isEditing()) { require(prontuarioId, "ID prontuario"); } require(tipo, "Tipo"); require(descricao, "Descricao"); return new Relatorio(0, descricao.getText().trim(), tipo.getText().trim()); }
     protected void save(Relatorio value) { controller.adicionarRelatorio(value, parseInt(prontuarioId, "ID prontuario")); }
+    protected boolean update(Relatorio value) { return controller.atualizarRelatorio(value); }
     protected boolean remove(Relatorio value) { return controller.removerRelatorio(value.getId()); }
     protected String entityName() { return "Relatorio"; }
+    protected int idOf(Relatorio value) { return value.getId(); }
+    protected void setId(Relatorio value, int id) { value.setId(id); }
+    protected void populateForm(Relatorio r) {
+        prontuarioId.setText("");
+        tipo.setText(Ui.value(r.getTipo()));
+        descricao.setText(Ui.value(r.getDescricao()));
+    }
+    protected void clearForm() {
+        prontuarioId.setText("");
+        tipo.setText("");
+        descricao.setText("");
+    }
 }

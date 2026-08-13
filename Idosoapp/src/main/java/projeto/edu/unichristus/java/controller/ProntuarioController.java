@@ -37,6 +37,15 @@ public class ProntuarioController {
         }
     }
 
+    public boolean atualizarProntuario(ProntuarioMedico prontuario) {
+        try {
+            return prontuarioDAO.atualizar(prontuario);
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar prontuario: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean removerProntuario(int id) {
         try {
             return prontuarioDAO.remover(id);

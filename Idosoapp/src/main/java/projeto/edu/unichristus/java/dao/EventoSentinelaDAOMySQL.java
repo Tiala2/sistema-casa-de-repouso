@@ -78,6 +78,20 @@ public class EventoSentinelaDAOMySQL {
         return null;
     }
 
+    public boolean atualizar(EventoSentinela evento) {
+        String sql = "UPDATE evento_sentinela SET tipo = ?, data_ocorrencia = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, evento.getTipo().name());
+            stmt.setDate(2, evento.getDataOcorrencia() != null ? Date.valueOf(evento.getDataOcorrencia()) : null);
+            stmt.setInt(3, evento.getId());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean remover(int id) {
         String sql = "DELETE FROM evento_sentinela WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();

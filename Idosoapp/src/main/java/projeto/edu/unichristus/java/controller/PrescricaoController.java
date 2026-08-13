@@ -37,6 +37,15 @@ public class PrescricaoController {
         }
     }
 
+    public boolean atualizarPrescricao(Prescricao prescricao) {
+        try {
+            return prescricaoDAO.atualizar(prescricao);
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar prescricao: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean removerPrescricao(int id) {
         try {
             return prescricaoDAO.remover(id);

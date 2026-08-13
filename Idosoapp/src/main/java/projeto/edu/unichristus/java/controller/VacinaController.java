@@ -37,6 +37,15 @@ public class VacinaController {
         }
     }
 
+    public boolean atualizarVacina(Vacina vacina) {
+        try {
+            return vacinaDAO.atualizar(vacina);
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar vacina: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean removerVacina(int id) {
         try {
             return vacinaDAO.remover(id);

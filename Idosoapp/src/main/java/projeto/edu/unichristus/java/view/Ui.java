@@ -143,6 +143,14 @@ final class Ui {
         return value == null ? "" : String.valueOf(value);
     }
 
+    static String formatDate(java.time.LocalDate value) {
+        return value == null ? "" : DATE.format(value);
+    }
+
+    static String formatDateTime(LocalDateTime value) {
+        return value == null ? "" : DATE_TIME.format(value);
+    }
+
     static LocalDate parseDate(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
             return null;

@@ -37,6 +37,15 @@ public class IdosaController {
         }
     }
 
+    public boolean atualizarIdosa(Idosa idosa) {
+        try {
+            return idosaDAO.atualizar(idosa);
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar idosa: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean removerIdosa(int id) {
         try {
             return idosaDAO.remover(id);

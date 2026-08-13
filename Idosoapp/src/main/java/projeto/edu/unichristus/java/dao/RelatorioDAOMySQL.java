@@ -81,6 +81,20 @@ public class RelatorioDAOMySQL {
         return null;
     }
 
+    public boolean atualizar(Relatorio relatorio) {
+        String sql = "UPDATE relatorio SET descricao = ?, tipo = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, relatorio.getDescricao());
+            stmt.setString(2, relatorio.getTipo());
+            stmt.setInt(3, relatorio.getId());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean remover(int id) {
         String sql = "DELETE FROM relatorio WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();

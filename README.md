@@ -32,7 +32,8 @@ A interface foi criada em Swing porque nao havia camada visual, classes `main`, 
 - cabecalhos de modulo com contexto, proposito e acao principal;
 - area principal para tabela e area secundaria para detalhes/formulario;
 - estados vazios, mensagens de sucesso, erro e confirmacao de remocao;
-- formularios com validacao basica antes de acionar controllers/DAOs.
+- formularios com validacao basica antes de acionar controllers/DAOs;
+- criacao, edicao e remocao integradas aos metodos reais de persistencia.
 
 Nao foram adicionados graficos, metricas hardcoded ou dados ficticios.
 
@@ -84,8 +85,9 @@ mvn exec:java
 
 ## Limitacoes Reais
 
-- Os DAOs atuais oferecem salvar, listar, buscar por ID e remover. Por isso a interface implementa cadastro, listagem, detalhes e remocao, mas nao simula edicao sem suporte de `UPDATE`.
+- Os DAOs oferecem salvar, listar, buscar por ID, atualizar e remover para os fluxos principais.
 - Consultas, prescricoes, vacinas, eventos e relatorios dependem de IDs existentes de profissional, prontuario ou idosa conforme as chaves estrangeiras do banco.
+- Em registros vinculados a prontuario, a interface usa o ID do prontuario na criacao. Na edicao, atualiza os campos proprios do registro, porque os models atuais nao carregam `prontuario_id` na listagem.
 - Sem MySQL configurado, a interface abre, mas as listagens ficam vazias ou exibem feedback de conexao.
 
 ## Testes

@@ -25,7 +25,9 @@ abstract class DataModulePanel<T> extends JPanel {
     private final JTextArea details;
     private final JPanel messageHost;
     private final JPanel formHost;
+    private final JButton saveButton;
     private List<T> rows = new ArrayList<T>();
+    private T editingValue;
 
     DataModulePanel(String context, String title, String description, String[] columns) {
         super(new BorderLayout(0, 16));
@@ -64,11 +66,15 @@ abstract class DataModulePanel<T> extends JPanel {
         JPanel actions = new JPanel();
         actions.setOpaque(false);
         actions.setLayout(new BoxLayout(actions, BoxLayout.X_AXIS));
-        JButton save = AppTheme.primaryButton("Salvar");
-        save.addActionListener(e -> saveCurrent());
+        JButton newButton = AppTheme.secondaryButton("Novo");
+        newButton.addActionListener(e -> startNew());
+        saveButton = AppTheme.primaryButton("Salvar");
+        saveButton.addActionListener(e -> saveCurrent());
         JButton remove = AppTheme.dangerButton("Remover selecionado");
         remove.addActionListener(e -> removeSelected());
-        actions.add(save);
+        actions.add(newButton);
+        actions.add(Box.createHorizontalStrut(8));
+        actions.add(saveButton);
         actions.add(Box.createHorizontalStrut(8));
         actions.add(remove);
         actions.add(Box.createHorizontalGlue());
@@ -105,9 +111,19 @@ abstract class DataModulePanel<T> extends JPanel {
 
     protected abstract void save(T value);
 
+    protected abstract boolean update(T value);
+
     protected abstract boolean remove(T value);
 
     protected abstract String entityName();
+
+    protected abstract int idOf(T value);
+
+    protected abstract void setId(T value, int id);
+
+    protected abstract void populateForm(T value);
+
+    protected abstract void clearForm();
 
     protected void afterSave() {
     }
@@ -122,6 +138,7 @@ abstract class DataModulePanel<T> extends JPanel {
             }
             if (rows.isEmpty()) {
                 details.setText("Nenhum registro encontrado.");
+                startNew();
                 showMessage("Nenhum registro encontrado. Confira a conexao com o banco ou cadastre um novo item.", 0);
             } else {
                 table.setRowSelectionInterval(0, 0);
@@ -139,15 +156,30 @@ abstract class DataModulePanel<T> extends JPanel {
         T selected = selectedValue();
         details.setText(selected == null ? "Selecione um registro para ver os detalhes." : details(selected));
         details.setCaretPosition(0);
+        if (selected != null) {
+            editingValue = selected;
+            populateForm(selected);
+            updateSaveButton();
+        }
     }
 
     private void saveCurrent() {
         try {
+            boolean wasEditing = editingValue != null;
             T value = readForm();
-            save(value);
+            if (!wasEditing) {
+                save(value);
+            } else {
+                setId(value, idOf(editingValue));
+                boolean changed = update(value);
+                if (!changed) {
+                    showMessage("Nenhum registro foi atualizado.", 0);
+                    return;
+                }
+            }
             afterSave();
             refreshData();
-            showMessage(entityName() + " salvo com sucesso.", 1);
+            showMessage(wasEditing ? entityName() + " atualizado com sucesso." : entityName() + " salvo com sucesso.", 1);
         } catch (IllegalArgumentException e) {
             showMessage(e.getMessage(), 2);
         } catch (Exception e) {
@@ -173,10 +205,21 @@ abstract class DataModulePanel<T> extends JPanel {
         try {
             boolean removed = remove(selected);
             refreshData();
+            if (removed) {
+                startNew();
+            }
             showMessage(removed ? "Registro removido com sucesso." : "Nenhum registro foi removido.", removed ? 1 : 0);
         } catch (Exception e) {
             showMessage("Erro ao remover " + entityName() + ": " + e.getMessage(), 2);
         }
+    }
+
+    private void startNew() {
+        editingValue = null;
+        clearForm();
+        table.clearSelection();
+        details.setText("Preencha o formulario para criar um novo registro.");
+        updateSaveButton();
     }
 
     private T selectedValue() {
@@ -196,6 +239,14 @@ abstract class DataModulePanel<T> extends JPanel {
 
     protected Component formHost() {
         return formHost;
+    }
+
+    protected boolean isEditing() {
+        return editingValue != null;
+    }
+
+    private void updateSaveButton() {
+        saveButton.setText(editingValue == null ? "Salvar" : "Salvar alteracoes");
     }
 
     protected void require(JTextField field, String name) {

@@ -88,6 +88,24 @@ public class IdosaDAOMySQL {
         return null;
     }
 
+    public boolean atualizar(Idosa idosa) {
+        String sql = "UPDATE idosa SET nome = ?, cpf = ?, data_nascimento = ?, nome_mae = ?, cartao_sus = ?, data_entrada = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, idosa.getNome());
+            stmt.setString(2, idosa.getCpf());
+            stmt.setDate(3, idosa.getDataNascimento() != null ? Date.valueOf(idosa.getDataNascimento()) : null);
+            stmt.setString(4, idosa.getNomeMae());
+            stmt.setString(5, idosa.getCartaoSUS());
+            stmt.setDate(6, idosa.getDataEntrada() != null ? Date.valueOf(idosa.getDataEntrada()) : null);
+            stmt.setInt(7, idosa.getId());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean remover(int id) {
         String sql = "DELETE FROM idosa WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();

@@ -24,6 +24,16 @@ public class ConsultaDAO {
         return null;
     }
 
+    public boolean atualizar(Consulta consulta) {
+        for (int i = 0; i < consultas.size(); i++) {
+            if (consultas.get(i).getId() == consulta.getId()) {
+                consultas.set(i, consulta);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean remover(int id) {
         return consultas.removeIf(c -> c.getId() == id);
     }

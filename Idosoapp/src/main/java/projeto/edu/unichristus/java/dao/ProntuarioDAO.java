@@ -24,6 +24,16 @@ public class ProntuarioDAO {
         return null;
     }
 
+    public boolean atualizar(ProntuarioMedico prontuario) {
+        for (int i = 0; i < prontuarios.size(); i++) {
+            if (prontuarios.get(i).getId() == prontuario.getId()) {
+                prontuarios.set(i, prontuario);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean remover(int id) {
         return prontuarios.removeIf(p -> p.getId() == id);
     }

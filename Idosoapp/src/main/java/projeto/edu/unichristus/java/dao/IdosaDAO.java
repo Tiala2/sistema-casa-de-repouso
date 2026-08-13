@@ -24,6 +24,16 @@ public class IdosaDAO {
         return null;
     }
 
+    public boolean atualizar(Idosa idosa) {
+        for (int i = 0; i < idosas.size(); i++) {
+            if (idosas.get(i).getId() == idosa.getId()) {
+                idosas.set(i, idosa);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean remover(int id) {
         return idosas.removeIf(i -> i.getId() == id);
     }

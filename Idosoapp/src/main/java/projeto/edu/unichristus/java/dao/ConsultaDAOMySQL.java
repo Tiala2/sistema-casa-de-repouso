@@ -99,6 +99,23 @@ public class ConsultaDAOMySQL {
         return null;
     }
 
+    public boolean atualizar(Consulta consulta) {
+        String sql = "UPDATE consulta SET data_hora = ?, profissional_id = ?, tipo = ?, motivo = ?, diagnostico = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setTimestamp(1, Timestamp.valueOf(consulta.getDataHora()));
+            stmt.setInt(2, consulta.getProfissional().getId());
+            stmt.setString(3, consulta.getTipo());
+            stmt.setString(4, consulta.getMotivo());
+            stmt.setString(5, consulta.getDiagnostico());
+            stmt.setInt(6, consulta.getId());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean remover(int id) {
         String sql = "DELETE FROM consulta WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();

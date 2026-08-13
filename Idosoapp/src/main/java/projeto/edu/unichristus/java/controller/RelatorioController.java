@@ -40,6 +40,15 @@ public class RelatorioController {
         }
     }
 
+    public boolean atualizarRelatorio(Relatorio relatorio) {
+        try {
+            return relatorioDAO.atualizar(relatorio);
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar relatorio: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean removerRelatorio(int id) {
         try {
             return relatorioDAO.remover(id);

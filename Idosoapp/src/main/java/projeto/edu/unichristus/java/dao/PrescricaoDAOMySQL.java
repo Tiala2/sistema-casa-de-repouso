@@ -83,6 +83,22 @@ public class PrescricaoDAOMySQL {
         return null;
     }
 
+    public boolean atualizar(Prescricao prescricao) {
+        String sql = "UPDATE prescricao SET medicamento = ?, posologia = ?, duracao = ?, observacoes = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, prescricao.getMedicamento());
+            stmt.setString(2, prescricao.getPosologia());
+            stmt.setString(3, prescricao.getDuracao());
+            stmt.setString(4, prescricao.getObservacoes());
+            stmt.setInt(5, prescricao.getId());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean remover(int id) {
         String sql = "DELETE FROM prescricao WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();

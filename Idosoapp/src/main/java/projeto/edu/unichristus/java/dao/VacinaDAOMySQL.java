@@ -77,6 +77,20 @@ public class VacinaDAOMySQL {
         return null;
     }
 
+    public boolean atualizar(Vacina vacina) {
+        String sql = "UPDATE vacina SET nome = ?, data_ocorrencia = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, vacina.getNome());
+            stmt.setDate(2, vacina.getDataOcorrencia() != null ? Date.valueOf(vacina.getDataOcorrencia()) : null);
+            stmt.setInt(3, vacina.getId());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean remover(int id) {
         String sql = "DELETE FROM vacina WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();

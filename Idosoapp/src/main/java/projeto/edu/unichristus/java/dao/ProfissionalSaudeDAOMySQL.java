@@ -79,6 +79,21 @@ public class ProfissionalSaudeDAOMySQL {
         return null;
     }
 
+    public boolean atualizar(ProfissionalSaude prof) {
+        String sql = "UPDATE profissional_saude SET nome = ?, especialidade = ?, registro_profissional = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, prof.getNome());
+            stmt.setString(2, prof.getEspecialidade());
+            stmt.setString(3, prof.getRegistroProfissional());
+            stmt.setInt(4, prof.getId());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean remover(int id) {
         String sql = "DELETE FROM profissional_saude WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();

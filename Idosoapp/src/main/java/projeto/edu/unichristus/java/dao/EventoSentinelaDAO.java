@@ -24,6 +24,16 @@ public class EventoSentinelaDAO {
         return null;
     }
 
+    public boolean atualizar(EventoSentinela evento) {
+        for (int i = 0; i < eventos.size(); i++) {
+            if (eventos.get(i).getId() == evento.getId()) {
+                eventos.set(i, evento);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean remover(int id) {
         return eventos.removeIf(e -> e.getId() == id);
     }

@@ -24,6 +24,16 @@ public class PrescricaoDAO {
         return null;
     }
 
+    public boolean atualizar(Prescricao prescricao) {
+        for (int i = 0; i < prescricoes.size(); i++) {
+            if (prescricoes.get(i).getId() == prescricao.getId()) {
+                prescricoes.set(i, prescricao);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean remover(int id) {
         return prescricoes.removeIf(p -> p.getId() == id);
     }

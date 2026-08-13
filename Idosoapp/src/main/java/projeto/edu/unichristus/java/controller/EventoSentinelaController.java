@@ -38,6 +38,15 @@ public class EventoSentinelaController {
         }
     }
 
+    public boolean atualizarEvento(EventoSentinela evento) {
+        try {
+            return eventoDAO.atualizar(evento);
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar evento sentinela: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean removerEvento(int id) {
         try {
             return eventoDAO.remover(id);

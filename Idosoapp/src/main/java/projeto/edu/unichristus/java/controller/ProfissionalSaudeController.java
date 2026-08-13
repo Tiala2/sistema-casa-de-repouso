@@ -37,6 +37,15 @@ public class ProfissionalSaudeController {
         }
     }
 
+    public boolean atualizarProfissional(ProfissionalSaude profissional) {
+        try {
+            return profissionalDAO.atualizar(profissional);
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar profissional: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean removerProfissional(int id) {
         try {
             return profissionalDAO.remover(id);

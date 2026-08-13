@@ -37,6 +37,15 @@ public class ConsultaController {
         }
     }
 
+    public boolean atualizarConsulta(Consulta consulta) {
+        try {
+            return consultaDAO.atualizar(consulta);
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar consulta: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean removerConsulta(int id) {
         try {
             return consultaDAO.remover(id);

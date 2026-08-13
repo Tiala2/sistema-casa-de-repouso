@@ -87,6 +87,20 @@ public class ProntuarioMedicoDAOMySQL {
         return null;
     }
 
+    public boolean atualizar(ProntuarioMedico prontuario) {
+        String sql = "UPDATE prontuario_medico SET data_hora_idosa = ?, idosa_id = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setTimestamp(1, prontuario.getDataHoraIdosa() != null ? Timestamp.valueOf(prontuario.getDataHoraIdosa()) : null);
+            stmt.setInt(2, prontuario.getIdosa().getId());
+            stmt.setInt(3, prontuario.getId());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean remover(int id) {
         String sql = "DELETE FROM prontuario_medico WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
