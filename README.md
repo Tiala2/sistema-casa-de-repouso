@@ -11,6 +11,7 @@ Aplicacao desktop em Java para apoiar a gestao de uma casa de repouso. O sistema
 - `Idosoapp/src/main/resources/application.properties`: configuracao local de banco, sem credenciais pessoais.
 
 O projeto permanece em Java 8, Maven, JDBC e MVC. A modernizacao visual nao muda o dominio nem transforma a aplicacao em web.
+As dependencias foram mantidas enxutas: MySQL Connector/J para persistencia e JUnit Jupiter para testes.
 
 ## Modulos
 
@@ -109,3 +110,4 @@ Validado com:
 ```
 
 A suite cobre os models principais e os DAOs em memoria para salvar com ID gerado, buscar, atualizar e remover.
+O Maven usa `maven-surefire-plugin` explicitamente para executar os testes JUnit 5 de forma previsivel.
