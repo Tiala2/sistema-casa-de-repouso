@@ -133,7 +133,8 @@ abstract class DataModulePanel<T> extends JPanel {
         actions.setLayout(new BoxLayout(actions, BoxLayout.X_AXIS));
         modeLabel = new JLabel("Modo: novo registro");
         modeLabel.setFont(AppTheme.SMALL);
-        modeLabel.setForeground(AppTheme.MUTED);
+        modeLabel.setOpaque(true);
+        modeLabel.setBorder(BorderFactory.createEmptyBorder(6, 10, 6, 10));
         newButton = AppTheme.secondaryButton("Novo registro");
         newButton.addActionListener(e -> startNew());
         saveButton = AppTheme.primaryButton("Salvar registro");
@@ -319,11 +320,13 @@ abstract class DataModulePanel<T> extends JPanel {
         refreshButton.setEnabled(enabled);
         newButton.setEnabled(enabled);
         saveButton.setEnabled(enabled);
-        removeButton.setEnabled(enabled);
         table.setEnabled(enabled);
         filterField.setEnabled(enabled);
         if (enabled) {
             updateSaveButton();
+            updateRemoveButton();
+        } else {
+            removeButton.setEnabled(false);
         }
     }
 
@@ -338,12 +341,14 @@ abstract class DataModulePanel<T> extends JPanel {
             editingValue = null;
             clearForm();
             updateSaveButton();
+            updateRemoveButton();
             onEditingStateChanged(false);
             return;
         }
         editingValue = selected;
         populateForm(selected);
         updateSaveButton();
+        updateRemoveButton();
         onEditingStateChanged(true);
     }
 
@@ -428,6 +433,7 @@ abstract class DataModulePanel<T> extends JPanel {
         table.clearSelection();
         details.setText("Preencha o formulario para criar um novo registro.");
         updateSaveButton();
+        updateRemoveButton();
         onEditingStateChanged(false);
     }
 
@@ -506,8 +512,15 @@ abstract class DataModulePanel<T> extends JPanel {
     private void updateSaveButton() {
         saveButton.setText(editingValue == null ? "Salvar registro" : "Salvar alteracoes");
         if (modeLabel != null) {
-            modeLabel.setText(editingValue == null ? "Modo: novo registro" : "Modo: editando ID " + idOf(editingValue));
+            boolean editing = editingValue != null;
+            modeLabel.setText(editing ? "Editando #" + idOf(editingValue) : "Novo registro");
+            modeLabel.setForeground(editing ? AppTheme.PRIMARY_DARK : AppTheme.MUTED);
+            modeLabel.setBackground(editing ? AppTheme.SUCCESS_BG : AppTheme.SURFACE_ALT);
         }
+    }
+
+    private void updateRemoveButton() {
+        removeButton.setEnabled(!isBusy() && selectedValue() != null);
     }
 
     private void applyFilter() {
@@ -531,6 +544,7 @@ abstract class DataModulePanel<T> extends JPanel {
         if (table.getRowCount() == 0) {
             table.clearSelection();
             details.setText("Nenhum registro corresponde ao filtro atual.");
+            updateRemoveButton();
             showMessage(rows.size() + " registro(s) carregado(s), sem resultado para a busca.", 0);
             return;
         }
