@@ -38,6 +38,21 @@ class RelatorioDAOMySQLTest {
         assertEquals(0.0, percentual.get(TipoEventoSentinela.OBITO), 0.001);
     }
 
+    @Test
+    void percentualIdosasPorEventoIgnoraProntuariosInvalidosNoDenominador() {
+        EventoDAOFake eventoDAO = new EventoDAOFake();
+        eventoDAO.eventos.put(5, Collections.singletonList(
+            new EventoSentinela(1, TipoEventoSentinela.QUEDA, LocalDate.of(2026, 8, 1))
+        ));
+
+        Map<TipoEventoSentinela, Double> percentual = new RelatorioDAOMySQL()
+            .percentualIdosasPorEvento(Arrays.asList(null, -1, 5), 8, 2026, eventoDAO);
+
+        assertEquals(1, eventoDAO.quantidadeConsultas);
+        assertEquals(100.0, percentual.get(TipoEventoSentinela.QUEDA), 0.001);
+        assertEquals(0.0, percentual.get(TipoEventoSentinela.DIARREIA), 0.001);
+    }
+
     private static class EventoDAOFake extends EventoSentinelaDAOMySQL {
         private final Map<Integer, List<EventoSentinela>> eventos = new HashMap<>();
         private int quantidadeConsultas;
