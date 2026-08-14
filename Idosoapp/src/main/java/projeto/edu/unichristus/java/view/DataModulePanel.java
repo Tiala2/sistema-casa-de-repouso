@@ -36,10 +36,13 @@ abstract class DataModulePanel<T> extends JPanel {
     private final JPanel formHost;
     private final JButton saveButton;
     private final JButton refreshButton;
+    private final JButton newButton;
+    private final JButton removeButton;
     private List<T> rows = new ArrayList<T>();
     private T editingValue;
     private SwingWorker<List<T>, Void> refreshWorker;
     private int refreshGeneration;
+    private boolean loading;
 
     DataModulePanel(String context, String title, String description, String[] columns) {
         super(new BorderLayout(0, 16));
@@ -105,17 +108,17 @@ abstract class DataModulePanel<T> extends JPanel {
         JPanel actions = new JPanel();
         actions.setOpaque(false);
         actions.setLayout(new BoxLayout(actions, BoxLayout.X_AXIS));
-        JButton newButton = AppTheme.secondaryButton("Novo");
+        newButton = AppTheme.secondaryButton("Novo");
         newButton.addActionListener(e -> startNew());
         saveButton = AppTheme.primaryButton("Salvar");
         saveButton.addActionListener(e -> saveCurrent());
-        JButton remove = AppTheme.dangerButton("Remover selecionado");
-        remove.addActionListener(e -> removeSelected());
+        removeButton = AppTheme.dangerButton("Remover selecionado");
+        removeButton.addActionListener(e -> removeSelected());
         actions.add(newButton);
         actions.add(Box.createHorizontalStrut(8));
         actions.add(saveButton);
         actions.add(Box.createHorizontalStrut(8));
-        actions.add(remove);
+        actions.add(removeButton);
         actions.add(Box.createHorizontalGlue());
         formHost.add(actions, BorderLayout.SOUTH);
 
@@ -209,6 +212,7 @@ abstract class DataModulePanel<T> extends JPanel {
                 model.addRow(toColumns(row));
             }
             applyFilter();
+            setLoading(false);
             if (rows.isEmpty()) {
                 details.setText("Nenhum registro encontrado.");
                 startNew();
@@ -220,21 +224,20 @@ abstract class DataModulePanel<T> extends JPanel {
                 table.setRowSelectionInterval(0, 0);
                 showMessage(rows.size() + " registro(s) carregado(s).", 1);
             }
-            refreshButton.setEnabled(true);
         } catch (Exception e) {
             showLoadError(e.getMessage());
         }
     }
 
     private void showLoading() {
-        refreshButton.setEnabled(false);
+        setLoading(true);
         model.setRowCount(0);
         details.setText("Carregando dados...");
         showMessage("Carregando " + entityName() + "...", 0);
     }
 
     private void showLoadError(String message) {
-        refreshButton.setEnabled(true);
+        setLoading(false);
         rows = new ArrayList<T>();
         model.setRowCount(0);
         details.setText("Nao foi possivel carregar os dados.");
@@ -242,7 +245,23 @@ abstract class DataModulePanel<T> extends JPanel {
         showMessage("Erro ao carregar " + entityName() + ": " + detail, 2);
     }
 
+    private void setLoading(boolean value) {
+        loading = value;
+        refreshButton.setEnabled(!value);
+        newButton.setEnabled(!value);
+        saveButton.setEnabled(!value);
+        removeButton.setEnabled(!value);
+        table.setEnabled(!value);
+        filterField.setEnabled(!value);
+        if (!value) {
+            updateSaveButton();
+        }
+    }
+
     private void updateDetails() {
+        if (loading) {
+            return;
+        }
         T selected = selectedValue();
         details.setText(selected == null ? "Selecione um registro para ver os detalhes." : details(selected));
         details.setCaretPosition(0);
@@ -254,6 +273,10 @@ abstract class DataModulePanel<T> extends JPanel {
     }
 
     private void saveCurrent() {
+        if (loading) {
+            showMessage("Aguarde o carregamento terminar antes de salvar.", 0);
+            return;
+        }
         try {
             boolean wasEditing = editingValue != null;
             T value = readForm();
@@ -279,6 +302,10 @@ abstract class DataModulePanel<T> extends JPanel {
     }
 
     private void removeSelected() {
+        if (loading) {
+            showMessage("Aguarde o carregamento terminar antes de remover.", 0);
+            return;
+        }
         T selected = selectedValue();
         if (selected == null) {
             showMessage("Selecione um registro antes de remover.", 0);
@@ -306,6 +333,10 @@ abstract class DataModulePanel<T> extends JPanel {
     }
 
     private void startNew() {
+        if (loading) {
+            showMessage("Aguarde o carregamento terminar antes de criar um novo registro.", 0);
+            return;
+        }
         editingValue = null;
         clearForm();
         table.clearSelection();
