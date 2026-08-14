@@ -1,255 +1,107 @@
-Relatório Técnico – Projeto IdosoApp 
+# Relatorio Tecnico - Sistema de Gestao de Casa de Repouso
 
-1. Introdução 
+## 1. Introducao
 
-O presente relatório descreve o desenvolvimento do IdosoApp, uma aplicação voltada à gestão de informações clínicas e administrativas de idosas residentes em instituições de longa permanência. 
+O sistema e uma aplicacao desktop Java para apoiar a gestao de uma casa de repouso. Ele centraliza cadastros de idosas, prontuarios medicos, consultas, prescricoes, vacinas, eventos sentinela, profissionais de saude e relatorios operacionais.
 
-O sistema foi construído utilizando a linguagem Java com o auxílio do gerenciador de dependências Maven, e utiliza o banco de dados MySQL para persistência das informações. Seu principal objetivo é centralizar e facilitar o acompanhamento do histórico médico das pacientes, otimizando os fluxos internos da instituição e contribuindo para um atendimento mais eficiente e humanizado. 
+A modernizacao manteve a proposta original do projeto: Java 8, Maven, MVC, JDBC e MySQL. A interface foi implementada em Swing, sem migracao para web, Spring Boot, JPA ou JavaFX.
 
- 
+## 2. Objetivos
 
-2. Estrutura do Projeto 
+- Organizar informacoes assistenciais e administrativas em uma interface unica.
+- Persistir dados em MySQL usando JDBC.
+- Exibir listagens, detalhes, formularios e feedback de operacoes.
+- Manter o sistema responsivo durante consultas e gravacoes no banco.
+- Preservar uma estrutura simples, compativel com o escopo academico e facil de evoluir.
 
-A estrutura do IdosoApp foi organizada conforme o padrão Maven, o que permite melhor modularização e organização do código. A seguir, apresentamos a estrutura principal: 
+## 3. Arquitetura
 
-bash 
+O projeto segue uma separacao em camadas:
 
-CopiarEditar 
+- `model`: entidades do dominio, como `Idosa`, `ProntuarioMedico`, `Consulta`, `Prescricao`, `Vacina`, `EventoSentinela`, `ProfissionalSaude` e `Relatorio`.
+- `dao`: acesso a dados com JDBC/MySQL e DAOs em memoria para testes.
+- `controller`: servicos de aplicacao chamados pela interface.
+- `view`: interface Swing, tema visual, dashboard e paineis dos modulos.
+- `resources`: configuracao de banco em `application.properties`.
 
-idosoapp/ 
-├── pom.xml 
-├── src/ 
-│   ├── main/ 
-│   │   ├── java/ 
-│   │   │   └── com/seuprojeto/idosoapp/ 
-│   │   │       ├── controller/ 
-│   │   │       ├── model/ 
-│   │   │       ├── repository/ 
-│   │   │       └── service/ 
-│   │   └── resources/ 
-│   │       ├── application.properties 
-│   │       └── static/ 
-│   └── test/ 
-│       └── java/ 
-│           └── com/seuprojeto/idosoapp/ 
-└── target/ 
- 
+## 4. Banco de Dados
 
-Descrição das Pastas e Arquivos: 
+O schema esta em `criar_banco_idosoapp.sql` e usa:
 
-pom.xml: Define as dependências do projeto (Spring Boot, JPA, MySQL, JUnit, etc.); 
+- MySQL com InnoDB.
+- `utf8mb4` para melhor compatibilidade de caracteres.
+- Chaves estrangeiras nomeadas.
+- Indices em campos de vinculo e busca.
+- Regras explicitas de `ON UPDATE` e `ON DELETE`.
 
-controller/: Responsável por receber e tratar requisições HTTP (camada de API); 
+A conexao JDBC e centralizada em `DatabaseConnection`, que le `application.properties` ou variaveis de ambiente:
 
-model/: Contém as entidades JPA que representam as tabelas do banco; 
+```properties
+db.url=jdbc:mysql://localhost:3306/idosoapp
+db.user=root
+db.password=
+```
 
-repository/: Interfaces que realizam operações de persistência com Spring Data JPA; 
+Variaveis aceitas:
 
-service/: Implementa a lógica de negócio e validações; 
+```text
+DB_URL
+DB_USER
+DB_PASSWORD
+```
 
-resources/: Arquivos de configuração da aplicação; 
+## 5. Interface
 
-test/: Contém os testes automatizados da aplicação; 
+A interface Swing foi organizada como um produto desktop tecnico:
 
-target/: Diretório gerado automaticamente após o build do projeto. 
+- Dashboard com contagens reais do banco.
+- Navegacao lateral por modulo.
+- Tabelas com busca local e feedback de quantidade visivel.
+- Area de detalhes do registro selecionado.
+- Formularios para criar e editar registros.
+- Mensagens claras para sucesso, erro, vazio e falha de conexao.
+- Carregamento, salvamento e remocao em background com `SwingWorker`.
 
- 
+## 6. Regras e Validacoes
 
-3. Arquitetura e Organização do Código 
+- Campos obrigatorios sao validados antes de gravar.
+- IDs relacionados sao verificados antes da persistencia.
+- Insercoes MySQL capturam o ID gerado e atualizam o objeto salvo.
+- Remocoes informam quando podem ter falhado por vinculos protegidos.
+- Listagens MySQL retornam erro para a interface quando a consulta falha, evitando confundir falha de conexao com lista vazia.
 
-O projeto segue a arquitetura MVC (Model-View-Controller), promovendo a separação de responsabilidades e facilitando a manutenção: 
+## 7. Testes
 
-Model: Representa as entidades do sistema (por exemplo, Idosa, ProntuarioMedico, Consulta); 
+O projeto usa JUnit Jupiter com Maven Surefire. A suite cobre:
 
-Repository: Interfaces responsáveis pela comunicação com o banco de dados; 
+- Comportamento dos modelos.
+- DAOs em memoria.
+- Geracao de IDs.
+- Busca, atualizacao e remocao em memoria.
 
-Service: Camada onde está implementada a lógica de negócio; 
+Comandos de validacao:
 
-Controller: Define os endpoints da API para interação com o sistema. 
+```bash
+cd Idosoapp
+..\maven\mvn\bin\mvn.cmd -q test
+..\maven\mvn\bin\mvn.cmd -q package
+```
 
- 
+## 8. Limitacoes
 
- 
+- Relatorios ainda sao registros operacionais simples.
+- Alguns models vinculados a prontuario nao carregam `prontuario_id` na listagem; por isso, na edicao sao atualizados apenas os campos proprios.
+- Nao ha autenticacao de usuarios.
+- Nao ha migracoes versionadas de banco.
 
-Exemplo de Entidade: 
+## 9. Melhorias Futuras
 
-java 
+- Autenticacao e perfis de acesso.
+- Exportacao de relatorios.
+- Testes de integracao com MySQL.
+- Versionamento de migrations SQL.
+- Relatorios analiticos mais ricos.
 
-CopiarEditar 
+## 10. Conclusao
 
-@Entity 
-public class Idosa { 
-    @Id 
-    @GeneratedValue(strategy = GenerationType.IDENTITY) 
-    private int id; 
-    private String nome; 
-    private String cpf; 
-    private Date dataNascimento; 
-    private String nomeMae; 
-    private String cartaoSus; 
-    private Date dataEntrada; 
-    // Getters e setters 
-} 
- 
-
-Exemplo de Repository: 
-
-java 
-
-CopiarEditar 
-
-public interface IdosaRepository extends JpaRepository<Idosa, Integer> { 
-} 
- 
-
- 
-
- 
-
-Exemplo de Controller: 
-
-java 
-
-CopiarEditar 
-
-@RestController 
-@RequestMapping("/idosas") 
-public class IdosaController { 
-    @Autowired 
-    private IdosaService idosaService; 
- 
-    @PostMapping 
-    public Idosa criarIdosa(@RequestBody Idosa idosa) { 
-        return idosaService.salvar(idosa); 
-    } 
-} 
- 
-
- 
-
-4. Configuração 
-
-No arquivo application.properties estão definidas as configurações principais de conexão com o banco: 
-
-ini 
-
-CopiarEditar 
-
-spring.datasource.url=jdbc:mysql://localhost:3306/idosoapp 
-spring.datasource.username=root 
-spring.datasource.password=senha 
-spring.jpa.hibernate.ddl-auto=update 
-spring.jpa.show-sql=true 
- 
-
-O comando spring.jpa.hibernate.ddl-auto=update garante que o schema do banco seja automaticamente atualizado conforme as entidades do projeto. 
-
- 
-
-5. Testes Automatizados 
-
-Para garantir a qualidade e estabilidade do sistema, foram implementados testes automatizados utilizando JUnit. Esses testes verificam a integridade das funcionalidades essenciais. 
-
-Exemplo de Teste: 
-
-java 
-
-CopiarEditar 
-
-@Test 
-public void testCriarIdosa() { 
-    Idosa idosa = new Idosa(); 
-    idosa.setNome("Maria"); 
-    assertEquals("Maria", idosa.getNome()); 
-} 
- 
-
-Outros testes podem ser adicionados para as camadas de controller utilizando MockMvc. 
-
- 
-
-6. Modelo de Dados 
-
-O modelo relacional adotado é baseado em um diagrama ER, garantindo integridade e rastreabilidade dos dados: 
-
-Idosa (1) —— (N) ProntuarioMedico 
-
-ProntuarioMedico (1) —— (N) Consulta, Prescricao, Vacina, EventoSentinela, Relatorio 
-
-ProfissionalSaude (1) —— (N) Consulta 
-
-Esse relacionamento permite controlar todas as ações realizadas para cada idosa, com histórico detalhado e individualizado. 
-
- 
-
-7. Fluxo do Sistema 
-
-Cadastro de idosas e profissionais de saúde; 
-
-Criação de prontuário médico vinculado à idosa; 
-
-Registro de consultas, vacinas, prescrições e eventos sentinelas; 
-
-Consulta ao histórico médico da idosa. 
-
- 
-
-8. Segurança e Boas Práticas 
-
-Autenticação e Autorização: Recomenda-se a integração do Spring Security para proteger endpoints sensíveis; 
-
-Validações: Dados de entrada são validados nas entidades ou DTOs; 
-
-Tratamento de Exceções: A aplicação conta com mecanismos de tratamento de erros; 
-
-Backup: O banco de dados deve ser submetido a rotinas periódicas de backup para garantir a integridade das informações. 
-
- 
-
- 
-
-9. Build e Execução 
-
-Para compilar e rodar os testes do projeto: 
-
-powershell  
-
-..\maven\mvn\bin\mvn.cmd clean test -f .\Idosoapp\pom.xml 
-
- 
-
-10. Melhorias Futuras 
-
-Interface web responsiva com Thymeleaf, Angular ou React; 
-
-Geração de relatórios em PDF; 
-
-Dashboards para visualização de indicadores; 
-
-Integração com sistemas externos, como o e-SUS; 
-
-Publicação em nuvem com pipelines de CI/CD. 
-
- 
-
-11. Considerações Finais 
-
-O IdosoApp representa uma solução robusta e escalável para o gerenciamento clínico de instituições de longa permanência para idosas. Sua estrutura modular, o uso de boas práticas de desenvolvimento e a preocupação com testes e segurança tornam o sistema confiável e eficiente. 
-
-Trata-se de uma base sólida que pode ser expandida com novas funcionalidades e facilmente adaptada a diferentes realidades de instituições de saúde. 
-
- 
-
-12. Referências 
-
-Documentação oficial do Spring Boot 
-
-Documentação do Spring Data JPA 
-
-Documentação do Maven 
-
-Documentação do JUnit 
-
-MySQL Documentation 
-
- 
+O sistema evoluiu para uma aplicacao desktop funcional, com persistencia real, interface organizada, feedback claro e base tecnica consistente. A modernizacao respeita o escopo Java desktop e melhora a apresentacao sem copiar visual externo nem transformar o projeto em web.

@@ -1,171 +1,45 @@
-Relatório Técnico – Projeto IdosoApp
+Relatorio Tecnico - Sistema de Gestao de Casa de Repouso
 
-1. Introdução
+1. Introducao
 
-O IdosoApp é um sistema voltado para o gerenciamento de informações clínicas 
-e administrativas de idosas em instituições de saúde. Desenvolvido em Java, 
-o projeto utiliza o Maven para gerenciamento de dependências e um banco de 
-dados relacional (MySQL) para persistência dos dados. O sistema visa 
-facilitar o acompanhamento do histórico de saúde das residentes, otimizando 
-processos internos e melhorando a qualidade do atendimento.
+O sistema e uma aplicacao desktop Java para apoiar a gestao de uma casa de repouso. Ele centraliza cadastros de idosas, prontuarios medicos, consultas, prescricoes, vacinas, eventos sentinela, profissionais de saude e relatorios operacionais.
 
-2. Estrutura do Projeto
+A modernizacao manteve Java 8, Maven, MVC, JDBC e MySQL. A interface foi implementada em Swing, sem migracao para web, Spring Boot, JPA ou JavaFX.
 
-A estrutura do projeto segue o padrão Maven e está organizada da seguinte 
-forma:
+2. Arquitetura
 
-Idosoapp/
-├── pom.xml
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/seuprojeto/idosoapp/
-│   │   │       ├── controller/
-│   │   │       ├── model/
-│   │   │       ├── repository/
-│   │   │       └── service/
-│   │   └── resources/
-│   │       ├── application.properties
-│   │       └── static/
-│   └── test/
-│       └── java/
-│           └── com/seuprojeto/idosoapp/
-└── target/
+- model: entidades do dominio.
+- dao: acesso a dados JDBC/MySQL e DAOs em memoria para testes.
+- controller: servicos de aplicacao chamados pela interface.
+- view: interface Swing, dashboard e paineis dos modulos.
+- resources: configuracao local de banco.
 
-- pom.xml: Configuração de dependências (Spring Boot, JPA, MySQL, JUnit, etc).
-- controller/: Camada responsável por receber requisições HTTP.
-- model/: Entidades JPA que representam as tabelas do banco de dados.
-- repository/: Interfaces responsáveis pela persistência de dados (Spring Data JPA).
-- service/: Lógica de negócio.
-- resources/: Configurações e arquivos estáticos.
-- test/: Testes automatizados.
-- target/: Artefatos gerados após o build.
+3. Banco de Dados
 
-3. Arquitetura e Organização do Código
+O schema esta em criar_banco_idosoapp.sql e usa MySQL/InnoDB, utf8mb4, indices e chaves estrangeiras nomeadas. A conexao e centralizada em DatabaseConnection e pode ser configurada por application.properties ou pelas variaveis DB_URL, DB_USER e DB_PASSWORD.
 
-O projeto adota a arquitetura MVC (Model-View-Controller), promovendo a separação de responsabilidades:
+4. Interface
 
-- Model: Define as entidades do domínio, como Idosa, ProntuarioMedico, Consulta, etc.
-- Repository: Interfaces JPA para acesso ao banco de dados.
-- Service: Lógica de negócio, validações e regras.
-- Controller: Pontos de entrada para a API, geralmente endpoints REST (caso utilize Spring Boot).
+A interface Swing possui dashboard, navegacao lateral, listagens, busca local, detalhes, formularios e mensagens de feedback. Listagens, salvamentos e remocoes rodam em background com SwingWorker para manter a janela responsiva.
 
-Exemplo de Entidade
+5. Validacoes
 
-@Entity
-public class Idosa {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String nome;
-    private String cpf;
-    private Date dataNascimento;
-    private String nomeMae;
-    private String cartaoSus;
-    private Date dataEntrada;
-    // Getters e setters
-}
+Campos obrigatorios e IDs relacionados sao validados antes da gravacao. Insercoes MySQL capturam o ID gerado. Falhas de consulta e remocao sao comunicadas de forma mais clara.
 
-Exemplo de Repositório
+6. Testes
 
-public interface IdosaRepository extends JpaRepository <Idosa, Integer> { }
+O projeto usa JUnit Jupiter com Maven Surefire. A suite cobre models e DAOs em memoria.
 
-Exemplo de Controller
+Comandos:
 
-@RestController
-@RequestMapping("/idosas")
-public class IdosaController {
-    @Autowired
-    private IdosaService idosaService;
-
-    @PostMapping
-    public Idosa criarIdosa(@RequestBody Idosa idosa) {
-        return idosaService.salvar(idosa);
-    }
-}
-
-4. Configuração
-
-Arquivo application.properties:
-
-spring.datasource.url=jdbc:mysql://localhost:3306/idosoapp
-spring.datasource.username=root
-spring.datasource.password=senha
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-
-- spring.jpa.hibernate.ddl-auto=update: Atualiza o schema do banco automaticamente conforme as entidades.
-
-5. Testes Automatizados
-
-O projeto utiliza JUnit para testes unitários e de integração. Os testes garantem a integridade e o funcionamento 
-correto das principais funcionalidades.
-
-Exemplo de Teste
-
-@Test
-public void testCriarIdosa() {
-    Idosa idosa = new Idosa();
-    idosa.setNome("Maria");
-    assertEquals("Maria", idosa.getNome());
-}
-
-Testes podem ser expandidos para controllers usando MockMvc.
-
-6. Modelo de Dados (Diagrama ER - Descrição)
-
-- idosa (1) —— (N) prontuario_medico
-- prontuario_medico (1) —— (N) consulta, prescricao, vacina, evento_sentinela, relatorio
-- profissional_saude (1) —— (N) consulta
-
-Esse modelo garante rastreabilidade de todas as ações e procedimentos realizados com cada idosa.
-
-7. Fluxo do Sistema
-
-1. Cadastro de idosa e profissionais de saúde.
-2. Criação do prontuário médico vinculado à idosa.
-3. Registro de consultas, prescrições, vacinas, eventos sentinela e relatórios.
-4. Consulta ao histórico médico da idosa, permitindo acompanhamento individualizado.
-
-8. Segurança e Boas Práticas
-
-- Autenticação e Autorização: Recomenda-se o uso de Spring Security para proteger endpoints sensíveis.
-- Validação: Dados de entrada são validados em nível de DTO ou entidade.
-- Tratamento de exceções: Controllers possuem handlers para erros comuns (ex: dados inválidos).
-- Backup: O banco de dados deve possuir rotina de backup periódico.
-
-9. Build e Execução
-
-Para compilar e rodar os testes do projeto:
-
-```powershell
 cd Idosoapp
-..\maven\mvn\bin\mvn.cmd clean test -f .\Idosoapp\pom.xml
-```
+..\maven\mvn\bin\mvn.cmd -q test
+..\maven\mvn\bin\mvn.cmd -q package
 
-10. Possíveis Melhorias Futuras
+7. Limitacoes
 
-- Implementação de interface web responsiva (Thymeleaf, Angular, React).
-- Exportação de relatórios em PDF.
-- Dashboards gerenciais para visualização de indicadores.
-- Integração com sistemas externos (ex: e-SUS).
-- Deploy em nuvem com CI/CD.
+Relatorios ainda sao simples, nao ha autenticacao e nao ha migrations versionadas. Alguns models vinculados a prontuario nao carregam prontuario_id na listagem, entao a edicao atualiza apenas campos proprios.
 
-11. Considerações Finais
+8. Conclusao
 
-O IdosoApp apresenta uma estrutura modular e organizada, facilitando manutenção e expansão. O uso de testes 
-automatizados e boas práticas de projeto contribui para a robustez do sistema, promovendo segurança, rastreabilidade
- e eficiência no gerenciamento de informações clínicas em instituições de longa permanência para idosas.
-
-12. Referências
-
-- Documentação Spring Boot
-- Documentação JPA
-- Documentação Maven
-- Documentação JUnit
-- MySQL Documentation
-
----
-
-
-
+O sistema evoluiu para uma aplicacao desktop funcional, com persistencia real, interface organizada, feedback claro e base tecnica consistente, mantendo o escopo Java desktop.
