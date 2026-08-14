@@ -89,6 +89,12 @@ cd Idosoapp
 ..\maven\mvn\bin\mvn.cmd exec:java
 ```
 
+Depois do `package`, tambem e gerado um JAR executavel com as dependencias:
+
+```bash
+java -jar target\Idosoapp.jar
+```
+
 Se Maven estiver no PATH, tambem funciona:
 
 ```bash
