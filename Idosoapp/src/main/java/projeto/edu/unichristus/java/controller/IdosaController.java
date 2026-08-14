@@ -24,8 +24,7 @@ public class IdosaController {
         try {
             return idosaDAO.listarTodos();
         } catch (Exception e) {
-            ControllerErrors.log("Listar idosas", e);
-            return null;
+            return ControllerErrors.emptyList("Listar idosas", e);
         }
     }
 

@@ -24,8 +24,7 @@ public class ProntuarioController {
         try {
             return prontuarioDAO.listarTodos();
         } catch (Exception e) {
-            ControllerErrors.log("Listar prontuarios", e);
-            return null;
+            return ControllerErrors.emptyList("Listar prontuarios", e);
         }
     }
 

@@ -24,8 +24,7 @@ public class ConsultaController {
         try {
             return consultaDAO.listarTodos();
         } catch (Exception e) {
-            ControllerErrors.log("Listar consultas", e);
-            return null;
+            return ControllerErrors.emptyList("Listar consultas", e);
         }
     }
 

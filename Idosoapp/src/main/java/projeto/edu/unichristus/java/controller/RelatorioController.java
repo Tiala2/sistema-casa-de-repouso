@@ -27,8 +27,7 @@ public class RelatorioController {
         try {
             return relatorioDAO.listarTodos();
         } catch (Exception e) {
-            ControllerErrors.log("Listar relatorios", e);
-            return null;
+            return ControllerErrors.emptyList("Listar relatorios", e);
         }
     }
 

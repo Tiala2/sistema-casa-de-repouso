@@ -24,8 +24,7 @@ public class ProfissionalSaudeController {
         try {
             return profissionalDAO.listarTodos();
         } catch (Exception e) {
-            ControllerErrors.log("Listar profissionais", e);
-            return null;
+            return ControllerErrors.emptyList("Listar profissionais", e);
         }
     }
 

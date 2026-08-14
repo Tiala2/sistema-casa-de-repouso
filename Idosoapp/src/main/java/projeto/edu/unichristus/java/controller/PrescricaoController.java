@@ -24,8 +24,7 @@ public class PrescricaoController {
         try {
             return prescricaoDAO.listarTodos();
         } catch (Exception e) {
-            ControllerErrors.log("Listar prescricoes", e);
-            return null;
+            return ControllerErrors.emptyList("Listar prescricoes", e);
         }
     }
 

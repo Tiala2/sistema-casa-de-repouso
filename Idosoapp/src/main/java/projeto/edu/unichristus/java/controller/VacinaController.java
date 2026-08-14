@@ -24,8 +24,7 @@ public class VacinaController {
         try {
             return vacinaDAO.listarTodos();
         } catch (Exception e) {
-            ControllerErrors.log("Listar vacinas", e);
-            return null;
+            return ControllerErrors.emptyList("Listar vacinas", e);
         }
     }
 
