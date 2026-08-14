@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
@@ -19,6 +20,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.RowFilter;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -33,17 +35,20 @@ abstract class DataModulePanel<T> extends JPanel {
     private final JPanel messageHost;
     private final JPanel formHost;
     private final JButton saveButton;
+    private final JButton refreshButton;
     private List<T> rows = new ArrayList<T>();
     private T editingValue;
+    private SwingWorker<List<T>, Void> refreshWorker;
+    private int refreshGeneration;
 
     DataModulePanel(String context, String title, String description, String[] columns) {
         super(new BorderLayout(0, 16));
         setBackground(AppTheme.BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
 
-        JButton refresh = AppTheme.secondaryButton("Atualizar");
-        refresh.addActionListener(e -> refreshData());
-        add(Ui.moduleHeader(context, title, description, refresh), BorderLayout.NORTH);
+        refreshButton = AppTheme.secondaryButton("Atualizar");
+        refreshButton.addActionListener(e -> refreshData());
+        add(Ui.moduleHeader(context, title, description, refreshButton), BorderLayout.NORTH);
 
         JPanel main = new JPanel(new BorderLayout(16, 0));
         main.setOpaque(false);
@@ -163,8 +168,38 @@ abstract class DataModulePanel<T> extends JPanel {
     }
 
     final void refreshData() {
+        refreshGeneration++;
+        final int generation = refreshGeneration;
+        if (refreshWorker != null && !refreshWorker.isDone()) {
+            refreshWorker.cancel(true);
+        }
+
+        showLoading();
+        refreshWorker = new SwingWorker<List<T>, Void>() {
+            protected List<T> doInBackground() {
+                return loadRows();
+            }
+
+            protected void done() {
+                if (isCancelled() || generation != refreshGeneration) {
+                    return;
+                }
+                try {
+                    applyLoadedRows(get());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    showLoadError("Atualizacao interrompida.");
+                } catch (ExecutionException e) {
+                    String message = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+                    showLoadError(message);
+                }
+            }
+        };
+        refreshWorker.execute();
+    }
+
+    private void applyLoadedRows(List<T> loaded) {
         try {
-            List<T> loaded = loadRows();
             if (loaded == null) {
                 throw new IllegalStateException("A consulta retornou erro. Verifique a configuracao do banco de dados.");
             }
@@ -185,12 +220,26 @@ abstract class DataModulePanel<T> extends JPanel {
                 table.setRowSelectionInterval(0, 0);
                 showMessage(rows.size() + " registro(s) carregado(s).", 1);
             }
+            refreshButton.setEnabled(true);
         } catch (Exception e) {
-            rows = new ArrayList<T>();
-            model.setRowCount(0);
-            details.setText("Nao foi possivel carregar os dados.");
-            showMessage("Erro ao carregar " + entityName() + ": " + e.getMessage(), 2);
+            showLoadError(e.getMessage());
         }
+    }
+
+    private void showLoading() {
+        refreshButton.setEnabled(false);
+        model.setRowCount(0);
+        details.setText("Carregando dados...");
+        showMessage("Carregando " + entityName() + "...", 0);
+    }
+
+    private void showLoadError(String message) {
+        refreshButton.setEnabled(true);
+        rows = new ArrayList<T>();
+        model.setRowCount(0);
+        details.setText("Nao foi possivel carregar os dados.");
+        String detail = message == null || message.trim().isEmpty() ? "erro nao informado" : message;
+        showMessage("Erro ao carregar " + entityName() + ": " + detail, 2);
     }
 
     private void updateDetails() {

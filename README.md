@@ -34,6 +34,7 @@ A interface foi criada em Swing porque nao havia camada visual, classes `main`, 
 - area principal para tabela e area secundaria para detalhes/formulario;
 - busca local nas listagens carregadas;
 - listagens ordenadas de forma previsivel por nome, data ou identificador conforme o modulo;
+- listagens carregadas em background para reduzir travamentos da interface quando o banco demora a responder;
 - estados vazios, mensagens de sucesso, erro e confirmacao de remocao;
 - formularios com validacao basica antes de acionar controllers/DAOs;
 - criacao, edicao e remocao integradas aos metodos reais de persistencia.
