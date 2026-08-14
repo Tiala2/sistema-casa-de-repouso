@@ -117,6 +117,10 @@ final class Ui {
             combo.setFont(AppTheme.BODY);
             combo.setBackground(AppTheme.SURFACE);
             combo.setForeground(AppTheme.TEXT);
+            combo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(AppTheme.LINE),
+                BorderFactory.createEmptyBorder(4, 6, 4, 6)
+            ));
         }
         GridBagConstraints left = new GridBagConstraints();
         left.gridx = 0;

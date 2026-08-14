@@ -109,7 +109,10 @@ abstract class DataModulePanel<T> extends JPanel {
         filterRow.add(filterPanel, BorderLayout.CENTER);
         filterRow.add(countLabel, BorderLayout.EAST);
         tableArea.add(filterRow, BorderLayout.NORTH);
-        tableArea.add(new JScrollPane(table), BorderLayout.CENTER);
+        JScrollPane tableScroll = new JScrollPane(table);
+        tableScroll.setBorder(BorderFactory.createLineBorder(AppTheme.LINE));
+        tableScroll.getViewport().setBackground(AppTheme.SURFACE);
+        tableArea.add(tableScroll, BorderLayout.CENTER);
         left.add(tableArea, BorderLayout.CENTER);
 
         JPanel right = new JPanel(new GridLayout(2, 1, 0, 16));
@@ -118,7 +121,9 @@ abstract class DataModulePanel<T> extends JPanel {
 
         JPanel detailBlock = Ui.block("Ficha do registro", "Contexto completo da linha selecionada.");
         details = Ui.detailsArea();
-        detailBlock.add(new JScrollPane(details), BorderLayout.CENTER);
+        JScrollPane detailScroll = new JScrollPane(details);
+        detailScroll.setBorder(BorderFactory.createLineBorder(AppTheme.LINE));
+        detailBlock.add(detailScroll, BorderLayout.CENTER);
 
         formHost = Ui.block("Cadastro e edicao", "Preencha os campos obrigatorios e salve.");
         formHost.add(buildForm(), BorderLayout.CENTER);

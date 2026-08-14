@@ -1,6 +1,7 @@
 package projeto.edu.unichristus.java.view;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
@@ -10,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableCellRenderer;
 
 final class AppTheme {
     static final Color BACKGROUND = new Color(244, 247, 251);
@@ -96,14 +98,30 @@ final class AppTheme {
     static void table(JTable table) {
         table.setRowHeight(34);
         table.setFont(BODY);
+        table.setBackground(SURFACE);
         table.setShowVerticalLines(false);
+        table.setShowHorizontalLines(true);
         table.setIntercellSpacing(new java.awt.Dimension(0, 1));
         table.getTableHeader().setFont(LABEL);
         table.getTableHeader().setBackground(new Color(225, 237, 246));
         table.getTableHeader().setForeground(TEXT);
+        table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, LINE));
         table.setGridColor(LINE);
         table.setSelectionBackground(new Color(210, 238, 231));
         table.setSelectionForeground(TEXT);
         table.setFillsViewportHeight(true);
+        table.setDefaultRenderer(Object.class, new StripedRenderer());
+    }
+
+    private static class StripedRenderer extends DefaultTableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean focus, int row, int column) {
+            Component component = super.getTableCellRendererComponent(table, value, selected, focus, row, column);
+            if (!selected) {
+                component.setBackground(row % 2 == 0 ? SURFACE : new Color(248, 251, 253));
+                component.setForeground(TEXT);
+            }
+            setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+            return component;
+        }
     }
 }
