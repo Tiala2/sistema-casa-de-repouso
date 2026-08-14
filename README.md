@@ -80,6 +80,14 @@ As conexoes JDBC foram centralizadas em `DatabaseConnection`, reduzindo repetica
 
 ## Como Executar
 
+No Windows, o caminho mais simples e usar o script da raiz:
+
+```bash
+executar-idosoapp.bat
+```
+
+Ele gera o JAR se necessario e abre o sistema desktop.
+
 No Windows, usando o Maven incluido no repositorio:
 
 ```bash
