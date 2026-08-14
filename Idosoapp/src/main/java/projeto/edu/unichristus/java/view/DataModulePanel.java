@@ -245,11 +245,11 @@ abstract class DataModulePanel<T> extends JPanel {
             applyFilter();
             setLoading(false);
             if (rows.isEmpty()) {
-                details.setText("Nenhum registro encontrado.");
                 startNew();
+                setDetailsState("Pronto para cadastrar", "Nenhum registro encontrado. Preencha o formulario ao lado para criar o primeiro item.");
                 showRefreshMessageOrDefault("Nenhum registro encontrado. Confira a conexao com o banco ou cadastre um novo item.", 0);
             } else if (table.getRowCount() == 0) {
-                details.setText("Nenhum registro corresponde ao filtro atual.");
+                setDetailsState("Sem resultado para a busca", "Limpe ou ajuste o filtro para visualizar os registros carregados.");
                 showRefreshMessageOrDefault(rows.size() + " registro(s) carregado(s), sem resultado para a busca.", 0);
             } else {
                 selectPreferredRow();
@@ -296,7 +296,7 @@ abstract class DataModulePanel<T> extends JPanel {
         setLoading(true);
         model.setRowCount(0);
         updateCountLabel();
-        details.setText("Carregando dados...");
+        setDetailsState("Carregando dados", "Aguarde enquanto o sistema consulta o banco.");
         showMessage("Carregando " + entityName() + "...", 0);
     }
 
@@ -305,7 +305,7 @@ abstract class DataModulePanel<T> extends JPanel {
         rows = new ArrayList<T>();
         model.setRowCount(0);
         updateCountLabel();
-        details.setText("Nao foi possivel carregar os dados.");
+        setDetailsState("Dados indisponiveis", "Nao foi possivel carregar as informacoes deste modulo.");
         String detail = message == null || message.trim().isEmpty() ? "erro nao informado" : message;
         showMessage("Erro ao carregar " + entityName() + ": " + detail, 2);
         clearRefreshFollowUp();
@@ -335,7 +335,11 @@ abstract class DataModulePanel<T> extends JPanel {
             return;
         }
         T selected = selectedValue();
-        details.setText(selected == null ? "Selecione um registro para ver os detalhes." : details(selected));
+        if (selected == null) {
+            setDetailsState("Nenhum registro selecionado", "Selecione uma linha da tabela para ver a ficha completa.");
+        } else {
+            details.setText(details(selected));
+        }
         details.setCaretPosition(0);
         if (selected == null) {
             editingValue = null;
@@ -431,7 +435,7 @@ abstract class DataModulePanel<T> extends JPanel {
         editingValue = null;
         clearForm();
         table.clearSelection();
-        details.setText("Preencha o formulario para criar um novo registro.");
+        setDetailsState("Novo registro", "Preencha o formulario para cadastrar um novo item.");
         updateSaveButton();
         updateRemoveButton();
         onEditingStateChanged(false);
@@ -501,6 +505,11 @@ abstract class DataModulePanel<T> extends JPanel {
         messageHost.repaint();
     }
 
+    private void setDetailsState(String title, String description) {
+        details.setText(title + "\n\n" + description);
+        details.setCaretPosition(0);
+    }
+
     protected Component formHost() {
         return formHost;
     }
@@ -543,7 +552,7 @@ abstract class DataModulePanel<T> extends JPanel {
         }
         if (table.getRowCount() == 0) {
             table.clearSelection();
-            details.setText("Nenhum registro corresponde ao filtro atual.");
+            setDetailsState("Sem resultado para a busca", "Limpe ou ajuste o filtro para visualizar os registros carregados.");
             updateRemoveButton();
             showMessage(rows.size() + " registro(s) carregado(s), sem resultado para a busca.", 0);
             return;
