@@ -12,8 +12,8 @@ public class IdosaDAO {
         if (idosa == null || !DaoValidations.hasText(idosa.getNome()) || !DaoValidations.hasText(idosa.getCpf())) {
             return false;
         }
-        if (idosa.getId() == 0) {
-            idosa.setId(nextId++);
+        if (!atribuirIdSeDisponivel(idosa)) {
+            return false;
         }
         idosas.add(idosa);
         return true;
@@ -53,5 +53,17 @@ public class IdosaDAO {
             return false;
         }
         return idosas.removeIf(i -> i.getId() == id);
+    }
+
+    private boolean atribuirIdSeDisponivel(Idosa idosa) {
+        if (idosa.getId() < 0 || buscarPorId(idosa.getId()) != null) {
+            return false;
+        }
+        if (idosa.getId() == 0) {
+            idosa.setId(nextId++);
+        } else if (idosa.getId() >= nextId) {
+            nextId = idosa.getId() + 1;
+        }
+        return true;
     }
 }

@@ -12,8 +12,8 @@ public class EventoSentinelaDAO {
         if (evento == null || evento.getTipo() == null || evento.getDataOcorrencia() == null) {
             return false;
         }
-        if (evento.getId() == 0) {
-            evento.setId(nextId++);
+        if (!atribuirIdSeDisponivel(evento)) {
+            return false;
         }
         eventos.add(evento);
         return true;
@@ -53,5 +53,17 @@ public class EventoSentinelaDAO {
             return false;
         }
         return eventos.removeIf(e -> e.getId() == id);
+    }
+
+    private boolean atribuirIdSeDisponivel(EventoSentinela evento) {
+        if (evento.getId() < 0 || buscarPorId(evento.getId()) != null) {
+            return false;
+        }
+        if (evento.getId() == 0) {
+            evento.setId(nextId++);
+        } else if (evento.getId() >= nextId) {
+            nextId = evento.getId() + 1;
+        }
+        return true;
     }
 }

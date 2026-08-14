@@ -12,8 +12,8 @@ public class VacinaDAO {
         if (vacina == null || !DaoValidations.hasText(vacina.getNome()) || vacina.getDataOcorrencia() == null) {
             return false;
         }
-        if (vacina.getId() == 0) {
-            vacina.setId(nextId++);
+        if (!atribuirIdSeDisponivel(vacina)) {
+            return false;
         }
         vacinas.add(vacina);
         return true;
@@ -53,5 +53,17 @@ public class VacinaDAO {
             return false;
         }
         return vacinas.removeIf(v -> v.getId() == id);
+    }
+
+    private boolean atribuirIdSeDisponivel(Vacina vacina) {
+        if (vacina.getId() < 0 || buscarPorId(vacina.getId()) != null) {
+            return false;
+        }
+        if (vacina.getId() == 0) {
+            vacina.setId(nextId++);
+        } else if (vacina.getId() >= nextId) {
+            nextId = vacina.getId() + 1;
+        }
+        return true;
     }
 }

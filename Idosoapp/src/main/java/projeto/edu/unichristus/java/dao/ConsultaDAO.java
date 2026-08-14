@@ -12,8 +12,8 @@ public class ConsultaDAO {
         if (consulta == null || consulta.getDataHora() == null || consulta.getProfissional() == null || !DaoValidations.positiveId(consulta.getProfissional().getId())) {
             return false;
         }
-        if (consulta.getId() == 0) {
-            consulta.setId(nextId++);
+        if (!atribuirIdSeDisponivel(consulta)) {
+            return false;
         }
         consultas.add(consulta);
         return true;
@@ -53,5 +53,17 @@ public class ConsultaDAO {
             return false;
         }
         return consultas.removeIf(c -> c.getId() == id);
+    }
+
+    private boolean atribuirIdSeDisponivel(Consulta consulta) {
+        if (consulta.getId() < 0 || buscarPorId(consulta.getId()) != null) {
+            return false;
+        }
+        if (consulta.getId() == 0) {
+            consulta.setId(nextId++);
+        } else if (consulta.getId() >= nextId) {
+            nextId = consulta.getId() + 1;
+        }
+        return true;
     }
 }

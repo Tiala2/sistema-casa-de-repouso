@@ -188,4 +188,25 @@ class InMemoryDAOTest {
         assertFalse(new VacinaDAO().atualizar(new Vacina(0, "Influenza", LocalDate.of(2026, 8, 1))));
         assertFalse(new EventoSentinelaDAO().atualizar(new EventoSentinela(0, TipoEventoSentinela.QUEDA, LocalDate.of(2026, 8, 1))));
     }
+
+    @Test
+    void daosEmMemoriaRecusamIdsDuplicadosAoSalvar() {
+        IdosaDAO dao = new IdosaDAO();
+
+        assertTrue(dao.salvar(new Idosa(10, "Maria", "123", null, null, null, null)));
+        assertFalse(dao.salvar(new Idosa(10, "Ana", "456", null, null, null, null)));
+        assertEquals(1, dao.listarTodos().size());
+    }
+
+    @Test
+    void daosEmMemoriaAvancamIdAutomaticoAposIdInformado() {
+        PrescricaoDAO dao = new PrescricaoDAO();
+        Prescricao informada = new Prescricao(5, "Medicamento A", null, null, null);
+        Prescricao automatica = new Prescricao(0, "Medicamento B", null, null, null);
+
+        assertTrue(dao.salvar(informada));
+        assertTrue(dao.salvar(automatica));
+
+        assertEquals(6, automatica.getId());
+    }
 }

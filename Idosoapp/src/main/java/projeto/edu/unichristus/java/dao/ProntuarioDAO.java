@@ -12,8 +12,8 @@ public class ProntuarioDAO {
         if (prontuario == null || prontuario.getIdosa() == null || !DaoValidations.positiveId(prontuario.getIdosa().getId())) {
             return false;
         }
-        if (prontuario.getId() == 0) {
-            prontuario.setId(nextId++);
+        if (!atribuirIdSeDisponivel(prontuario)) {
+            return false;
         }
         prontuarios.add(prontuario);
         return true;
@@ -53,5 +53,17 @@ public class ProntuarioDAO {
             return false;
         }
         return prontuarios.removeIf(p -> p.getId() == id);
+    }
+
+    private boolean atribuirIdSeDisponivel(ProntuarioMedico prontuario) {
+        if (prontuario.getId() < 0 || buscarPorId(prontuario.getId()) != null) {
+            return false;
+        }
+        if (prontuario.getId() == 0) {
+            prontuario.setId(nextId++);
+        } else if (prontuario.getId() >= nextId) {
+            nextId = prontuario.getId() + 1;
+        }
+        return true;
     }
 }

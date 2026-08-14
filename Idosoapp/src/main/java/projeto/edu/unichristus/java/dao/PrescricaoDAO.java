@@ -12,8 +12,8 @@ public class PrescricaoDAO {
         if (prescricao == null || !DaoValidations.hasText(prescricao.getMedicamento())) {
             return false;
         }
-        if (prescricao.getId() == 0) {
-            prescricao.setId(nextId++);
+        if (!atribuirIdSeDisponivel(prescricao)) {
+            return false;
         }
         prescricoes.add(prescricao);
         return true;
@@ -53,5 +53,17 @@ public class PrescricaoDAO {
             return false;
         }
         return prescricoes.removeIf(p -> p.getId() == id);
+    }
+
+    private boolean atribuirIdSeDisponivel(Prescricao prescricao) {
+        if (prescricao.getId() < 0 || buscarPorId(prescricao.getId()) != null) {
+            return false;
+        }
+        if (prescricao.getId() == 0) {
+            prescricao.setId(nextId++);
+        } else if (prescricao.getId() >= nextId) {
+            nextId = prescricao.getId() + 1;
+        }
+        return true;
     }
 }
