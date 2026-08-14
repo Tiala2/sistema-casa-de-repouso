@@ -10,6 +10,7 @@ import java.util.Properties;
 
 public final class DatabaseConnection {
     private static final String DEFAULT_URL = "jdbc:mysql://localhost:3306/idosoapp";
+    private static final int DEFAULT_LOGIN_TIMEOUT_SECONDS = 5;
     private static final Properties PROPERTIES = loadProperties();
 
     private DatabaseConnection() {
@@ -19,6 +20,7 @@ public final class DatabaseConnection {
         String url = read("DB_URL", "db.url", DEFAULT_URL);
         String user = read("DB_USER", "db.user", "root");
         String password = read("DB_PASSWORD", "db.password", "");
+        DriverManager.setLoginTimeout(readInt("DB_LOGIN_TIMEOUT_SECONDS", "db.loginTimeoutSeconds", DEFAULT_LOGIN_TIMEOUT_SECONDS));
         return DriverManager.getConnection(url, user, password);
     }
 
@@ -41,6 +43,17 @@ public final class DatabaseConnection {
             return property;
         }
         return fallback;
+    }
+
+    private static int readInt(String envName, String propertyName, int fallback) {
+        String value = read(envName, propertyName, String.valueOf(fallback));
+        try {
+            int parsed = Integer.parseInt(value.trim());
+            return parsed > 0 ? parsed : fallback;
+        } catch (NumberFormatException e) {
+            System.err.println("Valor invalido para " + propertyName + ": " + value + ". Usando " + fallback + ".");
+            return fallback;
+        }
     }
 
     private static Properties loadProperties() {

@@ -64,6 +64,7 @@ Configure `Idosoapp/src/main/resources/application.properties` ou use variaveis 
 db.url=jdbc:mysql://localhost:3306/idosoapp
 db.user=root
 db.password=
+db.loginTimeoutSeconds=5
 ```
 
 Variaveis aceitas:
@@ -72,9 +73,10 @@ Variaveis aceitas:
 DB_URL
 DB_USER
 DB_PASSWORD
+DB_LOGIN_TIMEOUT_SECONDS
 ```
 
-As conexoes JDBC foram centralizadas em `DatabaseConnection`, reduzindo repeticao nos DAOs MySQL e permitindo configurar o banco por arquivo ou variaveis de ambiente.
+As conexoes JDBC foram centralizadas em `DatabaseConnection`, reduzindo repeticao nos DAOs MySQL e permitindo configurar o banco por arquivo ou variaveis de ambiente. O timeout de login evita esperas longas quando o MySQL esta indisponivel.
 
 ## Como Executar
 
