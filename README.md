@@ -55,6 +55,8 @@ Crie o banco MySQL executando:
 mysql -u root -p < criar_banco_idosoapp.sql
 ```
 
+O script usa InnoDB com `utf8mb4`, indices para campos de busca/vinculo e chaves estrangeiras nomeadas para prontuario, idosa e profissional.
+
 Configure `Idosoapp/src/main/resources/application.properties` ou use variaveis de ambiente:
 
 ```properties
