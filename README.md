@@ -44,7 +44,7 @@ A interface foi criada em Swing porque nao havia camada visual, classes `main`, 
 - estados vazios, mensagens de sucesso, erro e confirmacao de remocao;
 - formularios com validacao basica antes de acionar controllers/DAOs;
 - criacao, edicao e remocao integradas aos metodos reais de persistencia.
-- feedback de erro quando a consulta ao banco falha, evitando confundir falha de conexao com lista vazia.
+- tratamento defensivo para falhas de listagem, mantendo a interface responsiva e sem `NullPointerException`.
 
 Nao foram adicionados graficos, metricas hardcoded ou dados ficticios.
 
@@ -118,7 +118,8 @@ mvn exec:java
 - Operacoes de salvar, atualizar e remover retornam sucesso/falha ate a interface.
 - Insercoes MySQL capturam o ID gerado pelo banco e atualizam o objeto salvo.
 - DAOs em memoria atribuem ID incremental quando o objeto e salvo sem identificador.
-- Listagens MySQL retornam erro para a interface quando a consulta falha, evitando mascarar falha de conexao como lista vazia.
+- Listagens MySQL retornam lista vazia em falhas de consulta, e os controllers tambem protegem a interface contra listas nulas.
+- O schema SQL marca como obrigatorios os mesmos campos clinicos exigidos pelos DAOs e formularios.
 - Erros SQL dos DAOs MySQL sao registrados por um utilitario comum, com SQLState e codigo do banco, sem espalhar `printStackTrace()` pela camada de persistencia.
 - Controllers registram falhas por um utilitario comum, reduzindo repeticao e evitando mensagens com encoding inconsistente no console.
 - Campos de texto sao normalizados antes da persistencia, reduzindo valores compostos apenas por espacos.
