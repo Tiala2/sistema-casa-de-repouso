@@ -49,10 +49,10 @@ class IdosasPanel extends DataModulePanel<Idosa> {
         entrada = new JTextField();
         Ui.addField(form, 0, "Nome *", nome);
         Ui.addField(form, 1, "CPF *", cpf);
-        Ui.addField(form, 2, "Nascimento", nascimento);
+        Ui.addField(form, 2, "Nascimento yyyy-MM-dd", nascimento);
         Ui.addField(form, 3, "Nome da mae", mae);
         Ui.addField(form, 4, "Cartao SUS", sus);
-        Ui.addField(form, 5, "Entrada", entrada);
+        Ui.addField(form, 5, "Entrada yyyy-MM-dd", entrada);
         return form;
     }
 
@@ -109,7 +109,7 @@ class ConsultasPanel extends DataModulePanel<Consulta> {
         tipo = new JTextField();
         motivo = new JTextField();
         diagnostico = new JTextField();
-        Ui.addField(form, 0, "Data/hora *", dataHora);
+        Ui.addField(form, 0, "Data/hora * yyyy-MM-dd HH:mm", dataHora);
         Ui.addField(form, 1, "ID profissional *", profissionalId);
         Ui.addField(form, 2, "Tipo", tipo);
         Ui.addField(form, 3, "Motivo", motivo);
@@ -172,7 +172,7 @@ class ProntuariosPanel extends DataModulePanel<ProntuarioMedico> {
         JPanel form = Ui.formPanel();
         dataHora = new JTextField();
         idosaId = new JTextField();
-        Ui.addField(form, 0, "Data/hora", dataHora);
+        Ui.addField(form, 0, "Data/hora yyyy-MM-dd HH:mm", dataHora);
         Ui.addField(form, 1, "ID idosa *", idosaId);
         return form;
     }
@@ -340,7 +340,7 @@ class VacinasPanel extends DataModulePanel<Vacina> {
         data = new JTextField();
         Ui.addField(form, 0, "ID prontuario *", prontuarioId);
         Ui.addField(form, 1, "Nome *", nome);
-        Ui.addField(form, 2, "Data", data);
+        Ui.addField(form, 2, "Data * yyyy-MM-dd", data);
         return form;
     }
 
@@ -392,7 +392,7 @@ class EventosPanel extends DataModulePanel<EventoSentinela> {
         data = new JTextField();
         Ui.addField(form, 0, "ID prontuario *", prontuarioId);
         Ui.addComponent(form, 1, "Tipo *", tipo);
-        Ui.addField(form, 2, "Data", data);
+        Ui.addField(form, 2, "Data * yyyy-MM-dd", data);
         return form;
     }
 

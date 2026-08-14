@@ -2,6 +2,7 @@ package projeto.edu.unichristus.java.view;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -38,6 +40,8 @@ abstract class DataModulePanel<T> extends JPanel {
     private final JButton refreshButton;
     private final JButton newButton;
     private final JButton removeButton;
+    private final JLabel countLabel;
+    private final JLabel modeLabel;
     private List<T> rows = new ArrayList<T>();
     private T editingValue;
     private SwingWorker<List<T>, Void> refreshWorker;
@@ -76,7 +80,8 @@ abstract class DataModulePanel<T> extends JPanel {
         JPanel tableArea = new JPanel(new BorderLayout(0, 10));
         tableArea.setOpaque(false);
         filterField = new JTextField();
-        filterField.setFont(AppTheme.BODY);
+        AppTheme.input(filterField);
+        filterField.setColumns(26);
         filterField.setToolTipText("Filtrar registros visiveis");
         filterField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -94,13 +99,21 @@ abstract class DataModulePanel<T> extends JPanel {
                 applyFilter();
             }
         });
+        JPanel filterRow = new JPanel(new BorderLayout(12, 0));
+        filterRow.setOpaque(false);
         JPanel filterPanel = Ui.inlineField("Buscar", filterField);
-        tableArea.add(filterPanel, BorderLayout.NORTH);
+        countLabel = new JLabel("0 registros");
+        countLabel.setFont(AppTheme.SMALL);
+        countLabel.setForeground(AppTheme.MUTED);
+        filterRow.add(filterPanel, BorderLayout.CENTER);
+        filterRow.add(countLabel, BorderLayout.EAST);
+        tableArea.add(filterRow, BorderLayout.NORTH);
         tableArea.add(new JScrollPane(table), BorderLayout.CENTER);
         left.add(tableArea, BorderLayout.CENTER);
 
         JPanel right = new JPanel(new GridLayout(2, 1, 0, 16));
         right.setOpaque(false);
+        right.setPreferredSize(new Dimension(390, 1));
 
         JPanel detailBlock = Ui.block("Ficha do registro", "Contexto completo da linha selecionada.");
         details = Ui.detailsArea();
@@ -112,11 +125,14 @@ abstract class DataModulePanel<T> extends JPanel {
         JPanel actions = new JPanel();
         actions.setOpaque(false);
         actions.setLayout(new BoxLayout(actions, BoxLayout.X_AXIS));
-        newButton = AppTheme.secondaryButton("Novo");
+        modeLabel = new JLabel("Modo: novo registro");
+        modeLabel.setFont(AppTheme.SMALL);
+        modeLabel.setForeground(AppTheme.MUTED);
+        newButton = AppTheme.secondaryButton("Novo registro");
         newButton.addActionListener(e -> startNew());
-        saveButton = AppTheme.primaryButton("Salvar");
+        saveButton = AppTheme.primaryButton("Salvar registro");
         saveButton.addActionListener(e -> saveCurrent());
-        removeButton = AppTheme.dangerButton("Remover selecionado");
+        removeButton = AppTheme.dangerButton("Remover");
         removeButton.addActionListener(e -> removeSelected());
         actions.add(newButton);
         actions.add(Box.createHorizontalStrut(8));
@@ -124,6 +140,7 @@ abstract class DataModulePanel<T> extends JPanel {
         actions.add(Box.createHorizontalStrut(8));
         actions.add(removeButton);
         actions.add(Box.createHorizontalGlue());
+        actions.add(modeLabel);
         formHost.add(actions, BorderLayout.SOUTH);
 
         right.add(detailBlock);
@@ -268,6 +285,7 @@ abstract class DataModulePanel<T> extends JPanel {
     private void showLoading() {
         setLoading(true);
         model.setRowCount(0);
+        updateCountLabel();
         details.setText("Carregando dados...");
         showMessage("Carregando " + entityName() + "...", 0);
     }
@@ -276,6 +294,7 @@ abstract class DataModulePanel<T> extends JPanel {
         setLoading(false);
         rows = new ArrayList<T>();
         model.setRowCount(0);
+        updateCountLabel();
         details.setText("Nao foi possivel carregar os dados.");
         String detail = message == null || message.trim().isEmpty() ? "erro nao informado" : message;
         showMessage("Erro ao carregar " + entityName() + ": " + detail, 2);
@@ -473,7 +492,10 @@ abstract class DataModulePanel<T> extends JPanel {
     }
 
     private void updateSaveButton() {
-        saveButton.setText(editingValue == null ? "Salvar" : "Salvar alteracoes");
+        saveButton.setText(editingValue == null ? "Salvar registro" : "Salvar alteracoes");
+        if (modeLabel != null) {
+            modeLabel.setText(editingValue == null ? "Modo: novo registro" : "Modo: editando ID " + idOf(editingValue));
+        }
     }
 
     private void applyFilter() {
@@ -490,6 +512,7 @@ abstract class DataModulePanel<T> extends JPanel {
     }
 
     private void updateFilterState() {
+        updateCountLabel();
         if (isBusy() || rows.isEmpty()) {
             return;
         }
@@ -507,6 +530,21 @@ abstract class DataModulePanel<T> extends JPanel {
             showMessage(rows.size() + " registro(s) carregado(s).", 1);
         } else {
             showMessage(visible + " de " + rows.size() + " registro(s) visiveis pelo filtro.", 0);
+        }
+    }
+
+    private void updateCountLabel() {
+        if (countLabel == null || table == null || rows == null) {
+            return;
+        }
+        int total = rows.size();
+        int visible = table.getRowCount();
+        if (total == 0) {
+            countLabel.setText("0 registros");
+        } else if (visible == total) {
+            countLabel.setText(total + " registro(s)");
+        } else {
+            countLabel.setText(visible + " de " + total + " visiveis");
         }
     }
 

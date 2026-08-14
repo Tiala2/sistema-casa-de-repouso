@@ -106,7 +106,7 @@ final class Ui {
     }
 
     static void addField(JPanel form, int row, String label, JTextField field) {
-        field.setFont(AppTheme.BODY);
+        AppTheme.input(field);
         addComponent(form, row, label, field);
     }
 

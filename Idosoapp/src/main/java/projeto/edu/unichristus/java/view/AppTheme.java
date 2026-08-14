@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 final class AppTheme {
@@ -82,9 +83,21 @@ final class AppTheme {
         return button;
     }
 
+    static void input(JTextField field) {
+        field.setFont(BODY);
+        field.setForeground(TEXT);
+        field.setBackground(Color.WHITE);
+        field.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(LINE),
+            BorderFactory.createEmptyBorder(8, 9, 8, 9)
+        ));
+    }
+
     static void table(JTable table) {
         table.setRowHeight(34);
         table.setFont(BODY);
+        table.setShowVerticalLines(false);
+        table.setIntercellSpacing(new java.awt.Dimension(0, 1));
         table.getTableHeader().setFont(LABEL);
         table.getTableHeader().setBackground(new Color(225, 237, 246));
         table.getTableHeader().setForeground(TEXT);
