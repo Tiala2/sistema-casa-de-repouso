@@ -22,7 +22,7 @@ public class IdosaController {
 
     public List<Idosa> listarIdosas() {
         try {
-            return idosaDAO.listarTodos();
+            return ControllerErrors.listOrEmpty(idosaDAO.listarTodos());
         } catch (Exception e) {
             return ControllerErrors.emptyList("Listar idosas", e);
         }

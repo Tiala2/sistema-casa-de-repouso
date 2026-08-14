@@ -27,4 +27,12 @@ class ControllerErrorsTest {
         assertTrue(result.isEmpty());
         assertTrue(capturedErr.toString().contains("Listar teste"));
     }
+
+    @Test
+    void listOrEmptyProtegeControllerContraListaNula() {
+        List<String> result = ControllerErrors.listOrEmpty(null);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
 }

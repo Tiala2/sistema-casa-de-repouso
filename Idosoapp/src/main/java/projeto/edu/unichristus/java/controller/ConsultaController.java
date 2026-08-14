@@ -22,7 +22,7 @@ public class ConsultaController {
 
     public List<Consulta> listarConsultas() {
         try {
-            return consultaDAO.listarTodos();
+            return ControllerErrors.listOrEmpty(consultaDAO.listarTodos());
         } catch (Exception e) {
             return ControllerErrors.emptyList("Listar consultas", e);
         }

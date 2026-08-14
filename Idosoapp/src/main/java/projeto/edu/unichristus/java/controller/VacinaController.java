@@ -22,7 +22,7 @@ public class VacinaController {
 
     public List<Vacina> listarVacinas() {
         try {
-            return vacinaDAO.listarTodos();
+            return ControllerErrors.listOrEmpty(vacinaDAO.listarTodos());
         } catch (Exception e) {
             return ControllerErrors.emptyList("Listar vacinas", e);
         }

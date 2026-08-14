@@ -16,4 +16,8 @@ final class ControllerErrors {
         log(operation, error);
         return Collections.emptyList();
     }
+
+    static <T> List<T> listOrEmpty(List<T> result) {
+        return result != null ? result : Collections.<T>emptyList();
+    }
 }

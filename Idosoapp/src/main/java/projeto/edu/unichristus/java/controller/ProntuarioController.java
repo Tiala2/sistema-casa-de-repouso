@@ -22,7 +22,7 @@ public class ProntuarioController {
 
     public List<ProntuarioMedico> listarProntuarios() {
         try {
-            return prontuarioDAO.listarTodos();
+            return ControllerErrors.listOrEmpty(prontuarioDAO.listarTodos());
         } catch (Exception e) {
             return ControllerErrors.emptyList("Listar prontuarios", e);
         }

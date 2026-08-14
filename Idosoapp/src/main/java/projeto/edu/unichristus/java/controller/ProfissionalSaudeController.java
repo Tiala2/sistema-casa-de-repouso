@@ -22,7 +22,7 @@ public class ProfissionalSaudeController {
 
     public List<ProfissionalSaude> listarProfissionais() {
         try {
-            return profissionalDAO.listarTodos();
+            return ControllerErrors.listOrEmpty(profissionalDAO.listarTodos());
         } catch (Exception e) {
             return ControllerErrors.emptyList("Listar profissionais", e);
         }

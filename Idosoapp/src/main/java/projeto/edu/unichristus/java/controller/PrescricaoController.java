@@ -22,7 +22,7 @@ public class PrescricaoController {
 
     public List<Prescricao> listarPrescricoes() {
         try {
-            return prescricaoDAO.listarTodos();
+            return ControllerErrors.listOrEmpty(prescricaoDAO.listarTodos());
         } catch (Exception e) {
             return ControllerErrors.emptyList("Listar prescricoes", e);
         }

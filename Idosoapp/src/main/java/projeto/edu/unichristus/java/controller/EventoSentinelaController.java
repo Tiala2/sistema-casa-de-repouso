@@ -23,7 +23,7 @@ public class EventoSentinelaController {
 
     public List<EventoSentinela> listarEventos() {
         try {
-            return eventoDAO.listarTodos();
+            return ControllerErrors.listOrEmpty(eventoDAO.listarTodos());
         } catch (Exception e) {
             return ControllerErrors.emptyList("Listar eventos sentinela", e);
         }
@@ -58,7 +58,7 @@ public class EventoSentinelaController {
 
     public List<EventoSentinela> listarPorIdosaEPeriodo(int prontuarioId, int mes, int ano) {
         try {
-            return eventoDAO.listarPorIdosaEPeriodo(prontuarioId, mes, ano);
+            return ControllerErrors.listOrEmpty(eventoDAO.listarPorIdosaEPeriodo(prontuarioId, mes, ano));
         } catch (Exception e) {
             return ControllerErrors.emptyList("Listar eventos sentinela por idosa e periodo", e);
         }
@@ -66,7 +66,7 @@ public class EventoSentinelaController {
 
     public List<EventoSentinela> listarPorTipoEPeriodo(TipoEventoSentinela tipo, int mes, int ano) {
         try {
-            return eventoDAO.listarPorTipoEPeriodo(tipo, mes, ano);
+            return ControllerErrors.listOrEmpty(eventoDAO.listarPorTipoEPeriodo(tipo, mes, ano));
         } catch (Exception e) {
             return ControllerErrors.emptyList("Listar eventos sentinela por tipo e periodo", e);
         }
