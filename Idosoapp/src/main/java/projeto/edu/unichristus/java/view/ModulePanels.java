@@ -293,6 +293,9 @@ class PrescricoesPanel extends DataModulePanel<Prescricao> {
         duracao.setText("");
         observacoes.setText("");
     }
+    protected void onEditingStateChanged(boolean editing) {
+        prontuario.setEnabled(!editing);
+    }
     private int existingProntuarioId(int id) {
         if (prontuarioController.buscarPorId(id) == null) {
             throw new IllegalArgumentException("ID prontuario nao encontrado ou banco indisponivel.");
@@ -302,7 +305,7 @@ class PrescricoesPanel extends DataModulePanel<Prescricao> {
 
     private void carregarProntuarios() {
         prontuario.removeAllItems();
-        prontuario.addItem(RefOption.empty(isEditing() ? "Mantem prontuario atual" : "Selecione um prontuario"));
+        prontuario.addItem(RefOption.empty(isEditing() ? "Prontuario original mantido na edicao" : "Selecione um prontuario"));
         for (ProntuarioMedico item : prontuarioController.listarProntuarios()) {
             String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
             prontuario.addItem(RefOption.of(item.getId(), label));
@@ -401,6 +404,9 @@ class VacinasPanel extends DataModulePanel<Vacina> {
         nome.setText("");
         data.setText("");
     }
+    protected void onEditingStateChanged(boolean editing) {
+        prontuario.setEnabled(!editing);
+    }
     private int existingProntuarioId(int id) {
         if (prontuarioController.buscarPorId(id) == null) {
             throw new IllegalArgumentException("ID prontuario nao encontrado ou banco indisponivel.");
@@ -410,7 +416,7 @@ class VacinasPanel extends DataModulePanel<Vacina> {
 
     private void carregarProntuarios() {
         prontuario.removeAllItems();
-        prontuario.addItem(RefOption.empty(isEditing() ? "Mantem prontuario atual" : "Selecione um prontuario"));
+        prontuario.addItem(RefOption.empty(isEditing() ? "Prontuario original mantido na edicao" : "Selecione um prontuario"));
         for (ProntuarioMedico item : prontuarioController.listarProntuarios()) {
             String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
             prontuario.addItem(RefOption.of(item.getId(), label));
@@ -465,6 +471,9 @@ class EventosPanel extends DataModulePanel<EventoSentinela> {
         tipo.setSelectedIndex(0);
         data.setText("");
     }
+    protected void onEditingStateChanged(boolean editing) {
+        prontuario.setEnabled(!editing);
+    }
     private int existingProntuarioId(int id) {
         if (prontuarioController.buscarPorId(id) == null) {
             throw new IllegalArgumentException("ID prontuario nao encontrado ou banco indisponivel.");
@@ -474,7 +483,7 @@ class EventosPanel extends DataModulePanel<EventoSentinela> {
 
     private void carregarProntuarios() {
         prontuario.removeAllItems();
-        prontuario.addItem(RefOption.empty(isEditing() ? "Mantem prontuario atual" : "Selecione um prontuario"));
+        prontuario.addItem(RefOption.empty(isEditing() ? "Prontuario original mantido na edicao" : "Selecione um prontuario"));
         for (ProntuarioMedico item : prontuarioController.listarProntuarios()) {
             String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
             prontuario.addItem(RefOption.of(item.getId(), label));
@@ -529,6 +538,9 @@ class RelatoriosPanel extends DataModulePanel<Relatorio> {
         tipo.setText("");
         descricao.setText("");
     }
+    protected void onEditingStateChanged(boolean editing) {
+        prontuario.setEnabled(!editing);
+    }
     private int existingProntuarioId(int id) {
         if (prontuarioController.buscarPorId(id) == null) {
             throw new IllegalArgumentException("ID prontuario nao encontrado ou banco indisponivel.");
@@ -538,7 +550,7 @@ class RelatoriosPanel extends DataModulePanel<Relatorio> {
 
     private void carregarProntuarios() {
         prontuario.removeAllItems();
-        prontuario.addItem(RefOption.empty(isEditing() ? "Mantem prontuario atual" : "Selecione um prontuario"));
+        prontuario.addItem(RefOption.empty(isEditing() ? "Prontuario original mantido na edicao" : "Selecione um prontuario"));
         for (ProntuarioMedico item : prontuarioController.listarProntuarios()) {
             String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
             prontuario.addItem(RefOption.of(item.getId(), label));

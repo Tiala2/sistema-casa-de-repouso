@@ -192,6 +192,9 @@ abstract class DataModulePanel<T> extends JPanel {
     protected void afterSave() {
     }
 
+    protected void onEditingStateChanged(boolean editing) {
+    }
+
     final void refreshData() {
         refreshGeneration++;
         final int generation = refreshGeneration;
@@ -330,11 +333,13 @@ abstract class DataModulePanel<T> extends JPanel {
             editingValue = null;
             clearForm();
             updateSaveButton();
+            onEditingStateChanged(false);
             return;
         }
         editingValue = selected;
         populateForm(selected);
         updateSaveButton();
+        onEditingStateChanged(true);
     }
 
     private void saveCurrent() {
@@ -418,6 +423,7 @@ abstract class DataModulePanel<T> extends JPanel {
         table.clearSelection();
         details.setText("Preencha o formulario para criar um novo registro.");
         updateSaveButton();
+        onEditingStateChanged(false);
     }
 
     private void runMutation(String message, final MutationTask task, final MutationResult result) {
