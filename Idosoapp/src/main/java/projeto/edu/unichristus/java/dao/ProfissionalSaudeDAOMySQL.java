@@ -53,6 +53,9 @@ public class ProfissionalSaudeDAOMySQL {
     }
 
     public ProfissionalSaude buscarPorId(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return null;
+        }
         String sql = "SELECT * FROM profissional_saude WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -92,6 +95,9 @@ public class ProfissionalSaudeDAOMySQL {
     }
 
     public boolean remover(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return false;
+        }
         String sql = "DELETE FROM profissional_saude WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

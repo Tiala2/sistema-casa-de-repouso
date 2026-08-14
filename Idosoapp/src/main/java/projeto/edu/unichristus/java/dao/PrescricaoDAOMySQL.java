@@ -56,6 +56,9 @@ public class PrescricaoDAOMySQL {
     }
 
     public Prescricao buscarPorId(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return null;
+        }
         String sql = "SELECT * FROM prescricao WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -97,6 +100,9 @@ public class PrescricaoDAOMySQL {
     }
 
     public boolean remover(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return false;
+        }
         String sql = "DELETE FROM prescricao WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

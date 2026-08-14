@@ -58,6 +58,9 @@ public class RelatorioDAOMySQL {
     }
 
     public Relatorio buscarPorId(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return null;
+        }
         String sql = "SELECT * FROM relatorio WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -95,6 +98,9 @@ public class RelatorioDAOMySQL {
     }
 
     public boolean remover(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return false;
+        }
         String sql = "DELETE FROM relatorio WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

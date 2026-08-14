@@ -66,6 +66,9 @@ public class ConsultaDAOMySQL {
     }
 
     public Consulta buscarPorId(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return null;
+        }
         String sql = "SELECT c.*, p.id as prof_id, p.nome, p.especialidade, p.registro_profissional FROM consulta c JOIN profissional_saude p ON c.profissional_id = p.id WHERE c.id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -115,6 +118,9 @@ public class ConsultaDAOMySQL {
     }
 
     public boolean remover(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return false;
+        }
         String sql = "DELETE FROM consulta WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

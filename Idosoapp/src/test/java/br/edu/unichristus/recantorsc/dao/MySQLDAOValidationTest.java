@@ -1,6 +1,7 @@
 package br.edu.unichristus.recantorsc.dao;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
@@ -99,6 +100,26 @@ class MySQLDAOValidationTest {
         assertFalse(new VacinaDAOMySQL().atualizar(new Vacina(1, "Influenza", null)));
         assertFalse(new EventoSentinelaDAOMySQL().salvar(new EventoSentinela(0, TipoEventoSentinela.QUEDA, null), 1));
         assertFalse(new EventoSentinelaDAOMySQL().atualizar(new EventoSentinela(1, TipoEventoSentinela.QUEDA, null)));
+    }
+
+    @Test
+    void daosMysqlRecusamBuscaERemocaoComIdInvalidoAntesDaConexao() {
+        assertNull(new IdosaDAOMySQL().buscarPorId(0));
+        assertFalse(new IdosaDAOMySQL().remover(0));
+        assertNull(new ProfissionalSaudeDAOMySQL().buscarPorId(-1));
+        assertFalse(new ProfissionalSaudeDAOMySQL().remover(-1));
+        assertNull(new ConsultaDAOMySQL().buscarPorId(0));
+        assertFalse(new ConsultaDAOMySQL().remover(0));
+        assertNull(new ProntuarioMedicoDAOMySQL().buscarPorId(-1));
+        assertFalse(new ProntuarioMedicoDAOMySQL().remover(-1));
+        assertNull(new PrescricaoDAOMySQL().buscarPorId(0));
+        assertFalse(new PrescricaoDAOMySQL().remover(0));
+        assertNull(new VacinaDAOMySQL().buscarPorId(-1));
+        assertFalse(new VacinaDAOMySQL().remover(-1));
+        assertNull(new EventoSentinelaDAOMySQL().buscarPorId(0));
+        assertFalse(new EventoSentinelaDAOMySQL().remover(0));
+        assertNull(new RelatorioDAOMySQL().buscarPorId(-1));
+        assertFalse(new RelatorioDAOMySQL().remover(-1));
     }
 
     @Test

@@ -59,6 +59,9 @@ public class IdosaDAOMySQL {
     }
 
     public Idosa buscarPorId(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return null;
+        }
         String sql = "SELECT * FROM idosa WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -104,6 +107,9 @@ public class IdosaDAOMySQL {
     }
 
     public boolean remover(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return false;
+        }
         String sql = "DELETE FROM idosa WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

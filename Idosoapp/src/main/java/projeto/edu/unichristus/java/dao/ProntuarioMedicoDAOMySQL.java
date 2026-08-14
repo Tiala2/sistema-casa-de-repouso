@@ -57,6 +57,9 @@ public class ProntuarioMedicoDAOMySQL {
     }
 
     public ProntuarioMedico buscarPorId(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return null;
+        }
         String sql = "SELECT p.*, i.nome, i.cpf FROM prontuario_medico p JOIN idosa i ON p.idosa_id = i.id WHERE p.id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -99,6 +102,9 @@ public class ProntuarioMedicoDAOMySQL {
     }
 
     public boolean remover(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return false;
+        }
         String sql = "DELETE FROM prontuario_medico WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
