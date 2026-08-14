@@ -108,10 +108,17 @@ final class Ui {
 
     static void addField(JPanel form, int row, String label, JTextField field) {
         AppTheme.input(field);
+        field.setToolTipText(tooltipFor(label));
         addComponent(form, row, label, field);
     }
 
     static void addComponent(JPanel form, int row, String label, java.awt.Component component) {
+        if (component.getName() == null || component.getName().trim().isEmpty()) {
+            component.setName(cleanLabel(label));
+        }
+        if (component instanceof javax.swing.JComponent) {
+            ((javax.swing.JComponent) component).setToolTipText(tooltipFor(label));
+        }
         if (component instanceof JComboBox) {
             JComboBox<?> combo = (JComboBox<?>) component;
             combo.setFont(AppTheme.BODY);
@@ -136,6 +143,25 @@ final class Ui {
         right.fill = GridBagConstraints.HORIZONTAL;
         right.insets = new Insets(0, 0, 10, 0);
         form.add(component, right);
+    }
+
+    private static String tooltipFor(String label) {
+        String clean = cleanLabel(label);
+        if (clean.contains("yyyy-MM-dd HH:mm")) {
+            return clean + " - use o formato 2026-08-14 09:30";
+        }
+        if (clean.contains("yyyy-MM-dd")) {
+            return clean + " - use o formato 2026-08-14";
+        }
+        if (label != null && label.contains("*")) {
+            return clean + " - preenchimento obrigatorio";
+        }
+        return clean;
+    }
+
+    private static String cleanLabel(String label) {
+        String clean = label == null ? "" : label.replace("*", "").trim();
+        return clean.isEmpty() ? "Campo" : clean;
     }
 
     static JPanel formPanel() {
