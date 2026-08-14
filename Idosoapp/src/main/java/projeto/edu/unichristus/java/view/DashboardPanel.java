@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 
 import projeto.edu.unichristus.java.controller.ConsultaController;
@@ -99,8 +100,9 @@ class DashboardPanel extends JPanel {
         center.add(summary, BorderLayout.NORTH);
         center.add(lower, BorderLayout.CENTER);
         add(center, BorderLayout.CENTER);
-        status.setFont(AppTheme.BODY);
-        add(Ui.messagePanel(status, 0), BorderLayout.SOUTH);
+        status.setFont(AppTheme.LABEL);
+        status.setHorizontalAlignment(SwingConstants.LEFT);
+        add(statusBar(), BorderLayout.SOUTH);
         refreshMetrics();
     }
 
@@ -157,16 +159,16 @@ class DashboardPanel extends JPanel {
         }
 
         if (failures == 0) {
-            status.setText("Resumo atualizado com os dados retornados pelo banco configurado.");
+            status.setText("Banco conectado - indicadores atualizados com sucesso");
         } else {
-            status.setText(failures + " metrica(s) nao carregaram. Verifique a conexao e as tabelas do banco.");
+            status.setText(failures + " metrica(s) nao carregaram - verifique conexao e tabelas");
         }
         refresh.setEnabled(true);
     }
 
     private void setLoading() {
         refresh.setEnabled(false);
-        status.setText("Atualizando resumo do banco...");
+        status.setText("Atualizando indicadores operacionais...");
         for (JLabel label : metricLabels.values()) {
             label.setText("...");
             label.setForeground(AppTheme.MUTED);
@@ -175,7 +177,7 @@ class DashboardPanel extends JPanel {
 
     private void showRefreshFailure() {
         refresh.setEnabled(true);
-        status.setText("Nao foi possivel atualizar o resumo agora.");
+        status.setText("Nao foi possivel atualizar o painel agora");
         for (JLabel label : metricLabels.values()) {
             label.setText("Erro");
             label.setForeground(AppTheme.DANGER);
@@ -217,6 +219,21 @@ class DashboardPanel extends JPanel {
         metricLabels.put(label, number);
     }
 
+    private JPanel statusBar() {
+        JPanel panel = new JPanel(new BorderLayout(12, 0));
+        panel.setBackground(AppTheme.NAV_BG);
+        panel.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
+
+        JLabel scope = new JLabel("Ambiente local MySQL");
+        scope.setForeground(new Color(183, 199, 213));
+        scope.setFont(AppTheme.SMALL);
+
+        status.setForeground(Color.WHITE);
+        panel.add(status, BorderLayout.CENTER);
+        panel.add(scope, BorderLayout.EAST);
+        return panel;
+    }
+
     private void step(JPanel parent, String number, String title, String description) {
         JPanel row = new JPanel(new BorderLayout(12, 0));
         row.setOpaque(false);
@@ -239,10 +256,46 @@ class DashboardPanel extends JPanel {
     }
 
     private void link(JPanel parent, String label, String key, MainFrame frame) {
-        JButton button = AppTheme.secondaryButton(label);
-        button.setHorizontalAlignment(JButton.CENTER);
+        parent.add(actionCard(label, descriptionFor(key), key, frame));
+    }
+
+    private JButton actionCard(String title, String description, String key, MainFrame frame) {
+        JButton button = new JButton("<html><b>" + title + "</b><br><span style='font-size:10px;color:#5C6A79'>" + description + "</span></html>");
+        button.setBackground(AppTheme.SURFACE);
+        button.setForeground(AppTheme.TEXT);
+        button.setFocusPainted(false);
+        button.setHorizontalAlignment(JButton.LEFT);
+        button.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(AppTheme.LINE),
+            BorderFactory.createEmptyBorder(12, 12, 12, 12)
+        ));
         button.addActionListener(e -> frame.select(key));
-        parent.add(button);
+        return button;
+    }
+
+    private String descriptionFor(String key) {
+        if ("idosas".equals(key)) {
+            return "Dados da residente";
+        }
+        if ("profissionais".equals(key)) {
+            return "Equipe assistencial";
+        }
+        if ("prontuarios".equals(key)) {
+            return "Historico central";
+        }
+        if ("consultas".equals(key)) {
+            return "Agenda clinica";
+        }
+        if ("prescricoes".equals(key)) {
+            return "Medicacoes";
+        }
+        if ("vacinas".equals(key)) {
+            return "Prevencao";
+        }
+        if ("eventos".equals(key)) {
+            return "Ocorrencias";
+        }
+        return "Analise operacional";
     }
 
     private static class DashboardSnapshot {
