@@ -381,7 +381,7 @@ abstract class DataModulePanel<T> extends JPanel {
                 if (removed) {
                     startNew();
                 }
-                messageAfterRefresh = removed ? "Registro removido com sucesso." : "Nenhum registro foi removido.";
+                messageAfterRefresh = removed ? "Registro removido com sucesso." : "Nenhum registro foi removido. Ele pode nao existir mais ou possuir vinculos protegidos.";
                 messageAfterRefreshType = removed ? 1 : 0;
                 refreshData();
             }

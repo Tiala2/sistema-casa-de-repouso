@@ -40,6 +40,7 @@ A interface foi criada em Swing porque nao havia camada visual, classes `main`, 
 - operacoes de salvar e remover executadas em background, mantendo a janela responsiva durante chamadas JDBC;
 - acoes de novo, salvar, remover, filtrar e selecionar ficam bloqueadas durante carregamentos e gravacoes para evitar estado visual inconsistente;
 - mensagens de sucesso sao preservadas apos a recarga automatica e o registro salvo/atualizado volta selecionado quando permanece visivel;
+- falhas de remocao indicam quando o registro pode ter vinculos protegidos por chave estrangeira;
 - estados vazios, mensagens de sucesso, erro e confirmacao de remocao;
 - formularios com validacao basica antes de acionar controllers/DAOs;
 - criacao, edicao e remocao integradas aos metodos reais de persistencia.
