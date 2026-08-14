@@ -59,6 +59,8 @@ abstract class DataModulePanel<T> extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
 
         refreshButton = AppTheme.secondaryButton("Atualizar");
+        refreshButton.setMnemonic('A');
+        refreshButton.setToolTipText("Atualizar dados do modulo");
         refreshButton.addActionListener(e -> refreshData());
         add(Ui.moduleHeader(context, title, description, refreshButton), BorderLayout.NORTH);
 
@@ -136,10 +138,16 @@ abstract class DataModulePanel<T> extends JPanel {
         modeLabel.setOpaque(true);
         modeLabel.setBorder(BorderFactory.createEmptyBorder(6, 10, 6, 10));
         newButton = AppTheme.secondaryButton("Novo registro");
+        newButton.setMnemonic('N');
+        newButton.setToolTipText("Limpar o formulario para cadastrar um novo registro");
         newButton.addActionListener(e -> startNew());
         saveButton = AppTheme.primaryButton("Salvar registro");
+        saveButton.setMnemonic('S');
+        saveButton.setToolTipText("Salvar o registro em preenchimento");
         saveButton.addActionListener(e -> saveCurrent());
         removeButton = AppTheme.dangerButton("Remover");
+        removeButton.setMnemonic('R');
+        removeButton.setToolTipText("Remover o registro selecionado");
         removeButton.addActionListener(e -> removeSelected());
         actions.add(newButton);
         actions.add(Box.createHorizontalStrut(8));
@@ -404,7 +412,7 @@ abstract class DataModulePanel<T> extends JPanel {
         }
         int answer = JOptionPane.showConfirmDialog(
             this,
-            "Remover o registro selecionado?",
+            "Remover " + entityName() + " #" + idOf(selected) + "?\nEsta acao nao pode ser desfeita.",
             "Confirmar remocao",
             JOptionPane.YES_NO_OPTION
         );
@@ -520,6 +528,7 @@ abstract class DataModulePanel<T> extends JPanel {
 
     private void updateSaveButton() {
         saveButton.setText(editingValue == null ? "Salvar registro" : "Salvar alteracoes");
+        saveButton.setToolTipText(editingValue == null ? "Salvar novo registro" : "Salvar alteracoes do registro selecionado");
         if (modeLabel != null) {
             boolean editing = editingValue != null;
             modeLabel.setText(editing ? "Editando #" + idOf(editingValue) : "Novo registro");
