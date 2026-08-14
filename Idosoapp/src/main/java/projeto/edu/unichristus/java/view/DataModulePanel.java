@@ -125,7 +125,7 @@ abstract class DataModulePanel<T> extends JPanel {
         detailScroll.setBorder(BorderFactory.createLineBorder(AppTheme.LINE));
         detailBlock.add(detailScroll, BorderLayout.CENTER);
 
-        formHost = Ui.block("Cadastro e edicao", "Preencha os campos obrigatorios e salve.");
+        formHost = Ui.block("Cadastro e edicao", "Complete os campos marcados e acompanhe o modo atual.");
         formHost.add(buildForm(), BorderLayout.CENTER);
 
         JPanel actions = new JPanel();
@@ -585,7 +585,7 @@ abstract class DataModulePanel<T> extends JPanel {
 
     protected void require(JTextField field, String name) {
         if (field.getText() == null || field.getText().trim().isEmpty()) {
-            throw new IllegalArgumentException(name + " e obrigatorio.");
+            throw new IllegalArgumentException("Preencha o campo " + name + ".");
         }
     }
 
@@ -603,14 +603,14 @@ abstract class DataModulePanel<T> extends JPanel {
         try {
             return Integer.parseInt(field.getText().trim());
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(name + " deve ser um numero inteiro.");
+            throw new IllegalArgumentException("Informe um numero inteiro no campo " + name + ".");
         }
     }
 
     protected int parsePositiveInt(JTextField field, String name) {
         int value = parseInt(field, name);
         if (value <= 0) {
-            throw new IllegalArgumentException(name + " deve ser maior que zero.");
+            throw new IllegalArgumentException("Informe um valor maior que zero no campo " + name + ".");
         }
         return value;
     }
@@ -618,7 +618,7 @@ abstract class DataModulePanel<T> extends JPanel {
     protected RefOption selectedOption(JComboBox<RefOption> combo, String name) {
         Object selected = combo.getSelectedItem();
         if (!(selected instanceof RefOption) || ((RefOption) selected).id <= 0) {
-            throw new IllegalArgumentException(name + " e obrigatorio.");
+            throw new IllegalArgumentException("Selecione " + name + " antes de salvar.");
         }
         return (RefOption) selected;
     }
