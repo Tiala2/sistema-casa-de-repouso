@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS prontuario_medico (
 -- Tabela Consulta
 CREATE TABLE IF NOT EXISTS consulta (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    data_hora DATETIME,
+    data_hora DATETIME NOT NULL,
     profissional_id INT NOT NULL,
     tipo VARCHAR(50),
     motivo VARCHAR(200),
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS consulta (
 -- Tabela Prescricao
 CREATE TABLE IF NOT EXISTS prescricao (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    medicamento VARCHAR(100),
+    medicamento VARCHAR(100) NOT NULL,
     posologia VARCHAR(100),
     duracao VARCHAR(50),
     observacoes VARCHAR(200),
@@ -83,8 +83,8 @@ CREATE TABLE IF NOT EXISTS prescricao (
 -- Tabela Vacina
 CREATE TABLE IF NOT EXISTS vacina (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100),
-    data_ocorrencia DATE,
+    nome VARCHAR(100) NOT NULL,
+    data_ocorrencia DATE NOT NULL,
     prontuario_id INT NOT NULL,
     INDEX idx_vacina_prontuario (prontuario_id),
     INDEX idx_vacina_data (data_ocorrencia),
@@ -98,8 +98,8 @@ CREATE TABLE IF NOT EXISTS vacina (
 -- Tabela EventoSentinela
 CREATE TABLE IF NOT EXISTS evento_sentinela (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    tipo VARCHAR(100),
-    data_ocorrencia DATE,
+    tipo VARCHAR(100) NOT NULL,
+    data_ocorrencia DATE NOT NULL,
     prontuario_id INT NOT NULL,
     INDEX idx_evento_prontuario (prontuario_id),
     INDEX idx_evento_tipo_periodo (tipo, data_ocorrencia),
@@ -113,8 +113,8 @@ CREATE TABLE IF NOT EXISTS evento_sentinela (
 -- Tabela Relatorio
 CREATE TABLE IF NOT EXISTS relatorio (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    descricao VARCHAR(200),
-    tipo VARCHAR(100),
+    descricao VARCHAR(200) NOT NULL,
+    tipo VARCHAR(100) NOT NULL,
     prontuario_id INT NOT NULL,
     INDEX idx_relatorio_prontuario (prontuario_id),
     CONSTRAINT fk_relatorio_prontuario
