@@ -208,7 +208,7 @@ abstract class DataModulePanel<T> extends JPanel {
     private void applyLoadedRows(List<T> loaded) {
         try {
             if (loaded == null) {
-                throw new IllegalStateException("A consulta retornou erro. Verifique a configuracao do banco de dados.");
+                loaded = new ArrayList<T>();
             }
             rows = loaded;
             model.setRowCount(0);
