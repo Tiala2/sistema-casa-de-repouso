@@ -3,6 +3,7 @@ package projeto.edu.unichristus.java.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,8 @@ class DashboardPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
 
         refresh = AppTheme.primaryButton("Atualizar");
+        refresh.setMnemonic('A');
+        refresh.setToolTipText("Atualizar indicadores do painel");
         refresh.addActionListener(e -> refreshMetrics());
 
         add(Ui.moduleHeader(
@@ -159,9 +162,9 @@ class DashboardPanel extends JPanel {
         }
 
         if (failures == 0) {
-            status.setText("Banco conectado - indicadores atualizados com sucesso");
+            status.setText("Banco conectado - atualizado em " + Ui.formatDateTime(LocalDateTime.now()));
         } else {
-            status.setText(failures + " metrica(s) nao carregaram - verifique conexao e tabelas");
+            status.setText(failures + " metrica(s) nao carregaram - ultima tentativa em " + Ui.formatDateTime(LocalDateTime.now()));
         }
         refresh.setEnabled(true);
     }
@@ -202,6 +205,7 @@ class DashboardPanel extends JPanel {
     private void addMetric(JPanel parent, String label) {
         JPanel card = new JPanel(new BorderLayout(0, 4));
         card.setBackground(AppTheme.SURFACE);
+        card.setToolTipText("Total de " + label.toLowerCase() + " cadastrados");
         card.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(AppTheme.LINE),
             BorderFactory.createEmptyBorder(16, 16, 16, 16)
@@ -269,6 +273,7 @@ class DashboardPanel extends JPanel {
             BorderFactory.createLineBorder(AppTheme.LINE),
             BorderFactory.createEmptyBorder(12, 12, 12, 12)
         ));
+        button.setToolTipText("Abrir modulo: " + title);
         button.addActionListener(e -> frame.select(key));
         return button;
     }
