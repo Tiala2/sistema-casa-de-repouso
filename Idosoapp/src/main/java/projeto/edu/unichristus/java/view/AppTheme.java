@@ -106,6 +106,7 @@ final class AppTheme {
         table.getTableHeader().setBackground(new Color(225, 237, 246));
         table.getTableHeader().setForeground(TEXT);
         table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, LINE));
+        table.getTableHeader().setReorderingAllowed(false);
         table.setGridColor(LINE);
         table.setSelectionBackground(new Color(210, 238, 231));
         table.setSelectionForeground(TEXT);

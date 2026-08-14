@@ -22,11 +22,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
 abstract class DataModulePanel<T> extends JPanel {
@@ -77,7 +79,9 @@ abstract class DataModulePanel<T> extends JPanel {
         table = new JTable(model);
         sorter = new TableRowSorter<DefaultTableModel>(model);
         table.setRowSorter(sorter);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         AppTheme.table(table);
+        configureColumns(columns);
         table.getSelectionModel().addListSelectionListener(e -> updateDetails());
 
         JPanel tableArea = new JPanel(new BorderLayout(0, 10));
@@ -178,6 +182,22 @@ abstract class DataModulePanel<T> extends JPanel {
     }
 
     protected abstract JPanel buildForm();
+
+    private void configureColumns(String[] columns) {
+        for (int i = 0; i < columns.length; i++) {
+            TableColumn column = table.getColumnModel().getColumn(i);
+            String name = columns[i] == null ? "" : columns[i].toLowerCase();
+            if ("id".equals(name)) {
+                column.setMinWidth(56);
+                column.setPreferredWidth(64);
+                column.setMaxWidth(84);
+            } else if (name.contains("data") || name.contains("hora") || name.contains("cpf")) {
+                column.setPreferredWidth(128);
+            } else {
+                column.setPreferredWidth(170);
+            }
+        }
+    }
 
     protected abstract List<T> loadRows();
 
