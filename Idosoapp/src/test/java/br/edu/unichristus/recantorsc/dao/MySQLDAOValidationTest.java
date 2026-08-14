@@ -1,6 +1,7 @@
 package br.edu.unichristus.recantorsc.dao;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,17 @@ class MySQLDAOValidationTest {
         assertFalse(new VacinaDAOMySQL().salvar(null, 0));
         assertFalse(new EventoSentinelaDAOMySQL().salvar(new EventoSentinela(), 0));
         assertFalse(new RelatorioDAOMySQL().salvar(null, 0));
+    }
+
+    @Test
+    void eventoSentinelaRecusaFiltrosInvalidosAntesDaConexao() {
+        EventoSentinelaDAOMySQL dao = new EventoSentinelaDAOMySQL();
+
+        assertTrue(dao.listarPorIdosaEPeriodo(0, 8, 2026).isEmpty());
+        assertTrue(dao.listarPorIdosaEPeriodo(1, 0, 2026).isEmpty());
+        assertTrue(dao.listarPorIdosaEPeriodo(1, 13, 2026).isEmpty());
+        assertTrue(dao.listarPorIdosaEPeriodo(1, 8, 0).isEmpty());
+        assertTrue(dao.listarPorTipoEPeriodo(null, 8, 2026).isEmpty());
+        assertTrue(dao.listarPorTipoEPeriodo(null, 0, 0).isEmpty());
     }
 }

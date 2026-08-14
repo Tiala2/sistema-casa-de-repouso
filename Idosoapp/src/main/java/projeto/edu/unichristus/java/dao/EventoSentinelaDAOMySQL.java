@@ -3,6 +3,7 @@ package projeto.edu.unichristus.java.dao;
 import projeto.edu.unichristus.java.model.EventoSentinela;
 import projeto.edu.unichristus.java.model.TipoEventoSentinela;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,13 +104,18 @@ public class EventoSentinelaDAOMySQL {
     }
 
     public List<EventoSentinela> listarPorIdosaEPeriodo(int prontuarioId, int mes, int ano) {
+        if (prontuarioId <= 0 || !periodoValido(mes, ano)) {
+            return new ArrayList<>();
+        }
         List<EventoSentinela> lista = new ArrayList<>();
-        String sql = "SELECT * FROM evento_sentinela WHERE prontuario_id = ? AND MONTH(data_ocorrencia) = ? AND YEAR(data_ocorrencia) = ?";
+        String sql = "SELECT * FROM evento_sentinela WHERE prontuario_id = ? AND data_ocorrencia >= ? AND data_ocorrencia < ? ORDER BY data_ocorrencia DESC, id DESC";
+        LocalDate inicio = LocalDate.of(ano, mes, 1);
+        LocalDate fim = inicio.plusMonths(1);
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, prontuarioId);
-            stmt.setInt(2, mes);
-            stmt.setInt(3, ano);
+            stmt.setDate(2, Date.valueOf(inicio));
+            stmt.setDate(3, Date.valueOf(fim));
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     EventoSentinela evento = new EventoSentinela(
@@ -128,13 +134,18 @@ public class EventoSentinelaDAOMySQL {
     }
 
     public List<EventoSentinela> listarPorTipoEPeriodo(TipoEventoSentinela tipo, int mes, int ano) {
+        if (tipo == null || !periodoValido(mes, ano)) {
+            return new ArrayList<>();
+        }
         List<EventoSentinela> lista = new ArrayList<>();
-        String sql = "SELECT * FROM evento_sentinela WHERE tipo = ? AND MONTH(data_ocorrencia) = ? AND YEAR(data_ocorrencia) = ?";
+        String sql = "SELECT * FROM evento_sentinela WHERE tipo = ? AND data_ocorrencia >= ? AND data_ocorrencia < ? ORDER BY data_ocorrencia DESC, id DESC";
+        LocalDate inicio = LocalDate.of(ano, mes, 1);
+        LocalDate fim = inicio.plusMonths(1);
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, tipo.name());
-            stmt.setInt(2, mes);
-            stmt.setInt(3, ano);
+            stmt.setDate(2, Date.valueOf(inicio));
+            stmt.setDate(3, Date.valueOf(fim));
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     EventoSentinela evento = new EventoSentinela(
@@ -150,5 +161,9 @@ public class EventoSentinelaDAOMySQL {
             return null;
         }
         return lista;
+    }
+
+    private boolean periodoValido(int mes, int ano) {
+        return mes >= 1 && mes <= 12 && ano > 0;
     }
 }
