@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProntuarioDAO {
-    private static List<ProntuarioMedico> prontuarios = new ArrayList<>();
-    private static int nextId = 1;
+    private final List<ProntuarioMedico> prontuarios = new ArrayList<>();
+    private int nextId = 1;
 
     public boolean salvar(ProntuarioMedico prontuario) {
         if (prontuario.getId() == 0) {

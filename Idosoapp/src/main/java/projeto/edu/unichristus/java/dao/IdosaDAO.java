@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IdosaDAO {
-    private static List<Idosa> idosas = new ArrayList<>();
-    private static int nextId = 1;
+    private final List<Idosa> idosas = new ArrayList<>();
+    private int nextId = 1;
 
     public boolean salvar(Idosa idosa) {
         if (idosa.getId() == 0) {

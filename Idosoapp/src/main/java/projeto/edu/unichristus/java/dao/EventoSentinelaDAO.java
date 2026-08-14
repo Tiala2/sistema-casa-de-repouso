@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EventoSentinelaDAO {
-    private static List<EventoSentinela> eventos = new ArrayList<>();
-    private static int nextId = 1;
+    private final List<EventoSentinela> eventos = new ArrayList<>();
+    private int nextId = 1;
 
     public boolean salvar(EventoSentinela evento) {
         if (evento.getId() == 0) {

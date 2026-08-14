@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConsultaDAO {
-    private static List<Consulta> consultas = new ArrayList<>();
-    private static int nextId = 1;
+    private final List<Consulta> consultas = new ArrayList<>();
+    private int nextId = 1;
 
     public boolean salvar(Consulta consulta) {
         if (consulta.getId() == 0) {

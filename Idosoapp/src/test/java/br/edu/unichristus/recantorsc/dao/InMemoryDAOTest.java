@@ -43,6 +43,18 @@ class InMemoryDAOTest {
     }
 
     @Test
+    void idosaDaoMantemDadosIsoladosPorInstancia() {
+        IdosaDAO primeiroDao = new IdosaDAO();
+        IdosaDAO segundoDao = new IdosaDAO();
+        Idosa idosa = new Idosa(0, "Helena Teste", "99988877766", LocalDate.of(1950, 6, 8), null, null, LocalDate.of(2025, 3, 2));
+
+        assertTrue(primeiroDao.salvar(idosa));
+
+        assertEquals(1, primeiroDao.listarTodos().size());
+        assertTrue(segundoDao.listarTodos().isEmpty());
+    }
+
+    @Test
     void consultaDaoGeraIdAtualizaBuscaERemove() {
         ConsultaDAO dao = new ConsultaDAO();
         ProfissionalSaude profissional = new ProfissionalSaude(7, "Dra. Ana", "Geriatria", "CRM-1");

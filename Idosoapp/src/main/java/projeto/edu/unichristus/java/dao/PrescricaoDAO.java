@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PrescricaoDAO {
-    private static List<Prescricao> prescricoes = new ArrayList<>();
-    private static int nextId = 1;
+    private final List<Prescricao> prescricoes = new ArrayList<>();
+    private int nextId = 1;
 
     public boolean salvar(Prescricao prescricao) {
         if (prescricao.getId() == 0) {
