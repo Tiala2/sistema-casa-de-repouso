@@ -12,4 +12,8 @@ final class DaoValidations {
     static boolean positiveId(int id) {
         return id > 0;
     }
+
+    static boolean validPeriod(int month, int year) {
+        return month >= 1 && month <= 12 && year > 0;
+    }
 }

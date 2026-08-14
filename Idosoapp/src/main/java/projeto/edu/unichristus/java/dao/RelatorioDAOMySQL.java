@@ -113,8 +113,8 @@ public class RelatorioDAOMySQL {
     }
 
     public Map<TipoEventoSentinela, Double> percentualIdosasPorEvento(List<Integer> idsIdosas, int mes, int ano, EventoSentinelaDAOMySQL eventoDAO) {
-        Map<TipoEventoSentinela, Double> percentualPorTipo = new EnumMap<>(TipoEventoSentinela.class);
-        if (idsIdosas == null || eventoDAO == null) {
+        Map<TipoEventoSentinela, Double> percentualPorTipo = percentualZerado();
+        if (idsIdosas == null || eventoDAO == null || !DaoValidations.validPeriod(mes, ano)) {
             return percentualPorTipo;
         }
         Map<TipoEventoSentinela, Integer> ocorrenciasPorTipo = new EnumMap<>(TipoEventoSentinela.class);
@@ -126,6 +126,9 @@ public class RelatorioDAOMySQL {
             }
             totalProntuariosValidos++;
             List<EventoSentinela> eventos = eventoDAO.listarPorIdosaEPeriodo(prontuarioId, mes, ano);
+            if (eventos == null) {
+                eventos = new ArrayList<EventoSentinela>();
+            }
             Set<TipoEventoSentinela> tiposDaIdosa = EnumSet.noneOf(TipoEventoSentinela.class);
             for (EventoSentinela evento : eventos) {
                 if (evento != null && evento.getTipo() != null) {
@@ -141,6 +144,14 @@ public class RelatorioDAOMySQL {
         for (TipoEventoSentinela tipo : TipoEventoSentinela.values()) {
             Integer ocorrencias = ocorrenciasPorTipo.get(tipo);
             percentualPorTipo.put(tipo, totalProntuariosValidos > 0 && ocorrencias != null ? (ocorrencias * 100.0) / totalProntuariosValidos : 0.0);
+        }
+        return percentualPorTipo;
+    }
+
+    private Map<TipoEventoSentinela, Double> percentualZerado() {
+        Map<TipoEventoSentinela, Double> percentualPorTipo = new EnumMap<>(TipoEventoSentinela.class);
+        for (TipoEventoSentinela tipo : TipoEventoSentinela.values()) {
+            percentualPorTipo.put(tipo, 0.0);
         }
         return percentualPorTipo;
     }

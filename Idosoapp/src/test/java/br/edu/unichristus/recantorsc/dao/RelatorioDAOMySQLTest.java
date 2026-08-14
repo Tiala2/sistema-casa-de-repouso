@@ -53,13 +53,44 @@ class RelatorioDAOMySQLTest {
         assertEquals(0.0, percentual.get(TipoEventoSentinela.DIARREIA), 0.001);
     }
 
+    @Test
+    void percentualIdosasPorEventoRetornaZerosParaPeriodoInvalidoSemConsultarEventos() {
+        EventoDAOFake eventoDAO = new EventoDAOFake();
+
+        Map<TipoEventoSentinela, Double> percentual = new RelatorioDAOMySQL()
+            .percentualIdosasPorEvento(Arrays.asList(1, 2), 13, 2026, eventoDAO);
+
+        assertEquals(0, eventoDAO.quantidadeConsultas);
+        for (TipoEventoSentinela tipo : TipoEventoSentinela.values()) {
+            assertEquals(0.0, percentual.get(tipo), 0.001);
+        }
+    }
+
+    @Test
+    void percentualIdosasPorEventoTrataListaNulaComoSemEventos() {
+        EventoDAOFake eventoDAO = new EventoDAOFake();
+        eventoDAO.retornarNull = true;
+
+        Map<TipoEventoSentinela, Double> percentual = new RelatorioDAOMySQL()
+            .percentualIdosasPorEvento(Collections.singletonList(1), 8, 2026, eventoDAO);
+
+        assertEquals(1, eventoDAO.quantidadeConsultas);
+        for (TipoEventoSentinela tipo : TipoEventoSentinela.values()) {
+            assertEquals(0.0, percentual.get(tipo), 0.001);
+        }
+    }
+
     private static class EventoDAOFake extends EventoSentinelaDAOMySQL {
         private final Map<Integer, List<EventoSentinela>> eventos = new HashMap<>();
         private int quantidadeConsultas;
+        private boolean retornarNull;
 
         @Override
         public List<EventoSentinela> listarPorIdosaEPeriodo(int prontuarioId, int mes, int ano) {
             quantidadeConsultas++;
+            if (retornarNull) {
+                return null;
+            }
             List<EventoSentinela> resultado = eventos.get(prontuarioId);
             return resultado != null ? resultado : Collections.emptyList();
         }

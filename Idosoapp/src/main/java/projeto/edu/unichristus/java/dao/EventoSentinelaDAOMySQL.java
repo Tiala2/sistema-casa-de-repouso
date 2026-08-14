@@ -109,7 +109,7 @@ public class EventoSentinelaDAOMySQL {
     }
 
     public List<EventoSentinela> listarPorIdosaEPeriodo(int prontuarioId, int mes, int ano) {
-        if (prontuarioId <= 0 || !periodoValido(mes, ano)) {
+        if (prontuarioId <= 0 || !DaoValidations.validPeriod(mes, ano)) {
             return new ArrayList<>();
         }
         List<EventoSentinela> lista = new ArrayList<>();
@@ -138,7 +138,7 @@ public class EventoSentinelaDAOMySQL {
     }
 
     public List<EventoSentinela> listarPorTipoEPeriodo(TipoEventoSentinela tipo, int mes, int ano) {
-        if (tipo == null || !periodoValido(mes, ano)) {
+        if (tipo == null || !DaoValidations.validPeriod(mes, ano)) {
             return new ArrayList<>();
         }
         List<EventoSentinela> lista = new ArrayList<>();
@@ -164,9 +164,5 @@ public class EventoSentinelaDAOMySQL {
             return DaoErrors.emptyList("Erro de persistencia", e);
         }
         return lista;
-    }
-
-    private boolean periodoValido(int mes, int ano) {
-        return mes >= 1 && mes <= 12 && ano > 0;
     }
 }
