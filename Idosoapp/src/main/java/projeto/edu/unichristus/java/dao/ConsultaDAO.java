@@ -36,7 +36,7 @@ public class ConsultaDAO {
     }
 
     public boolean atualizar(Consulta consulta) {
-        if (consulta == null || consulta.getDataHora() == null || consulta.getProfissional() == null || !DaoValidations.positiveId(consulta.getProfissional().getId())) {
+        if (consulta == null || !DaoValidations.positiveId(consulta.getId()) || consulta.getDataHora() == null || consulta.getProfissional() == null || !DaoValidations.positiveId(consulta.getProfissional().getId())) {
             return false;
         }
         for (int i = 0; i < consultas.size(); i++) {

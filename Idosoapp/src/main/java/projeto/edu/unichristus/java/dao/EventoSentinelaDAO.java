@@ -36,7 +36,7 @@ public class EventoSentinelaDAO {
     }
 
     public boolean atualizar(EventoSentinela evento) {
-        if (evento == null || evento.getTipo() == null || evento.getDataOcorrencia() == null) {
+        if (evento == null || !DaoValidations.positiveId(evento.getId()) || evento.getTipo() == null || evento.getDataOcorrencia() == null) {
             return false;
         }
         for (int i = 0; i < eventos.size(); i++) {

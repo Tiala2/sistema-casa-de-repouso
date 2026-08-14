@@ -81,7 +81,7 @@ public class RelatorioDAOMySQL {
     }
 
     public boolean atualizar(Relatorio relatorio) {
-        if (relatorio == null || !DaoValidations.hasText(relatorio.getDescricao()) || !DaoValidations.hasText(relatorio.getTipo())) {
+        if (relatorio == null || !DaoValidations.positiveId(relatorio.getId()) || !DaoValidations.hasText(relatorio.getDescricao()) || !DaoValidations.hasText(relatorio.getTipo())) {
             return false;
         }
         String sql = "UPDATE relatorio SET descricao = ?, tipo = ? WHERE id = ?";

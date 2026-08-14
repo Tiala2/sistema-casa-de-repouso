@@ -75,7 +75,7 @@ public class VacinaDAOMySQL {
     }
 
     public boolean atualizar(Vacina vacina) {
-        if (vacina == null || !DaoValidations.hasText(vacina.getNome()) || vacina.getDataOcorrencia() == null) {
+        if (vacina == null || !DaoValidations.positiveId(vacina.getId()) || !DaoValidations.hasText(vacina.getNome()) || vacina.getDataOcorrencia() == null) {
             return false;
         }
         String sql = "UPDATE vacina SET nome = ?, data_ocorrencia = ? WHERE id = ?";

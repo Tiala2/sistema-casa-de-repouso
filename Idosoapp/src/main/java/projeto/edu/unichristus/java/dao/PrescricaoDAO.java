@@ -36,7 +36,7 @@ public class PrescricaoDAO {
     }
 
     public boolean atualizar(Prescricao prescricao) {
-        if (prescricao == null || !DaoValidations.hasText(prescricao.getMedicamento())) {
+        if (prescricao == null || !DaoValidations.positiveId(prescricao.getId()) || !DaoValidations.hasText(prescricao.getMedicamento())) {
             return false;
         }
         for (int i = 0; i < prescricoes.size(); i++) {

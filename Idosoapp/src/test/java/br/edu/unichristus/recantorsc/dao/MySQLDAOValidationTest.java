@@ -123,6 +123,24 @@ class MySQLDAOValidationTest {
     }
 
     @Test
+    void daosMysqlRecusamAtualizacaoSemIdValidoAntesDaConexao() {
+        assertFalse(new IdosaDAOMySQL().atualizar(new Idosa(0, "Maria", "123", null, null, null, null)));
+        assertFalse(new ProfissionalSaudeDAOMySQL().atualizar(new ProfissionalSaude(0, "Dra. Ana", "Geriatria", "CRM-1")));
+        assertFalse(new ConsultaDAOMySQL().atualizar(new Consulta(0, LocalDateTime.of(2026, 8, 14, 10, 0), new ProfissionalSaude(1, "Dra. Ana", "Geriatria", "CRM-1"), "Rotina", null, null)));
+
+        ProntuarioMedico prontuario = new ProntuarioMedico();
+        Idosa idosa = new Idosa();
+        idosa.setId(1);
+        prontuario.setIdosa(idosa);
+        assertFalse(new ProntuarioMedicoDAOMySQL().atualizar(prontuario));
+
+        assertFalse(new PrescricaoDAOMySQL().atualizar(new Prescricao(0, "Medicamento", "1x", "7 dias", null)));
+        assertFalse(new VacinaDAOMySQL().atualizar(new Vacina(0, "Influenza", LocalDate.of(2026, 8, 1))));
+        assertFalse(new EventoSentinelaDAOMySQL().atualizar(new EventoSentinela(0, TipoEventoSentinela.QUEDA, LocalDate.of(2026, 8, 1))));
+        assertFalse(new RelatorioDAOMySQL().atualizar(new Relatorio(0, "Descricao", "Clinico")));
+    }
+
+    @Test
     void eventoSentinelaRecusaFiltrosInvalidosAntesDaConexao() {
         EventoSentinelaDAOMySQL dao = new EventoSentinelaDAOMySQL();
 

@@ -36,7 +36,7 @@ public class VacinaDAO {
     }
 
     public boolean atualizar(Vacina vacina) {
-        if (vacina == null || !DaoValidations.hasText(vacina.getNome()) || vacina.getDataOcorrencia() == null) {
+        if (vacina == null || !DaoValidations.positiveId(vacina.getId()) || !DaoValidations.hasText(vacina.getNome()) || vacina.getDataOcorrencia() == null) {
             return false;
         }
         for (int i = 0; i < vacinas.size(); i++) {

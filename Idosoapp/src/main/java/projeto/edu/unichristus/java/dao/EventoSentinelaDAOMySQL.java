@@ -77,7 +77,7 @@ public class EventoSentinelaDAOMySQL {
     }
 
     public boolean atualizar(EventoSentinela evento) {
-        if (evento == null || evento.getTipo() == null || evento.getDataOcorrencia() == null) {
+        if (evento == null || !DaoValidations.positiveId(evento.getId()) || evento.getTipo() == null || evento.getDataOcorrencia() == null) {
             return false;
         }
         String sql = "UPDATE evento_sentinela SET tipo = ?, data_ocorrencia = ? WHERE id = ?";

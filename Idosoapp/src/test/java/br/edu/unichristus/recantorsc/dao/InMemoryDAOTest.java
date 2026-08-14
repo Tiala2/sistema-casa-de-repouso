@@ -172,4 +172,20 @@ class InMemoryDAOTest {
         assertNull(new EventoSentinelaDAO().buscarPorId(-1));
         assertFalse(new EventoSentinelaDAO().remover(-1));
     }
+
+    @Test
+    void daosEmMemoriaRecusamAtualizacaoSemIdValido() {
+        assertFalse(new IdosaDAO().atualizar(new Idosa(0, "Maria", "123", null, null, null, null)));
+        assertFalse(new ConsultaDAO().atualizar(new Consulta(0, LocalDateTime.of(2026, 8, 14, 10, 0), new ProfissionalSaude(1, "Dra. Ana", "Geriatria", "CRM-1"), "Rotina", null, null)));
+
+        ProntuarioMedico prontuario = new ProntuarioMedico();
+        Idosa idosa = new Idosa();
+        idosa.setId(1);
+        prontuario.setIdosa(idosa);
+        assertFalse(new ProntuarioDAO().atualizar(prontuario));
+
+        assertFalse(new PrescricaoDAO().atualizar(new Prescricao(0, "Medicamento", "1x", "7 dias", null)));
+        assertFalse(new VacinaDAO().atualizar(new Vacina(0, "Influenza", LocalDate.of(2026, 8, 1))));
+        assertFalse(new EventoSentinelaDAO().atualizar(new EventoSentinela(0, TipoEventoSentinela.QUEDA, LocalDate.of(2026, 8, 1))));
+    }
 }

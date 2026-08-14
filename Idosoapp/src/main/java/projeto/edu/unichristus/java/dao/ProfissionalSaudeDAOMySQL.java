@@ -77,7 +77,7 @@ public class ProfissionalSaudeDAOMySQL {
     }
 
     public boolean atualizar(ProfissionalSaude prof) {
-        if (prof == null || !DaoValidations.hasText(prof.getNome())) {
+        if (prof == null || !DaoValidations.positiveId(prof.getId()) || !DaoValidations.hasText(prof.getNome())) {
             return false;
         }
         String sql = "UPDATE profissional_saude SET nome = ?, especialidade = ?, registro_profissional = ? WHERE id = ?";

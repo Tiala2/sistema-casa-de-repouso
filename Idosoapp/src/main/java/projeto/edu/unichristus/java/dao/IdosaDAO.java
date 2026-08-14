@@ -36,7 +36,7 @@ public class IdosaDAO {
     }
 
     public boolean atualizar(Idosa idosa) {
-        if (idosa == null || !DaoValidations.hasText(idosa.getNome()) || !DaoValidations.hasText(idosa.getCpf())) {
+        if (idosa == null || !DaoValidations.positiveId(idosa.getId()) || !DaoValidations.hasText(idosa.getNome()) || !DaoValidations.hasText(idosa.getCpf())) {
             return false;
         }
         for (int i = 0; i < idosas.size(); i++) {

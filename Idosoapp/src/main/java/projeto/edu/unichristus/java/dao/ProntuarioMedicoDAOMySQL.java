@@ -85,7 +85,7 @@ public class ProntuarioMedicoDAOMySQL {
     }
 
     public boolean atualizar(ProntuarioMedico prontuario) {
-        if (prontuario == null || prontuario.getIdosa() == null || !DaoValidations.positiveId(prontuario.getIdosa().getId())) {
+        if (prontuario == null || !DaoValidations.positiveId(prontuario.getId()) || prontuario.getIdosa() == null || !DaoValidations.positiveId(prontuario.getIdosa().getId())) {
             return false;
         }
         String sql = "UPDATE prontuario_medico SET data_hora_idosa = ?, idosa_id = ? WHERE id = ?";

@@ -36,7 +36,7 @@ public class ProntuarioDAO {
     }
 
     public boolean atualizar(ProntuarioMedico prontuario) {
-        if (prontuario == null || prontuario.getIdosa() == null || !DaoValidations.positiveId(prontuario.getIdosa().getId())) {
+        if (prontuario == null || !DaoValidations.positiveId(prontuario.getId()) || prontuario.getIdosa() == null || !DaoValidations.positiveId(prontuario.getIdosa().getId())) {
             return false;
         }
         for (int i = 0; i < prontuarios.size(); i++) {
