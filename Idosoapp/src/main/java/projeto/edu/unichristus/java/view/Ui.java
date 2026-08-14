@@ -160,7 +160,7 @@ final class Ui {
     }
 
     private static String cleanLabel(String label) {
-        String clean = label == null ? "" : label.replace("*", "").trim();
+        String clean = label == null ? "" : label.replace("*", "").trim().replaceAll("\\s+", " ");
         return clean.isEmpty() ? "Campo" : clean;
     }
 

@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import org.junit.jupiter.api.Test;
 
 class UiTest {
@@ -65,5 +68,27 @@ class UiTest {
         });
 
         assertEquals("Data/hora e obrigatorio.", erro.getMessage());
+    }
+
+    @Test
+    void detailsMontaFichaComLinhasPadronizadas() {
+        String ficha = Ui.details(
+            Ui.detail("ID", 10),
+            Ui.detail("Nome", "Maria"),
+            Ui.detail("Observacoes", null)
+        );
+
+        assertEquals("ID: 10\nNome: Maria\nObservacoes: ", ficha);
+    }
+
+    @Test
+    void addFieldConfiguraNomeETooltipDoCampo() {
+        JPanel form = Ui.formPanel();
+        JTextField field = new JTextField();
+
+        Ui.addField(form, 0, "Data * yyyy-MM-dd", field);
+
+        assertEquals("Data yyyy-MM-dd", field.getName());
+        assertEquals("Data yyyy-MM-dd - use o formato 2026-08-14", field.getToolTipText());
     }
 }
