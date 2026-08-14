@@ -482,6 +482,28 @@ abstract class DataModulePanel<T> extends JPanel {
         } else {
             sorter.setRowFilter(RowFilter.regexFilter("(?i)" + Pattern.quote(text.trim())));
         }
+        updateFilterState();
+    }
+
+    private void updateFilterState() {
+        if (isBusy() || rows.isEmpty()) {
+            return;
+        }
+        if (table.getRowCount() == 0) {
+            table.clearSelection();
+            details.setText("Nenhum registro corresponde ao filtro atual.");
+            showMessage(rows.size() + " registro(s) carregado(s), sem resultado para a busca.", 0);
+            return;
+        }
+        if (table.getSelectedRow() < 0) {
+            table.setRowSelectionInterval(0, 0);
+        }
+        int visible = table.getRowCount();
+        if (visible == rows.size()) {
+            showMessage(rows.size() + " registro(s) carregado(s).", 1);
+        } else {
+            showMessage(visible + " de " + rows.size() + " registro(s) visiveis pelo filtro.", 0);
+        }
     }
 
     protected void require(JTextField field, String name) {
