@@ -9,6 +9,9 @@ public class VacinaDAOMySQL {
 
 
     public boolean salvar(Vacina vacina, int prontuarioId) {
+        if (vacina == null || prontuarioId <= 0) {
+            return false;
+        }
         String sql = "INSERT INTO vacina (nome, data_ocorrencia, prontuario_id) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -69,6 +72,9 @@ public class VacinaDAOMySQL {
     }
 
     public boolean atualizar(Vacina vacina) {
+        if (vacina == null) {
+            return false;
+        }
         String sql = "UPDATE vacina SET nome = ?, data_ocorrencia = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

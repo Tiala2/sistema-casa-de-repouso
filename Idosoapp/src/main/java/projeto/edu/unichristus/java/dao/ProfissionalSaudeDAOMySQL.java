@@ -9,6 +9,9 @@ public class ProfissionalSaudeDAOMySQL {
 
 
     public boolean salvar(ProfissionalSaude prof) {
+        if (prof == null) {
+            return false;
+        }
         String sql = "INSERT INTO profissional_saude (nome, especialidade, registro_profissional) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -71,6 +74,9 @@ public class ProfissionalSaudeDAOMySQL {
     }
 
     public boolean atualizar(ProfissionalSaude prof) {
+        if (prof == null) {
+            return false;
+        }
         String sql = "UPDATE profissional_saude SET nome = ?, especialidade = ?, registro_profissional = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

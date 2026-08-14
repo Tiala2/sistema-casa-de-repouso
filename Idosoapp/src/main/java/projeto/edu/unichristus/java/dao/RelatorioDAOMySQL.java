@@ -12,6 +12,9 @@ public class RelatorioDAOMySQL {
 
 
     public boolean salvar(Relatorio relatorio, int prontuarioId) {
+        if (relatorio == null || prontuarioId <= 0) {
+            return false;
+        }
         String sql = "INSERT INTO relatorio (descricao, tipo, prontuario_id) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -72,6 +75,9 @@ public class RelatorioDAOMySQL {
     }
 
     public boolean atualizar(Relatorio relatorio) {
+        if (relatorio == null) {
+            return false;
+        }
         String sql = "UPDATE relatorio SET descricao = ?, tipo = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

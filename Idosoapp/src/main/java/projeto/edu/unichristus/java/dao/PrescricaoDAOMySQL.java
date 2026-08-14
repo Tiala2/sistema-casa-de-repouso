@@ -9,6 +9,9 @@ public class PrescricaoDAOMySQL {
 
 
     public boolean salvar(Prescricao prescricao, int prontuarioId) {
+        if (prescricao == null || prontuarioId <= 0) {
+            return false;
+        }
         String sql = "INSERT INTO prescricao (medicamento, posologia, duracao, observacoes, prontuario_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -75,6 +78,9 @@ public class PrescricaoDAOMySQL {
     }
 
     public boolean atualizar(Prescricao prescricao) {
+        if (prescricao == null) {
+            return false;
+        }
         String sql = "UPDATE prescricao SET medicamento = ?, posologia = ?, duracao = ?, observacoes = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

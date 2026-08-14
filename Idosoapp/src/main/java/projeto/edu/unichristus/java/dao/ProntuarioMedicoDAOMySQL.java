@@ -11,6 +11,9 @@ public class ProntuarioMedicoDAOMySQL {
 
 
     public boolean salvar(ProntuarioMedico prontuario) {
+        if (prontuario == null || prontuario.getIdosa() == null) {
+            return false;
+        }
         String sql = "INSERT INTO prontuario_medico (data_hora_idosa, idosa_id) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -79,6 +82,9 @@ public class ProntuarioMedicoDAOMySQL {
     }
 
     public boolean atualizar(ProntuarioMedico prontuario) {
+        if (prontuario == null || prontuario.getIdosa() == null) {
+            return false;
+        }
         String sql = "UPDATE prontuario_medico SET data_hora_idosa = ?, idosa_id = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

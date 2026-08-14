@@ -9,6 +9,9 @@ public class IdosaDAOMySQL {
 
 
     public boolean salvar(Idosa idosa) {
+        if (idosa == null) {
+            return false;
+        }
         String sql = "INSERT INTO idosa (nome, cpf, data_nascimento, nome_mae, cartao_sus, data_entrada) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -80,6 +83,9 @@ public class IdosaDAOMySQL {
     }
 
     public boolean atualizar(Idosa idosa) {
+        if (idosa == null) {
+            return false;
+        }
         String sql = "UPDATE idosa SET nome = ?, cpf = ?, data_nascimento = ?, nome_mae = ?, cartao_sus = ?, data_entrada = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

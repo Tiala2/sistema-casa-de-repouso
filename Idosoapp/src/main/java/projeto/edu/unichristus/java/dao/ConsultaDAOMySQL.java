@@ -10,6 +10,9 @@ public class ConsultaDAOMySQL {
 
 
     public boolean salvar(Consulta consulta) {
+        if (consulta == null || consulta.getProfissional() == null) {
+            return false;
+        }
         String sql = "INSERT INTO consulta (data_hora, profissional_id, tipo, motivo, diagnostico, prontuario_id) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -91,6 +94,9 @@ public class ConsultaDAOMySQL {
     }
 
     public boolean atualizar(Consulta consulta) {
+        if (consulta == null || consulta.getProfissional() == null) {
+            return false;
+        }
         String sql = "UPDATE consulta SET data_hora = ?, profissional_id = ?, tipo = ?, motivo = ?, diagnostico = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

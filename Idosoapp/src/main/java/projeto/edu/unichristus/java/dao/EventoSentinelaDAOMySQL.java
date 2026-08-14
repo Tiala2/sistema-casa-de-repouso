@@ -10,6 +10,9 @@ public class EventoSentinelaDAOMySQL {
 
 
     public boolean salvar(EventoSentinela evento, int prontuarioId) {
+        if (evento == null || evento.getTipo() == null || prontuarioId <= 0) {
+            return false;
+        }
         String sql = "INSERT INTO evento_sentinela (tipo, data_ocorrencia, prontuario_id) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -70,6 +73,9 @@ public class EventoSentinelaDAOMySQL {
     }
 
     public boolean atualizar(EventoSentinela evento) {
+        if (evento == null || evento.getTipo() == null) {
+            return false;
+        }
         String sql = "UPDATE evento_sentinela SET tipo = ?, data_ocorrencia = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
