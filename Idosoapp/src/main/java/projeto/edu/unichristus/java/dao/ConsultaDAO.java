@@ -9,7 +9,7 @@ public class ConsultaDAO {
     private int nextId = 1;
 
     public boolean salvar(Consulta consulta) {
-        if (consulta == null) {
+        if (consulta == null || consulta.getDataHora() == null || consulta.getProfissional() == null || !DaoValidations.positiveId(consulta.getProfissional().getId())) {
             return false;
         }
         if (consulta.getId() == 0) {
@@ -33,7 +33,7 @@ public class ConsultaDAO {
     }
 
     public boolean atualizar(Consulta consulta) {
-        if (consulta == null) {
+        if (consulta == null || consulta.getDataHora() == null || consulta.getProfissional() == null || !DaoValidations.positiveId(consulta.getProfissional().getId())) {
             return false;
         }
         for (int i = 0; i < consultas.size(); i++) {

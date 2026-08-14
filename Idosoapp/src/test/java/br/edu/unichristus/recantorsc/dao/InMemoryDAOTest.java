@@ -133,4 +133,26 @@ class InMemoryDAOTest {
         assertFalse(new EventoSentinelaDAO().salvar(null));
         assertFalse(new EventoSentinelaDAO().atualizar(null));
     }
+
+    @Test
+    void daosEmMemoriaRecusamCamposObrigatoriosInvalidos() {
+        assertFalse(new IdosaDAO().salvar(new Idosa(0, " ", "123", null, null, null, null)));
+        assertFalse(new IdosaDAO().salvar(new Idosa(0, "Maria", " ", null, null, null, null)));
+        assertFalse(new PrescricaoDAO().salvar(new Prescricao(0, " ", "1x", "7 dias", null)));
+        assertFalse(new VacinaDAO().salvar(new Vacina(0, " ", LocalDate.of(2026, 8, 1))));
+        assertFalse(new VacinaDAO().salvar(new Vacina(0, "Influenza", null)));
+        assertFalse(new EventoSentinelaDAO().salvar(new EventoSentinela(0, null, LocalDate.of(2026, 8, 1))));
+        assertFalse(new EventoSentinelaDAO().salvar(new EventoSentinela(0, TipoEventoSentinela.QUEDA, null)));
+    }
+
+    @Test
+    void daosEmMemoriaRecusamVinculosObrigatoriosInvalidos() {
+        assertFalse(new ConsultaDAO().salvar(new Consulta(0, LocalDateTime.of(2026, 8, 14, 10, 0), null, "Rotina", null, null)));
+        assertFalse(new ConsultaDAO().salvar(new Consulta(0, null, new ProfissionalSaude(1, "Dra. Ana", "Geriatria", "CRM-1"), "Rotina", null, null)));
+        assertFalse(new ConsultaDAO().salvar(new Consulta(0, LocalDateTime.of(2026, 8, 14, 10, 0), new ProfissionalSaude(0, "Dra. Ana", "Geriatria", "CRM-1"), "Rotina", null, null)));
+
+        ProntuarioMedico prontuario = new ProntuarioMedico();
+        prontuario.setIdosa(new Idosa());
+        assertFalse(new ProntuarioDAO().salvar(prontuario));
+    }
 }

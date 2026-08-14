@@ -9,7 +9,7 @@ public class ProntuarioDAO {
     private int nextId = 1;
 
     public boolean salvar(ProntuarioMedico prontuario) {
-        if (prontuario == null) {
+        if (prontuario == null || prontuario.getIdosa() == null || !DaoValidations.positiveId(prontuario.getIdosa().getId())) {
             return false;
         }
         if (prontuario.getId() == 0) {
@@ -33,7 +33,7 @@ public class ProntuarioDAO {
     }
 
     public boolean atualizar(ProntuarioMedico prontuario) {
-        if (prontuario == null) {
+        if (prontuario == null || prontuario.getIdosa() == null || !DaoValidations.positiveId(prontuario.getIdosa().getId())) {
             return false;
         }
         for (int i = 0; i < prontuarios.size(); i++) {

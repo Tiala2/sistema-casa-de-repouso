@@ -9,7 +9,7 @@ public class PrescricaoDAO {
     private int nextId = 1;
 
     public boolean salvar(Prescricao prescricao) {
-        if (prescricao == null) {
+        if (prescricao == null || !DaoValidations.hasText(prescricao.getMedicamento())) {
             return false;
         }
         if (prescricao.getId() == 0) {
@@ -33,7 +33,7 @@ public class PrescricaoDAO {
     }
 
     public boolean atualizar(Prescricao prescricao) {
-        if (prescricao == null) {
+        if (prescricao == null || !DaoValidations.hasText(prescricao.getMedicamento())) {
             return false;
         }
         for (int i = 0; i < prescricoes.size(); i++) {

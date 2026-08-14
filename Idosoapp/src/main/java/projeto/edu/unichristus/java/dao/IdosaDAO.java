@@ -9,7 +9,7 @@ public class IdosaDAO {
     private int nextId = 1;
 
     public boolean salvar(Idosa idosa) {
-        if (idosa == null) {
+        if (idosa == null || !DaoValidations.hasText(idosa.getNome()) || !DaoValidations.hasText(idosa.getCpf())) {
             return false;
         }
         if (idosa.getId() == 0) {
@@ -33,7 +33,7 @@ public class IdosaDAO {
     }
 
     public boolean atualizar(Idosa idosa) {
-        if (idosa == null) {
+        if (idosa == null || !DaoValidations.hasText(idosa.getNome()) || !DaoValidations.hasText(idosa.getCpf())) {
             return false;
         }
         for (int i = 0; i < idosas.size(); i++) {
