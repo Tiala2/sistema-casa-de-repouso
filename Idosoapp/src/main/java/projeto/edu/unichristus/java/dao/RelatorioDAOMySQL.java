@@ -15,7 +15,7 @@ public class RelatorioDAOMySQL {
 
 
     public boolean salvar(Relatorio relatorio, int prontuarioId) {
-        if (relatorio == null || prontuarioId <= 0) {
+        if (relatorio == null || !DaoValidations.positiveId(prontuarioId) || !DaoValidations.hasText(relatorio.getDescricao()) || !DaoValidations.hasText(relatorio.getTipo())) {
             return false;
         }
         String sql = "INSERT INTO relatorio (descricao, tipo, prontuario_id) VALUES (?, ?, ?)";
@@ -78,7 +78,7 @@ public class RelatorioDAOMySQL {
     }
 
     public boolean atualizar(Relatorio relatorio) {
-        if (relatorio == null) {
+        if (relatorio == null || !DaoValidations.hasText(relatorio.getDescricao()) || !DaoValidations.hasText(relatorio.getTipo())) {
             return false;
         }
         String sql = "UPDATE relatorio SET descricao = ?, tipo = ? WHERE id = ?";

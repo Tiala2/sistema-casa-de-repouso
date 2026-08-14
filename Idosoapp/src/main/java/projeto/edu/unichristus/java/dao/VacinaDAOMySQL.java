@@ -9,7 +9,7 @@ public class VacinaDAOMySQL {
 
 
     public boolean salvar(Vacina vacina, int prontuarioId) {
-        if (vacina == null || prontuarioId <= 0) {
+        if (vacina == null || !DaoValidations.positiveId(prontuarioId) || !DaoValidations.hasText(vacina.getNome()) || vacina.getDataOcorrencia() == null) {
             return false;
         }
         String sql = "INSERT INTO vacina (nome, data_ocorrencia, prontuario_id) VALUES (?, ?, ?)";
@@ -72,7 +72,7 @@ public class VacinaDAOMySQL {
     }
 
     public boolean atualizar(Vacina vacina) {
-        if (vacina == null) {
+        if (vacina == null || !DaoValidations.hasText(vacina.getNome()) || vacina.getDataOcorrencia() == null) {
             return false;
         }
         String sql = "UPDATE vacina SET nome = ?, data_ocorrencia = ? WHERE id = ?";

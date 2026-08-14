@@ -9,7 +9,7 @@ public class PrescricaoDAOMySQL {
 
 
     public boolean salvar(Prescricao prescricao, int prontuarioId) {
-        if (prescricao == null || prontuarioId <= 0) {
+        if (prescricao == null || !DaoValidations.positiveId(prontuarioId) || !DaoValidations.hasText(prescricao.getMedicamento())) {
             return false;
         }
         String sql = "INSERT INTO prescricao (medicamento, posologia, duracao, observacoes, prontuario_id) VALUES (?, ?, ?, ?, ?)";
@@ -78,7 +78,7 @@ public class PrescricaoDAOMySQL {
     }
 
     public boolean atualizar(Prescricao prescricao) {
-        if (prescricao == null) {
+        if (prescricao == null || !DaoValidations.hasText(prescricao.getMedicamento())) {
             return false;
         }
         String sql = "UPDATE prescricao SET medicamento = ?, posologia = ?, duracao = ?, observacoes = ? WHERE id = ?";

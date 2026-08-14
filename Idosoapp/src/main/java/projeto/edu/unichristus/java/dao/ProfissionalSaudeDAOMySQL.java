@@ -9,7 +9,7 @@ public class ProfissionalSaudeDAOMySQL {
 
 
     public boolean salvar(ProfissionalSaude prof) {
-        if (prof == null) {
+        if (prof == null || !DaoValidations.hasText(prof.getNome())) {
             return false;
         }
         String sql = "INSERT INTO profissional_saude (nome, especialidade, registro_profissional) VALUES (?, ?, ?)";
@@ -74,7 +74,7 @@ public class ProfissionalSaudeDAOMySQL {
     }
 
     public boolean atualizar(ProfissionalSaude prof) {
-        if (prof == null) {
+        if (prof == null || !DaoValidations.hasText(prof.getNome())) {
             return false;
         }
         String sql = "UPDATE profissional_saude SET nome = ?, especialidade = ?, registro_profissional = ? WHERE id = ?";

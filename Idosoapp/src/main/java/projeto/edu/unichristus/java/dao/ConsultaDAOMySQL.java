@@ -11,7 +11,7 @@ public class ConsultaDAOMySQL {
 
 
     public boolean salvar(Consulta consulta) {
-        if (consulta == null || consulta.getDataHora() == null || consulta.getProfissional() == null) {
+        if (consulta == null || consulta.getDataHora() == null || consulta.getProfissional() == null || !DaoValidations.positiveId(consulta.getProfissional().getId())) {
             return false;
         }
         String sql = "INSERT INTO consulta (data_hora, profissional_id, tipo, motivo, diagnostico, prontuario_id) VALUES (?, ?, ?, ?, ?, ?)";
@@ -95,7 +95,7 @@ public class ConsultaDAOMySQL {
     }
 
     public boolean atualizar(Consulta consulta) {
-        if (consulta == null || consulta.getDataHora() == null || consulta.getProfissional() == null) {
+        if (consulta == null || consulta.getDataHora() == null || consulta.getProfissional() == null || !DaoValidations.positiveId(consulta.getProfissional().getId())) {
             return false;
         }
         String sql = "UPDATE consulta SET data_hora = ?, profissional_id = ?, tipo = ?, motivo = ?, diagnostico = ? WHERE id = ?";

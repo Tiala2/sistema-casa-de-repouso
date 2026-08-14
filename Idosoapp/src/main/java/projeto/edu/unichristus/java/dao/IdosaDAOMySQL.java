@@ -9,7 +9,7 @@ public class IdosaDAOMySQL {
 
 
     public boolean salvar(Idosa idosa) {
-        if (idosa == null) {
+        if (idosa == null || !DaoValidations.hasText(idosa.getNome()) || !DaoValidations.hasText(idosa.getCpf())) {
             return false;
         }
         String sql = "INSERT INTO idosa (nome, cpf, data_nascimento, nome_mae, cartao_sus, data_entrada) VALUES (?, ?, ?, ?, ?, ?)";
@@ -83,7 +83,7 @@ public class IdosaDAOMySQL {
     }
 
     public boolean atualizar(Idosa idosa) {
-        if (idosa == null) {
+        if (idosa == null || !DaoValidations.hasText(idosa.getNome()) || !DaoValidations.hasText(idosa.getCpf())) {
             return false;
         }
         String sql = "UPDATE idosa SET nome = ?, cpf = ?, data_nascimento = ?, nome_mae = ?, cartao_sus = ?, data_entrada = ? WHERE id = ?";
