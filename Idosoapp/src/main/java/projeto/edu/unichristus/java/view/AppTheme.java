@@ -2,6 +2,7 @@ package projeto.edu.unichristus.java.view;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
@@ -61,6 +62,7 @@ final class AppTheme {
 
     static JButton primaryButton(String text) {
         JButton button = new JButton(text);
+        clickable(button);
         button.setBackground(PRIMARY);
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
@@ -71,6 +73,7 @@ final class AppTheme {
 
     static JButton secondaryButton(String text) {
         JButton button = new JButton(text);
+        clickable(button);
         button.setBackground(SURFACE_ALT);
         button.setForeground(TEXT);
         button.setFocusPainted(false);
@@ -83,6 +86,12 @@ final class AppTheme {
         JButton button = secondaryButton(text);
         button.setForeground(DANGER);
         return button;
+    }
+
+    static void clickable(JButton button) {
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.setOpaque(true);
+        button.setRolloverEnabled(true);
     }
 
     static void input(JTextField field) {

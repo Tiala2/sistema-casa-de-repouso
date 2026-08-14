@@ -265,6 +265,7 @@ class DashboardPanel extends JPanel {
 
     private JButton actionCard(String title, String description, String key, MainFrame frame) {
         JButton button = new JButton("<html><b>" + title + "</b><br><span style='font-size:10px;color:#5C6A79'>" + description + "</span></html>");
+        AppTheme.clickable(button);
         button.setBackground(AppTheme.SURFACE);
         button.setForeground(AppTheme.TEXT);
         button.setFocusPainted(false);

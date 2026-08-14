@@ -119,6 +119,7 @@ public class MainFrame extends JFrame {
 
     private void navButton(JPanel parent, String key, String label) {
         JButton button = new JButton(label);
+        AppTheme.clickable(button);
         button.setBackground(AppTheme.NAV_BG);
         button.setForeground(AppTheme.NAV_TEXT);
         button.setFocusPainted(false);
