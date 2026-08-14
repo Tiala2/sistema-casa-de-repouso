@@ -57,8 +57,13 @@ public class MainFrame extends JFrame {
         cards.show(content, key);
         for (Map.Entry<String, JButton> entry : navButtons.entrySet()) {
             boolean active = entry.getKey().equals(key);
-            entry.getValue().setBackground(active ? AppTheme.NAV_ACTIVE : AppTheme.NAV_BG);
-            entry.getValue().setForeground(active ? Color.WHITE : AppTheme.NAV_TEXT);
+            JButton button = entry.getValue();
+            button.setBackground(active ? AppTheme.NAV_ACTIVE : AppTheme.NAV_BG);
+            button.setForeground(active ? Color.WHITE : AppTheme.NAV_TEXT);
+            button.setBorder(active ? BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 4, 0, 0, Color.WHITE),
+                BorderFactory.createEmptyBorder(10, 10, 10, 12)
+            ) : BorderFactory.createEmptyBorder(10, 14, 10, 12));
         }
     }
 
@@ -98,7 +103,7 @@ public class MainFrame extends JFrame {
         navButton(links, "relatorios", "Relatorios");
         nav.add(links, BorderLayout.CENTER);
 
-        JLabel status = new JLabel("<html><span style='color:#B7C7D5'>Java 8 + Maven + JDBC</span><br><span style='color:#7F95A8'>Banco MySQL local</span></html>");
+        JLabel status = new JLabel("<html><span style='color:#B7C7D5'>Operacao local conectada ao MySQL</span><br><span style='color:#7F95A8'>Java 8 + Maven + JDBC</span></html>");
         status.setFont(AppTheme.SMALL);
         nav.add(status, BorderLayout.SOUTH);
         return nav;
@@ -118,12 +123,41 @@ public class MainFrame extends JFrame {
         button.setForeground(AppTheme.NAV_TEXT);
         button.setFocusPainted(false);
         button.setFont(AppTheme.LABEL);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 12, 10, 12));
+        button.setBorder(BorderFactory.createEmptyBorder(10, 14, 10, 12));
         button.setHorizontalAlignment(JButton.LEFT);
         button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        button.setToolTipText(descriptionFor(key));
         button.addActionListener(e -> select(key));
         navButtons.put(key, button);
         parent.add(button);
         parent.add(Box.createVerticalStrut(4));
+    }
+
+    private String descriptionFor(String key) {
+        if ("dashboard".equals(key)) {
+            return "Visao geral dos indicadores e atalhos principais";
+        }
+        if ("idosas".equals(key)) {
+            return "Cadastrar e acompanhar dados das residentes";
+        }
+        if ("profissionais".equals(key)) {
+            return "Gerenciar equipe assistencial e registros profissionais";
+        }
+        if ("consultas".equals(key)) {
+            return "Registrar consultas, motivos e diagnosticos";
+        }
+        if ("prontuarios".equals(key)) {
+            return "Centralizar historico clinico da residente";
+        }
+        if ("prescricoes".equals(key)) {
+            return "Registrar medicacoes, posologia e observacoes";
+        }
+        if ("vacinas".equals(key)) {
+            return "Acompanhar vacinas aplicadas";
+        }
+        if ("eventos".equals(key)) {
+            return "Registrar ocorrencias assistenciais relevantes";
+        }
+        return "Registrar e consultar relatorios operacionais";
     }
 }
