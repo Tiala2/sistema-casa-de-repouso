@@ -9,6 +9,9 @@ public class IdosaDAO {
     private int nextId = 1;
 
     public boolean salvar(Idosa idosa) {
+        if (idosa == null) {
+            return false;
+        }
         if (idosa.getId() == 0) {
             idosa.setId(nextId++);
         }
@@ -30,6 +33,9 @@ public class IdosaDAO {
     }
 
     public boolean atualizar(Idosa idosa) {
+        if (idosa == null) {
+            return false;
+        }
         for (int i = 0; i < idosas.size(); i++) {
             if (idosas.get(i).getId() == idosa.getId()) {
                 idosas.set(i, idosa);

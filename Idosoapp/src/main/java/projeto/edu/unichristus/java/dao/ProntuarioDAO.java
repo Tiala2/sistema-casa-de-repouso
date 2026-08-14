@@ -9,6 +9,9 @@ public class ProntuarioDAO {
     private int nextId = 1;
 
     public boolean salvar(ProntuarioMedico prontuario) {
+        if (prontuario == null) {
+            return false;
+        }
         if (prontuario.getId() == 0) {
             prontuario.setId(nextId++);
         }
@@ -30,6 +33,9 @@ public class ProntuarioDAO {
     }
 
     public boolean atualizar(ProntuarioMedico prontuario) {
+        if (prontuario == null) {
+            return false;
+        }
         for (int i = 0; i < prontuarios.size(); i++) {
             if (prontuarios.get(i).getId() == prontuario.getId()) {
                 prontuarios.set(i, prontuario);

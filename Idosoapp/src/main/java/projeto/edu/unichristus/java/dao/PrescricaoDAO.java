@@ -9,6 +9,9 @@ public class PrescricaoDAO {
     private int nextId = 1;
 
     public boolean salvar(Prescricao prescricao) {
+        if (prescricao == null) {
+            return false;
+        }
         if (prescricao.getId() == 0) {
             prescricao.setId(nextId++);
         }
@@ -30,6 +33,9 @@ public class PrescricaoDAO {
     }
 
     public boolean atualizar(Prescricao prescricao) {
+        if (prescricao == null) {
+            return false;
+        }
         for (int i = 0; i < prescricoes.size(); i++) {
             if (prescricoes.get(i).getId() == prescricao.getId()) {
                 prescricoes.set(i, prescricao);

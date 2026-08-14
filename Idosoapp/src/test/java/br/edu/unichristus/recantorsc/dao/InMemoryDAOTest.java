@@ -1,6 +1,7 @@
 package br.edu.unichristus.recantorsc.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -115,5 +116,21 @@ class InMemoryDAOTest {
         assertTrue(eventos.atualizar(evento));
         assertEquals(TipoEventoSentinela.OUTRO, eventos.buscarPorId(evento.getId()).getTipo());
         assertTrue(eventos.remover(evento.getId()));
+    }
+
+    @Test
+    void daosEmMemoriaRecusamSalvarEAtualizarObjetoNulo() {
+        assertFalse(new IdosaDAO().salvar(null));
+        assertFalse(new IdosaDAO().atualizar(null));
+        assertFalse(new ConsultaDAO().salvar(null));
+        assertFalse(new ConsultaDAO().atualizar(null));
+        assertFalse(new ProntuarioDAO().salvar(null));
+        assertFalse(new ProntuarioDAO().atualizar(null));
+        assertFalse(new PrescricaoDAO().salvar(null));
+        assertFalse(new PrescricaoDAO().atualizar(null));
+        assertFalse(new VacinaDAO().salvar(null));
+        assertFalse(new VacinaDAO().atualizar(null));
+        assertFalse(new EventoSentinelaDAO().salvar(null));
+        assertFalse(new EventoSentinelaDAO().atualizar(null));
     }
 }

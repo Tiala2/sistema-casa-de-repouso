@@ -9,6 +9,9 @@ public class ConsultaDAO {
     private int nextId = 1;
 
     public boolean salvar(Consulta consulta) {
+        if (consulta == null) {
+            return false;
+        }
         if (consulta.getId() == 0) {
             consulta.setId(nextId++);
         }
@@ -30,6 +33,9 @@ public class ConsultaDAO {
     }
 
     public boolean atualizar(Consulta consulta) {
+        if (consulta == null) {
+            return false;
+        }
         for (int i = 0; i < consultas.size(); i++) {
             if (consultas.get(i).getId() == consulta.getId()) {
                 consultas.set(i, consulta);

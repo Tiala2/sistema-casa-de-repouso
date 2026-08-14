@@ -9,6 +9,9 @@ public class VacinaDAO {
     private int nextId = 1;
 
     public boolean salvar(Vacina vacina) {
+        if (vacina == null) {
+            return false;
+        }
         if (vacina.getId() == 0) {
             vacina.setId(nextId++);
         }
@@ -30,6 +33,9 @@ public class VacinaDAO {
     }
 
     public boolean atualizar(Vacina vacina) {
+        if (vacina == null) {
+            return false;
+        }
         for (int i = 0; i < vacinas.size(); i++) {
             if (vacinas.get(i).getId() == vacina.getId()) {
                 vacinas.set(i, vacina);

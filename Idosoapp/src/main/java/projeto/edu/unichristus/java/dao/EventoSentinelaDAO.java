@@ -9,6 +9,9 @@ public class EventoSentinelaDAO {
     private int nextId = 1;
 
     public boolean salvar(EventoSentinela evento) {
+        if (evento == null) {
+            return false;
+        }
         if (evento.getId() == 0) {
             evento.setId(nextId++);
         }
@@ -30,6 +33,9 @@ public class EventoSentinelaDAO {
     }
 
     public boolean atualizar(EventoSentinela evento) {
+        if (evento == null) {
+            return false;
+        }
         for (int i = 0; i < eventos.size(); i++) {
             if (eventos.get(i).getId() == evento.getId()) {
                 eventos.set(i, evento);
