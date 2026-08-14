@@ -5,11 +5,13 @@ import java.awt.GridLayout;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 
 import projeto.edu.unichristus.java.controller.ConsultaController;
 import projeto.edu.unichristus.java.controller.EventoSentinelaController;
@@ -31,13 +33,16 @@ class DashboardPanel extends JPanel {
     private final RelatorioController relatorioController = new RelatorioController();
     private final Map<String, JLabel> metricLabels = new LinkedHashMap<String, JLabel>();
     private final JLabel status = new JLabel();
+    private final JButton refresh;
+    private SwingWorker<DashboardSnapshot, Void> refreshWorker;
+    private int refreshGeneration;
 
     DashboardPanel(MainFrame frame) {
         super(new BorderLayout(0, 18));
         setBackground(AppTheme.BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
 
-        JButton refresh = AppTheme.primaryButton("Atualizar");
+        refresh = AppTheme.primaryButton("Atualizar");
         refresh.addActionListener(e -> refreshMetrics());
 
         add(Ui.moduleHeader(
@@ -85,20 +90,80 @@ class DashboardPanel extends JPanel {
     }
 
     void refreshMetrics() {
+        refreshGeneration++;
+        final int generation = refreshGeneration;
+        if (refreshWorker != null && !refreshWorker.isDone()) {
+            refreshWorker.cancel(true);
+        }
+
+        setLoading();
+        refreshWorker = new SwingWorker<DashboardSnapshot, Void>() {
+            protected DashboardSnapshot doInBackground() {
+                return loadSnapshot(generation);
+            }
+
+            protected void done() {
+                if (isCancelled()) {
+                    return;
+                }
+                try {
+                    DashboardSnapshot snapshot = get();
+                    if (snapshot.generation == refreshGeneration) {
+                        applySnapshot(snapshot);
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    showRefreshFailure();
+                } catch (ExecutionException e) {
+                    showRefreshFailure();
+                }
+            }
+        };
+        refreshWorker.execute();
+    }
+
+    private DashboardSnapshot loadSnapshot(int generation) {
+        DashboardSnapshot snapshot = new DashboardSnapshot(generation);
+        snapshot.put("Idosas", idosaController.listarIdosas());
+        snapshot.put("Consultas", consultaController.listarConsultas());
+        snapshot.put("Prontuarios", prontuarioController.listarProntuarios());
+        snapshot.put("Prescricoes", prescricaoController.listarPrescricoes());
+        snapshot.put("Profissionais", profissionalController.listarProfissionais());
+        snapshot.put("Vacinas", vacinaController.listarVacinas());
+        snapshot.put("Eventos", eventoController.listarEventos());
+        snapshot.put("Relatorios", relatorioController.listarRelatorios());
+        return snapshot;
+    }
+
+    private void applySnapshot(DashboardSnapshot snapshot) {
         int failures = 0;
-        failures += updateMetric("Idosas", idosaController.listarIdosas());
-        failures += updateMetric("Consultas", consultaController.listarConsultas());
-        failures += updateMetric("Prontuarios", prontuarioController.listarProntuarios());
-        failures += updateMetric("Prescricoes", prescricaoController.listarPrescricoes());
-        failures += updateMetric("Profissionais", profissionalController.listarProfissionais());
-        failures += updateMetric("Vacinas", vacinaController.listarVacinas());
-        failures += updateMetric("Eventos", eventoController.listarEventos());
-        failures += updateMetric("Relatorios", relatorioController.listarRelatorios());
+        for (Map.Entry<String, List<?>> entry : snapshot.metrics.entrySet()) {
+            failures += updateMetric(entry.getKey(), entry.getValue());
+        }
 
         if (failures == 0) {
             status.setText("Resumo atualizado com os dados retornados pelo banco configurado.");
         } else {
             status.setText(failures + " metrica(s) nao carregaram. Verifique a conexao e as tabelas do banco.");
+        }
+        refresh.setEnabled(true);
+    }
+
+    private void setLoading() {
+        refresh.setEnabled(false);
+        status.setText("Atualizando resumo do banco...");
+        for (JLabel label : metricLabels.values()) {
+            label.setText("...");
+            label.setForeground(AppTheme.MUTED);
+        }
+    }
+
+    private void showRefreshFailure() {
+        refresh.setEnabled(true);
+        status.setText("Nao foi possivel atualizar o resumo agora.");
+        for (JLabel label : metricLabels.values()) {
+            label.setText("Erro");
+            label.setForeground(AppTheme.DANGER);
         }
     }
 
@@ -139,5 +204,18 @@ class DashboardPanel extends JPanel {
         button.setHorizontalAlignment(JButton.LEFT);
         button.addActionListener(e -> frame.select(key));
         parent.add(button);
+    }
+
+    private static class DashboardSnapshot {
+        final int generation;
+        final Map<String, List<?>> metrics = new LinkedHashMap<String, List<?>>();
+
+        DashboardSnapshot(int generation) {
+            this.generation = generation;
+        }
+
+        void put(String label, List<?> values) {
+            metrics.put(label, values);
+        }
     }
 }

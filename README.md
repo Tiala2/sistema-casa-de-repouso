@@ -28,7 +28,7 @@ As dependencias foram mantidas enxutas: MySQL Connector/J para persistencia e JU
 
 A interface foi criada em Swing porque nao havia camada visual, classes `main`, Swing, JavaFX ou FXML no branch analisado. A nova apresentacao traduz a referencia editorial para um produto desktop tecnico:
 
-- dashboard com resumo vindo das listagens reais, atualizacao manual e recarga automatica ao voltar para a tela inicial;
+- dashboard com resumo vindo das listagens reais, atualizacao em background, botao manual e recarga automatica ao voltar para a tela inicial;
 - navegacao lateral com secao ativa;
 - cabecalhos de modulo com contexto, proposito e acao principal;
 - area principal para tabela e area secundaria para detalhes/formulario;
