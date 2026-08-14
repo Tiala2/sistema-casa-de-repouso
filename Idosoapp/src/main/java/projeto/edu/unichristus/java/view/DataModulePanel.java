@@ -306,11 +306,15 @@ abstract class DataModulePanel<T> extends JPanel {
         T selected = selectedValue();
         details.setText(selected == null ? "Selecione um registro para ver os detalhes." : details(selected));
         details.setCaretPosition(0);
-        if (selected != null) {
-            editingValue = selected;
-            populateForm(selected);
+        if (selected == null) {
+            editingValue = null;
+            clearForm();
             updateSaveButton();
+            return;
         }
+        editingValue = selected;
+        populateForm(selected);
+        updateSaveButton();
     }
 
     private void saveCurrent() {

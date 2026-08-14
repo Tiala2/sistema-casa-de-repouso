@@ -34,6 +34,7 @@ A interface foi criada em Swing porque nao havia camada visual, classes `main`, 
 - area principal para tabela e area secundaria para detalhes/formulario;
 - busca local nas listagens carregadas;
 - feedback imediato de quantidade visivel e estado sem resultado durante buscas locais;
+- formulario sai do modo de edicao quando o filtro deixa a linha selecionada fora da listagem visivel;
 - listagens ordenadas de forma previsivel por nome, data ou identificador conforme o modulo;
 - listagens carregadas em background para reduzir travamentos da interface quando o banco demora a responder;
 - operacoes de salvar e remover executadas em background, mantendo a janela responsiva durante chamadas JDBC;
