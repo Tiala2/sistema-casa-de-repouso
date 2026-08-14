@@ -161,8 +161,9 @@ class ConsultasPanel extends DataModulePanel<Consulta> {
 
     private void carregarProfissionais() {
         profissional.removeAllItems();
-        profissional.addItem(RefOption.empty("Selecione um profissional"));
-        for (ProfissionalSaude item : profissionalController.listarProfissionais()) {
+        List<ProfissionalSaude> profissionais = profissionalController.listarProfissionais();
+        profissional.addItem(RefOption.empty(profissionais.isEmpty() ? "Cadastre um profissional primeiro" : "Selecione um profissional"));
+        for (ProfissionalSaude item : profissionais) {
             profissional.addItem(RefOption.of(item.getId(), item.getNome()));
         }
     }
@@ -229,8 +230,9 @@ class ProntuariosPanel extends DataModulePanel<ProntuarioMedico> {
 
     private void carregarIdosas() {
         idosa.removeAllItems();
-        idosa.addItem(RefOption.empty("Selecione uma idosa"));
-        for (Idosa item : idosaController.listarIdosas()) {
+        List<Idosa> idosas = idosaController.listarIdosas();
+        idosa.addItem(RefOption.empty(idosas.isEmpty() ? "Cadastre uma idosa primeiro" : "Selecione uma idosa"));
+        for (Idosa item : idosas) {
             idosa.addItem(RefOption.of(item.getId(), item.getNome()));
         }
     }
@@ -304,12 +306,7 @@ class PrescricoesPanel extends DataModulePanel<Prescricao> {
     }
 
     private void carregarProntuarios() {
-        prontuario.removeAllItems();
-        prontuario.addItem(RefOption.empty(isEditing() ? "Prontuario original mantido na edicao" : "Selecione um prontuario"));
-        for (ProntuarioMedico item : prontuarioController.listarProntuarios()) {
-            String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
-            prontuario.addItem(RefOption.of(item.getId(), label));
-        }
+        RefOption.loadProntuarios(prontuario, prontuarioController.listarProntuarios(), isEditing());
     }
 }
 
@@ -415,12 +412,7 @@ class VacinasPanel extends DataModulePanel<Vacina> {
     }
 
     private void carregarProntuarios() {
-        prontuario.removeAllItems();
-        prontuario.addItem(RefOption.empty(isEditing() ? "Prontuario original mantido na edicao" : "Selecione um prontuario"));
-        for (ProntuarioMedico item : prontuarioController.listarProntuarios()) {
-            String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
-            prontuario.addItem(RefOption.of(item.getId(), label));
-        }
+        RefOption.loadProntuarios(prontuario, prontuarioController.listarProntuarios(), isEditing());
     }
 }
 
@@ -482,12 +474,7 @@ class EventosPanel extends DataModulePanel<EventoSentinela> {
     }
 
     private void carregarProntuarios() {
-        prontuario.removeAllItems();
-        prontuario.addItem(RefOption.empty(isEditing() ? "Prontuario original mantido na edicao" : "Selecione um prontuario"));
-        for (ProntuarioMedico item : prontuarioController.listarProntuarios()) {
-            String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
-            prontuario.addItem(RefOption.of(item.getId(), label));
-        }
+        RefOption.loadProntuarios(prontuario, prontuarioController.listarProntuarios(), isEditing());
     }
 }
 
@@ -549,12 +536,7 @@ class RelatoriosPanel extends DataModulePanel<Relatorio> {
     }
 
     private void carregarProntuarios() {
-        prontuario.removeAllItems();
-        prontuario.addItem(RefOption.empty(isEditing() ? "Prontuario original mantido na edicao" : "Selecione um prontuario"));
-        for (ProntuarioMedico item : prontuarioController.listarProntuarios()) {
-            String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
-            prontuario.addItem(RefOption.of(item.getId(), label));
-        }
+        RefOption.loadProntuarios(prontuario, prontuarioController.listarProntuarios(), isEditing());
     }
 }
 
@@ -573,6 +555,17 @@ class RefOption {
 
     static RefOption of(int id, String label) {
         return new RefOption(id, "#" + id + " - " + Ui.value(label));
+    }
+
+    static void loadProntuarios(JComboBox<RefOption> combo, List<ProntuarioMedico> prontuarios, boolean editing) {
+        combo.removeAllItems();
+        String placeholder = editing ? "Prontuario original mantido na edicao" :
+            (prontuarios.isEmpty() ? "Cadastre um prontuario primeiro" : "Selecione um prontuario");
+        combo.addItem(empty(placeholder));
+        for (ProntuarioMedico item : prontuarios) {
+            String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
+            combo.addItem(of(item.getId(), label));
+        }
     }
 
     public String toString() {
