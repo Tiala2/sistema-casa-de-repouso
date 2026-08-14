@@ -51,8 +51,7 @@ public class RelatorioDAOMySQL {
                 lista.add(relatorio);
             }
         } catch (SQLException e) {
-            DaoErrors.log("Erro de persistencia", e);
-            return null;
+            return DaoErrors.emptyList("Erro de persistencia", e);
         }
         return lista;
     }
@@ -127,9 +126,6 @@ public class RelatorioDAOMySQL {
             }
             totalProntuariosValidos++;
             List<EventoSentinela> eventos = eventoDAO.listarPorIdosaEPeriodo(prontuarioId, mes, ano);
-            if (eventos == null) {
-                throw new IllegalStateException("Nao foi possivel consultar eventos sentinela para o relatorio.");
-            }
             Set<TipoEventoSentinela> tiposDaIdosa = EnumSet.noneOf(TipoEventoSentinela.class);
             for (EventoSentinela evento : eventos) {
                 if (evento != null && evento.getTipo() != null) {

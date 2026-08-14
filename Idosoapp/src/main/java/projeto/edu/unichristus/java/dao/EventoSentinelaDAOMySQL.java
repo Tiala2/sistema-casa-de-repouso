@@ -47,8 +47,7 @@ public class EventoSentinelaDAOMySQL {
                 lista.add(evento);
             }
         } catch (SQLException e) {
-            DaoErrors.log("Erro de persistencia", e);
-            return null;
+            return DaoErrors.emptyList("Erro de persistencia", e);
         }
         return lista;
     }
@@ -133,8 +132,7 @@ public class EventoSentinelaDAOMySQL {
                 }
             }
         } catch (SQLException e) {
-            DaoErrors.log("Erro de persistencia", e);
-            return null;
+            return DaoErrors.emptyList("Erro de persistencia", e);
         }
         return lista;
     }
@@ -163,8 +161,7 @@ public class EventoSentinelaDAOMySQL {
                 }
             }
         } catch (SQLException e) {
-            DaoErrors.log("Erro de persistencia", e);
-            return null;
+            return DaoErrors.emptyList("Erro de persistencia", e);
         }
         return lista;
     }

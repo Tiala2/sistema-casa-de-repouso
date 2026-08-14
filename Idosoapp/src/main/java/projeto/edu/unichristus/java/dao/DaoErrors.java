@@ -1,6 +1,8 @@
 package projeto.edu.unichristus.java.dao;
 
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 
 final class DaoErrors {
 
@@ -22,5 +24,10 @@ final class DaoErrors {
         }
 
         System.err.println(message.toString());
+    }
+
+    static <T> List<T> emptyList(String operation, SQLException error) {
+        log(operation, error);
+        return Collections.emptyList();
     }
 }

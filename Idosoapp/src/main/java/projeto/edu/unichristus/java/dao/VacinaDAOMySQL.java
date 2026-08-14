@@ -45,8 +45,7 @@ public class VacinaDAOMySQL {
                 lista.add(vacina);
             }
         } catch (SQLException e) {
-            DaoErrors.log("Erro de persistencia", e);
-            return null;
+            return DaoErrors.emptyList("Erro de persistencia", e);
         }
         return lista;
     }
