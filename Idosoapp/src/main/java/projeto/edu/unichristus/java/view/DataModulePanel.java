@@ -44,6 +44,9 @@ abstract class DataModulePanel<T> extends JPanel {
     private int refreshGeneration;
     private boolean loading;
     private boolean operationRunning;
+    private String messageAfterRefresh;
+    private int messageAfterRefreshType;
+    private Integer selectIdAfterRefresh;
 
     DataModulePanel(String context, String title, String description, String[] columns) {
         super(new BorderLayout(0, 16));
@@ -217,17 +220,49 @@ abstract class DataModulePanel<T> extends JPanel {
             if (rows.isEmpty()) {
                 details.setText("Nenhum registro encontrado.");
                 startNew();
-                showMessage("Nenhum registro encontrado. Confira a conexao com o banco ou cadastre um novo item.", 0);
+                showRefreshMessageOrDefault("Nenhum registro encontrado. Confira a conexao com o banco ou cadastre um novo item.", 0);
             } else if (table.getRowCount() == 0) {
                 details.setText("Nenhum registro corresponde ao filtro atual.");
-                showMessage(rows.size() + " registro(s) carregado(s), sem resultado para a busca.", 0);
+                showRefreshMessageOrDefault(rows.size() + " registro(s) carregado(s), sem resultado para a busca.", 0);
             } else {
-                table.setRowSelectionInterval(0, 0);
-                showMessage(rows.size() + " registro(s) carregado(s).", 1);
+                selectPreferredRow();
+                showRefreshMessageOrDefault(rows.size() + " registro(s) carregado(s).", 1);
             }
         } catch (Exception e) {
             showLoadError(e.getMessage());
+        } finally {
+            clearRefreshFollowUp();
         }
+    }
+
+    private void showRefreshMessageOrDefault(String text, int type) {
+        showMessage(messageAfterRefresh != null ? messageAfterRefresh : text, messageAfterRefresh != null ? messageAfterRefreshType : type);
+    }
+
+    private void selectPreferredRow() {
+        int selectedModelRow = -1;
+        if (selectIdAfterRefresh != null) {
+            for (int i = 0; i < rows.size(); i++) {
+                if (idOf(rows.get(i)) == selectIdAfterRefresh.intValue()) {
+                    selectedModelRow = i;
+                    break;
+                }
+            }
+        }
+
+        int viewRow = selectedModelRow >= 0 ? table.convertRowIndexToView(selectedModelRow) : -1;
+        if (viewRow < 0 && table.getRowCount() > 0) {
+            viewRow = 0;
+        }
+        if (viewRow >= 0) {
+            table.setRowSelectionInterval(viewRow, viewRow);
+        }
+    }
+
+    private void clearRefreshFollowUp() {
+        messageAfterRefresh = null;
+        messageAfterRefreshType = 0;
+        selectIdAfterRefresh = null;
     }
 
     private void showLoading() {
@@ -244,6 +279,7 @@ abstract class DataModulePanel<T> extends JPanel {
         details.setText("Nao foi possivel carregar os dados.");
         String detail = message == null || message.trim().isEmpty() ? "erro nao informado" : message;
         showMessage("Erro ao carregar " + entityName() + ": " + detail, 2);
+        clearRefreshFollowUp();
     }
 
     private void setLoading(boolean value) {
@@ -300,8 +336,10 @@ abstract class DataModulePanel<T> extends JPanel {
                         return;
                     }
                     afterSave();
+                    messageAfterRefresh = wasEditing ? entityName() + " atualizado com sucesso." : entityName() + " salvo com sucesso.";
+                    messageAfterRefreshType = 1;
+                    selectIdAfterRefresh = Integer.valueOf(idOf(pending));
                     refreshData();
-                    showMessage(wasEditing ? entityName() + " atualizado com sucesso." : entityName() + " salvo com sucesso.", 1);
                 }
             });
         } catch (IllegalArgumentException e) {
@@ -339,8 +377,9 @@ abstract class DataModulePanel<T> extends JPanel {
                 if (removed) {
                     startNew();
                 }
+                messageAfterRefresh = removed ? "Registro removido com sucesso." : "Nenhum registro foi removido.";
+                messageAfterRefreshType = removed ? 1 : 0;
                 refreshData();
-                showMessage(removed ? "Registro removido com sucesso." : "Nenhum registro foi removido.", removed ? 1 : 0);
             }
         });
     }
