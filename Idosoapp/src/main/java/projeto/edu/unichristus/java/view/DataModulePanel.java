@@ -533,4 +533,12 @@ abstract class DataModulePanel<T> extends JPanel {
             throw new IllegalArgumentException(name + " deve ser um numero inteiro.");
         }
     }
+
+    protected int parsePositiveInt(JTextField field, String name) {
+        int value = parseInt(field, name);
+        if (value <= 0) {
+            throw new IllegalArgumentException(name + " deve ser maior que zero.");
+        }
+        return value;
+    }
 }
