@@ -24,6 +24,9 @@ public class VacinaDAO {
     }
 
     public Vacina buscarPorId(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return null;
+        }
         for (Vacina vacina : vacinas) {
             if (vacina.getId() == id) {
                 return vacina;
@@ -46,6 +49,9 @@ public class VacinaDAO {
     }
 
     public boolean remover(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return false;
+        }
         return vacinas.removeIf(v -> v.getId() == id);
     }
 }

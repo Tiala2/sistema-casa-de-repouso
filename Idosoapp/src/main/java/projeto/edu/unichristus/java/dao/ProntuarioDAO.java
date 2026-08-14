@@ -24,6 +24,9 @@ public class ProntuarioDAO {
     }
 
     public ProntuarioMedico buscarPorId(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return null;
+        }
         for (ProntuarioMedico prontuario : prontuarios) {
             if (prontuario.getId() == id) {
                 return prontuario;
@@ -46,6 +49,9 @@ public class ProntuarioDAO {
     }
 
     public boolean remover(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return false;
+        }
         return prontuarios.removeIf(p -> p.getId() == id);
     }
 }

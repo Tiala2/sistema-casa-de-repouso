@@ -24,6 +24,9 @@ public class ConsultaDAO {
     }
 
     public Consulta buscarPorId(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return null;
+        }
         for (Consulta consulta : consultas) {
             if (consulta.getId() == id) {
                 return consulta;
@@ -46,6 +49,9 @@ public class ConsultaDAO {
     }
 
     public boolean remover(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return false;
+        }
         return consultas.removeIf(c -> c.getId() == id);
     }
 }

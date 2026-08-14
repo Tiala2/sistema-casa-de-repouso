@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
@@ -154,5 +155,21 @@ class InMemoryDAOTest {
         ProntuarioMedico prontuario = new ProntuarioMedico();
         prontuario.setIdosa(new Idosa());
         assertFalse(new ProntuarioDAO().salvar(prontuario));
+    }
+
+    @Test
+    void daosEmMemoriaRecusamBuscaERemocaoComIdInvalido() {
+        assertNull(new IdosaDAO().buscarPorId(0));
+        assertFalse(new IdosaDAO().remover(0));
+        assertNull(new ConsultaDAO().buscarPorId(-1));
+        assertFalse(new ConsultaDAO().remover(-1));
+        assertNull(new ProntuarioDAO().buscarPorId(0));
+        assertFalse(new ProntuarioDAO().remover(0));
+        assertNull(new PrescricaoDAO().buscarPorId(-1));
+        assertFalse(new PrescricaoDAO().remover(-1));
+        assertNull(new VacinaDAO().buscarPorId(0));
+        assertFalse(new VacinaDAO().remover(0));
+        assertNull(new EventoSentinelaDAO().buscarPorId(-1));
+        assertFalse(new EventoSentinelaDAO().remover(-1));
     }
 }

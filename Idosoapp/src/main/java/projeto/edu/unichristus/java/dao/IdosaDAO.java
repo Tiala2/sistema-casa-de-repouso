@@ -24,6 +24,9 @@ public class IdosaDAO {
     }
 
     public Idosa buscarPorId(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return null;
+        }
         for (Idosa idosa : idosas) {
             if (idosa.getId() == id) {
                 return idosa;
@@ -46,6 +49,9 @@ public class IdosaDAO {
     }
 
     public boolean remover(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return false;
+        }
         return idosas.removeIf(i -> i.getId() == id);
     }
 }

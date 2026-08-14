@@ -24,6 +24,9 @@ public class EventoSentinelaDAO {
     }
 
     public EventoSentinela buscarPorId(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return null;
+        }
         for (EventoSentinela evento : eventos) {
             if (evento.getId() == id) {
                 return evento;
@@ -46,6 +49,9 @@ public class EventoSentinelaDAO {
     }
 
     public boolean remover(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return false;
+        }
         return eventos.removeIf(e -> e.getId() == id);
     }
 }

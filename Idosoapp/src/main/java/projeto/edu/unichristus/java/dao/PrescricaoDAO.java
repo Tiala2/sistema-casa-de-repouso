@@ -24,6 +24,9 @@ public class PrescricaoDAO {
     }
 
     public Prescricao buscarPorId(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return null;
+        }
         for (Prescricao prescricao : prescricoes) {
             if (prescricao.getId() == id) {
                 return prescricao;
@@ -46,6 +49,9 @@ public class PrescricaoDAO {
     }
 
     public boolean remover(int id) {
+        if (!DaoValidations.positiveId(id)) {
+            return false;
+        }
         return prescricoes.removeIf(p -> p.getId() == id);
     }
 }
