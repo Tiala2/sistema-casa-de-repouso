@@ -1,0 +1,33 @@
+name: Java CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - 'feat/**'
+  pull_request:
+
+jobs:
+  build:
+    name: Test and package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+          cache: maven
+
+      - name: Run tests
+        working-directory: Idosoapp
+        run: mvn -q test
+
+      - name: Package executable jar
+        working-directory: Idosoapp
+        run: mvn -q package
