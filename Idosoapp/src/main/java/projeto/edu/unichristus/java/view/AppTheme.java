@@ -11,21 +11,25 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 
 final class AppTheme {
-    static final Color BACKGROUND = new Color(246, 247, 244);
+    static final Color BACKGROUND = new Color(244, 247, 251);
     static final Color SURFACE = new Color(255, 255, 255);
-    static final Color SURFACE_ALT = new Color(236, 241, 238);
-    static final Color TEXT = new Color(33, 38, 36);
-    static final Color MUTED = new Color(96, 105, 101);
-    static final Color LINE = new Color(214, 221, 216);
-    static final Color PRIMARY = new Color(42, 91, 76);
-    static final Color PRIMARY_DARK = new Color(28, 62, 52);
-    static final Color DANGER = new Color(151, 55, 45);
-    static final Color WARNING_BG = new Color(255, 248, 224);
+    static final Color SURFACE_ALT = new Color(235, 243, 249);
+    static final Color TEXT = new Color(27, 39, 51);
+    static final Color MUTED = new Color(92, 106, 121);
+    static final Color LINE = new Color(213, 222, 232);
+    static final Color PRIMARY = new Color(0, 125, 101);
+    static final Color PRIMARY_DARK = new Color(0, 82, 72);
+    static final Color ACCENT = new Color(0, 150, 199);
+    static final Color NAV_BG = new Color(21, 37, 53);
+    static final Color NAV_ACTIVE = new Color(0, 125, 101);
+    static final Color NAV_TEXT = new Color(231, 239, 246);
+    static final Color DANGER = new Color(177, 58, 46);
+    static final Color WARNING_BG = new Color(255, 249, 229);
     static final Color ERROR_BG = new Color(255, 239, 236);
-    static final Color SUCCESS_BG = new Color(232, 246, 238);
+    static final Color SUCCESS_BG = new Color(231, 248, 241);
 
-    static final Font TITLE = new Font("SansSerif", Font.BOLD, 24);
-    static final Font SECTION_TITLE = new Font("SansSerif", Font.BOLD, 18);
+    static final Font TITLE = new Font("SansSerif", Font.BOLD, 26);
+    static final Font SECTION_TITLE = new Font("SansSerif", Font.BOLD, 17);
     static final Font LABEL = new Font("SansSerif", Font.BOLD, 12);
     static final Font BODY = new Font("SansSerif", Font.PLAIN, 13);
     static final Font SMALL = new Font("SansSerif", Font.PLAIN, 12);
@@ -36,7 +40,7 @@ final class AppTheme {
     static Border panelBorder() {
         return BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(LINE),
-            BorderFactory.createEmptyBorder(16, 16, 16, 16)
+            BorderFactory.createEmptyBorder(18, 18, 18, 18)
         );
     }
 
@@ -57,6 +61,7 @@ final class AppTheme {
         button.setBackground(PRIMARY);
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
+        button.setFont(LABEL);
         button.setBorder(BorderFactory.createEmptyBorder(9, 14, 9, 14));
         return button;
     }
@@ -66,6 +71,7 @@ final class AppTheme {
         button.setBackground(SURFACE_ALT);
         button.setForeground(TEXT);
         button.setFocusPainted(false);
+        button.setFont(LABEL);
         button.setBorder(BorderFactory.createEmptyBorder(9, 14, 9, 14));
         return button;
     }
@@ -77,13 +83,13 @@ final class AppTheme {
     }
 
     static void table(JTable table) {
-        table.setRowHeight(30);
+        table.setRowHeight(34);
         table.setFont(BODY);
         table.getTableHeader().setFont(LABEL);
-        table.getTableHeader().setBackground(SURFACE_ALT);
+        table.getTableHeader().setBackground(new Color(225, 237, 246));
         table.getTableHeader().setForeground(TEXT);
         table.setGridColor(LINE);
-        table.setSelectionBackground(new Color(214, 232, 225));
+        table.setSelectionBackground(new Color(210, 238, 231));
         table.setSelectionForeground(TEXT);
         table.setFillsViewportHeight(true);
     }

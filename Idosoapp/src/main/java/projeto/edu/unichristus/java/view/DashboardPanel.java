@@ -1,6 +1,7 @@
 package projeto.edu.unichristus.java.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,16 +48,16 @@ class DashboardPanel extends JPanel {
 
         add(Ui.moduleHeader(
             "Inicio",
-            "Sistema de Gestao de Casa de Repouso",
-            "Ponto de entrada para cadastros, acompanhamento clinico e relatorios operacionais.",
+            "Painel operacional",
+            "Visao executiva dos cadastros, prontuarios e rotinas assistenciais.",
             refresh
         ), BorderLayout.NORTH);
 
-        JPanel center = new JPanel(new GridLayout(1, 2, 16, 0));
+        JPanel center = new JPanel(new BorderLayout(16, 16));
         center.setOpaque(false);
 
-        JPanel summary = Ui.block("Resumo real do banco", "Contagens calculadas pelas listagens existentes.");
-        JPanel summaryGrid = new JPanel(new GridLayout(0, 2, 12, 12));
+        JPanel summary = Ui.block("Indicadores do sistema", "Contagens atualizadas diretamente pelas listagens do banco.");
+        JPanel summaryGrid = new JPanel(new GridLayout(2, 4, 12, 12));
         summaryGrid.setOpaque(false);
         addMetric(summaryGrid, "Idosas");
         addMetric(summaryGrid, "Consultas");
@@ -68,21 +69,35 @@ class DashboardPanel extends JPanel {
         addMetric(summaryGrid, "Relatorios");
         summary.add(summaryGrid, BorderLayout.CENTER);
 
-        JPanel modules = Ui.block("Modulos disponiveis", "Acesso direto aos fluxos implementados no dominio.");
-        JPanel links = new JPanel(new GridLayout(0, 1, 0, 10));
+        JPanel lower = new JPanel(new GridLayout(1, 2, 16, 0));
+        lower.setOpaque(false);
+
+        JPanel flow = Ui.block("Fluxo recomendado", "Ordem natural para alimentar o prontuario completo.");
+        JPanel flowSteps = new JPanel(new GridLayout(0, 1, 0, 8));
+        flowSteps.setOpaque(false);
+        step(flowSteps, "1", "Cadastre profissionais e idosas", "Base para consultas e prontuarios.");
+        step(flowSteps, "2", "Abra o prontuario medico", "Conecta a residente aos registros clinicos.");
+        step(flowSteps, "3", "Registre consultas e cuidados", "Prescricoes, vacinas e eventos sentinela.");
+        step(flowSteps, "4", "Acompanhe por relatorios", "Consolide registros operacionais.");
+        flow.add(flowSteps, BorderLayout.CENTER);
+
+        JPanel modules = Ui.block("Acoes rapidas", "Acesso direto aos fluxos mais usados.");
+        JPanel links = new JPanel(new GridLayout(0, 2, 10, 10));
         links.setOpaque(false);
-        link(links, "Cadastro de idosas", "idosas", frame);
-        link(links, "Agenda de consultas", "consultas", frame);
-        link(links, "Prontuarios medicos", "prontuarios", frame);
-        link(links, "Prescricoes e medicacoes", "prescricoes", frame);
-        link(links, "Profissionais de saude", "profissionais", frame);
-        link(links, "Vacinas", "vacinas", frame);
-        link(links, "Eventos sentinela", "eventos", frame);
-        link(links, "Relatorios operacionais", "relatorios", frame);
+        link(links, "Nova idosa", "idosas", frame);
+        link(links, "Profissional", "profissionais", frame);
+        link(links, "Prontuario", "prontuarios", frame);
+        link(links, "Consulta", "consultas", frame);
+        link(links, "Prescricao", "prescricoes", frame);
+        link(links, "Vacina", "vacinas", frame);
+        link(links, "Evento", "eventos", frame);
+        link(links, "Relatorio", "relatorios", frame);
         modules.add(links, BorderLayout.CENTER);
 
-        center.add(summary);
-        center.add(modules);
+        lower.add(flow);
+        lower.add(modules);
+        center.add(summary, BorderLayout.NORTH);
+        center.add(lower, BorderLayout.CENTER);
         add(center, BorderLayout.CENTER);
         status.setFont(AppTheme.BODY);
         add(Ui.messagePanel(status, 0), BorderLayout.SOUTH);
@@ -184,8 +199,11 @@ class DashboardPanel extends JPanel {
 
     private void addMetric(JPanel parent, String label) {
         JPanel card = new JPanel(new BorderLayout(0, 4));
-        card.setBackground(AppTheme.SURFACE_ALT);
-        card.setBorder(BorderFactory.createEmptyBorder(14, 14, 14, 14));
+        card.setBackground(AppTheme.SURFACE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(AppTheme.LINE),
+            BorderFactory.createEmptyBorder(16, 16, 16, 16)
+        ));
 
         JLabel number = new JLabel("-");
         number.setFont(AppTheme.TITLE);
@@ -199,9 +217,30 @@ class DashboardPanel extends JPanel {
         metricLabels.put(label, number);
     }
 
+    private void step(JPanel parent, String number, String title, String description) {
+        JPanel row = new JPanel(new BorderLayout(12, 0));
+        row.setOpaque(false);
+
+        JLabel badge = new JLabel(number);
+        badge.setOpaque(true);
+        badge.setHorizontalAlignment(JLabel.CENTER);
+        badge.setForeground(Color.WHITE);
+        badge.setBackground(AppTheme.ACCENT);
+        badge.setFont(AppTheme.LABEL);
+        badge.setBorder(BorderFactory.createEmptyBorder(7, 10, 7, 10));
+
+        JLabel copy = new JLabel("<html><b>" + title + "</b><br><span style='color:#5C6A79'>" + description + "</span></html>");
+        copy.setFont(AppTheme.BODY);
+        copy.setForeground(AppTheme.TEXT);
+
+        row.add(badge, BorderLayout.WEST);
+        row.add(copy, BorderLayout.CENTER);
+        parent.add(row);
+    }
+
     private void link(JPanel parent, String label, String key, MainFrame frame) {
         JButton button = AppTheme.secondaryButton(label);
-        button.setHorizontalAlignment(JButton.LEFT);
+        button.setHorizontalAlignment(JButton.CENTER);
         button.addActionListener(e -> frame.select(key));
         parent.add(button);
     }

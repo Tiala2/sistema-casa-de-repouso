@@ -60,7 +60,7 @@ abstract class DataModulePanel<T> extends JPanel {
         JPanel main = new JPanel(new BorderLayout(16, 0));
         main.setOpaque(false);
 
-        JPanel left = Ui.block("Conteudo principal", "Registros carregados das consultas existentes.");
+        JPanel left = Ui.block("Registros", "Busque, selecione e acompanhe os dados cadastrados.");
         model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -77,7 +77,7 @@ abstract class DataModulePanel<T> extends JPanel {
         tableArea.setOpaque(false);
         filterField = new JTextField();
         filterField.setFont(AppTheme.BODY);
-        filterField.setToolTipText("Filtrar registros carregados");
+        filterField.setToolTipText("Filtrar registros visiveis");
         filterField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -102,11 +102,11 @@ abstract class DataModulePanel<T> extends JPanel {
         JPanel right = new JPanel(new GridLayout(2, 1, 0, 16));
         right.setOpaque(false);
 
-        JPanel detailBlock = Ui.block("Detalhes do registro", "Selecione uma linha para revisar o contexto.");
+        JPanel detailBlock = Ui.block("Ficha do registro", "Contexto completo da linha selecionada.");
         details = Ui.detailsArea();
         detailBlock.add(new JScrollPane(details), BorderLayout.CENTER);
 
-        formHost = Ui.block("Acao principal", "Preencha os campos obrigatorios e salve.");
+        formHost = Ui.block("Cadastro e edicao", "Preencha os campos obrigatorios e salve.");
         formHost.add(buildForm(), BorderLayout.CENTER);
 
         JPanel actions = new JPanel();

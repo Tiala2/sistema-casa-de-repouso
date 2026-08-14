@@ -2,12 +2,14 @@ package projeto.edu.unichristus.java.view;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -55,8 +57,8 @@ public class MainFrame extends JFrame {
         cards.show(content, key);
         for (Map.Entry<String, JButton> entry : navButtons.entrySet()) {
             boolean active = entry.getKey().equals(key);
-            entry.getValue().setBackground(active ? AppTheme.PRIMARY : AppTheme.SURFACE);
-            entry.getValue().setForeground(active ? java.awt.Color.WHITE : AppTheme.TEXT);
+            entry.getValue().setBackground(active ? AppTheme.NAV_ACTIVE : AppTheme.NAV_BG);
+            entry.getValue().setForeground(active ? Color.WHITE : AppTheme.NAV_TEXT);
         }
     }
 
@@ -66,42 +68,62 @@ public class MainFrame extends JFrame {
 
     private JPanel buildNavigation() {
         JPanel nav = new JPanel(new BorderLayout(0, 16));
-        nav.setPreferredSize(new Dimension(235, 1));
-        nav.setBackground(AppTheme.SURFACE);
+        nav.setPreferredSize(new Dimension(260, 1));
+        nav.setBackground(AppTheme.NAV_BG);
         nav.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 0, 1, AppTheme.LINE),
-            BorderFactory.createEmptyBorder(24, 18, 24, 18)
+            BorderFactory.createMatteBorder(0, 0, 0, 1, new Color(12, 25, 38)),
+            BorderFactory.createEmptyBorder(22, 18, 22, 18)
         ));
 
-        JLabel brand = new JLabel("<html><b>Recanto RSC</b><br><span style='color:#606965'>Gestao assistencial</span></html>");
-        brand.setForeground(AppTheme.TEXT);
+        JLabel brand = new JLabel("<html><span style='font-size:18px'><b>Recanto RSC</b></span><br><span style='color:#B7C7D5'>Gestao assistencial integrada</span></html>");
+        brand.setForeground(AppTheme.NAV_TEXT);
         brand.setFont(AppTheme.SECTION_TITLE);
         nav.add(brand, BorderLayout.NORTH);
 
-        JPanel links = new JPanel(new GridLayout(0, 1, 0, 8));
+        JPanel links = new JPanel();
+        links.setLayout(new BoxLayout(links, BoxLayout.Y_AXIS));
         links.setOpaque(false);
+        navSection(links, "Painel");
         navButton(links, "dashboard", "Inicio");
+        navSection(links, "Cadastros");
         navButton(links, "idosas", "Cadastro de idosas");
+        navButton(links, "profissionais", "Profissionais");
+        navSection(links, "Clinico");
         navButton(links, "consultas", "Agenda de consultas");
         navButton(links, "prontuarios", "Prontuarios medicos");
         navButton(links, "prescricoes", "Prescricoes");
-        navButton(links, "profissionais", "Profissionais");
         navButton(links, "vacinas", "Vacinas");
         navButton(links, "eventos", "Eventos sentinela");
+        navSection(links, "Gestao");
         navButton(links, "relatorios", "Relatorios");
         nav.add(links, BorderLayout.CENTER);
 
-        JLabel status = new JLabel("<html><span style='color:#606965'>Java 8 + Maven + JDBC</span></html>");
+        JLabel status = new JLabel("<html><span style='color:#B7C7D5'>Java 8 + Maven + JDBC</span><br><span style='color:#7F95A8'>Banco MySQL local</span></html>");
         status.setFont(AppTheme.SMALL);
         nav.add(status, BorderLayout.SOUTH);
         return nav;
     }
 
+    private void navSection(JPanel parent, String label) {
+        JLabel section = new JLabel(label.toUpperCase());
+        section.setFont(AppTheme.SMALL);
+        section.setForeground(new Color(127, 149, 168));
+        section.setBorder(BorderFactory.createEmptyBorder(14, 8, 6, 8));
+        parent.add(section);
+    }
+
     private void navButton(JPanel parent, String key, String label) {
-        JButton button = AppTheme.secondaryButton(label);
+        JButton button = new JButton(label);
+        button.setBackground(AppTheme.NAV_BG);
+        button.setForeground(AppTheme.NAV_TEXT);
+        button.setFocusPainted(false);
+        button.setFont(AppTheme.LABEL);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 12, 10, 12));
         button.setHorizontalAlignment(JButton.LEFT);
+        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         button.addActionListener(e -> select(key));
         navButtons.put(key, button);
         parent.add(button);
+        parent.add(Box.createVerticalStrut(4));
     }
 }
