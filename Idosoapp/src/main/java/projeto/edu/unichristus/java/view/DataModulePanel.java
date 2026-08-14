@@ -43,6 +43,7 @@ abstract class DataModulePanel<T> extends JPanel {
     private SwingWorker<List<T>, Void> refreshWorker;
     private int refreshGeneration;
     private boolean loading;
+    private boolean operationRunning;
 
     DataModulePanel(String context, String title, String description, String[] columns) {
         super(new BorderLayout(0, 16));
@@ -247,19 +248,23 @@ abstract class DataModulePanel<T> extends JPanel {
 
     private void setLoading(boolean value) {
         loading = value;
-        refreshButton.setEnabled(!value);
-        newButton.setEnabled(!value);
-        saveButton.setEnabled(!value);
-        removeButton.setEnabled(!value);
-        table.setEnabled(!value);
-        filterField.setEnabled(!value);
-        if (!value) {
+        setControlsEnabled(!value && !operationRunning);
+    }
+
+    private void setControlsEnabled(boolean enabled) {
+        refreshButton.setEnabled(enabled);
+        newButton.setEnabled(enabled);
+        saveButton.setEnabled(enabled);
+        removeButton.setEnabled(enabled);
+        table.setEnabled(enabled);
+        filterField.setEnabled(enabled);
+        if (enabled) {
             updateSaveButton();
         }
     }
 
     private void updateDetails() {
-        if (loading) {
+        if (isBusy()) {
             return;
         }
         T selected = selectedValue();
@@ -273,27 +278,32 @@ abstract class DataModulePanel<T> extends JPanel {
     }
 
     private void saveCurrent() {
-        if (loading) {
-            showMessage("Aguarde o carregamento terminar antes de salvar.", 0);
+        if (isBusy()) {
+            showMessage("Aguarde a operacao atual terminar antes de salvar.", 0);
             return;
         }
         try {
-            boolean wasEditing = editingValue != null;
+            final boolean wasEditing = editingValue != null;
             T value = readForm();
-            boolean changed;
-            if (!wasEditing) {
-                changed = save(value);
-            } else {
+            if (wasEditing) {
                 setId(value, idOf(editingValue));
-                changed = update(value);
             }
-            if (!changed) {
-                showMessage(wasEditing ? "Nenhum registro foi atualizado." : "Nenhum registro foi salvo.", 0);
-                return;
-            }
-            afterSave();
-            refreshData();
-            showMessage(wasEditing ? entityName() + " atualizado com sucesso." : entityName() + " salvo com sucesso.", 1);
+            final T pending = value;
+            runMutation("Salvando " + entityName() + "...", new MutationTask() {
+                public boolean execute() {
+                    return wasEditing ? update(pending) : save(pending);
+                }
+            }, new MutationResult() {
+                public void handle(boolean changed) {
+                    if (!changed) {
+                        showMessage(wasEditing ? "Nenhum registro foi atualizado." : "Nenhum registro foi salvo.", 0);
+                        return;
+                    }
+                    afterSave();
+                    refreshData();
+                    showMessage(wasEditing ? entityName() + " atualizado com sucesso." : entityName() + " salvo com sucesso.", 1);
+                }
+            });
         } catch (IllegalArgumentException e) {
             showMessage(e.getMessage(), 2);
         } catch (Exception e) {
@@ -302,11 +312,11 @@ abstract class DataModulePanel<T> extends JPanel {
     }
 
     private void removeSelected() {
-        if (loading) {
-            showMessage("Aguarde o carregamento terminar antes de remover.", 0);
+        if (isBusy()) {
+            showMessage("Aguarde a operacao atual terminar antes de remover.", 0);
             return;
         }
-        T selected = selectedValue();
+        final T selected = selectedValue();
         if (selected == null) {
             showMessage("Selecione um registro antes de remover.", 0);
             return;
@@ -320,21 +330,24 @@ abstract class DataModulePanel<T> extends JPanel {
         if (answer != JOptionPane.YES_OPTION) {
             return;
         }
-        try {
-            boolean removed = remove(selected);
-            refreshData();
-            if (removed) {
-                startNew();
+        runMutation("Removendo " + entityName() + "...", new MutationTask() {
+            public boolean execute() {
+                return remove(selected);
             }
-            showMessage(removed ? "Registro removido com sucesso." : "Nenhum registro foi removido.", removed ? 1 : 0);
-        } catch (Exception e) {
-            showMessage("Erro ao remover " + entityName() + ": " + e.getMessage(), 2);
-        }
+        }, new MutationResult() {
+            public void handle(boolean removed) {
+                if (removed) {
+                    startNew();
+                }
+                refreshData();
+                showMessage(removed ? "Registro removido com sucesso." : "Nenhum registro foi removido.", removed ? 1 : 0);
+            }
+        });
     }
 
     private void startNew() {
-        if (loading) {
-            showMessage("Aguarde o carregamento terminar antes de criar um novo registro.", 0);
+        if (isBusy()) {
+            showMessage("Aguarde a operacao atual terminar antes de criar um novo registro.", 0);
             return;
         }
         editingValue = null;
@@ -342,6 +355,43 @@ abstract class DataModulePanel<T> extends JPanel {
         table.clearSelection();
         details.setText("Preencha o formulario para criar um novo registro.");
         updateSaveButton();
+    }
+
+    private void runMutation(String message, final MutationTask task, final MutationResult result) {
+        setOperationRunning(true);
+        showMessage(message, 0);
+        SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+            protected Boolean doInBackground() {
+                return Boolean.valueOf(task.execute());
+            }
+
+            protected void done() {
+                setOperationRunning(false);
+                try {
+                    result.handle(get().booleanValue());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    showMessage("Operacao interrompida.", 2);
+                } catch (ExecutionException e) {
+                    String message = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+                    showMessage("Erro ao executar operacao em " + entityName() + ": " + safeDetail(message), 2);
+                }
+            }
+        };
+        worker.execute();
+    }
+
+    private void setOperationRunning(boolean value) {
+        operationRunning = value;
+        setControlsEnabled(!value && !loading);
+    }
+
+    private boolean isBusy() {
+        return loading || operationRunning;
+    }
+
+    private String safeDetail(String message) {
+        return message == null || message.trim().isEmpty() ? "erro nao informado" : message;
     }
 
     private T selectedValue() {
@@ -354,6 +404,14 @@ abstract class DataModulePanel<T> extends JPanel {
             return null;
         }
         return rows.get(modelRow);
+    }
+
+    private interface MutationTask {
+        boolean execute();
+    }
+
+    private interface MutationResult {
+        void handle(boolean changed);
     }
 
     protected void showMessage(String text, int type) {

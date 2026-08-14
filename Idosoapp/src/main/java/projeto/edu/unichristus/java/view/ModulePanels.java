@@ -123,14 +123,12 @@ class ConsultasPanel extends DataModulePanel<Consulta> {
     protected Consulta readForm() {
         require(dataHora, "Data/hora");
         require(profissionalId, "ID profissional");
-        ProfissionalSaude prof = profissionalController.buscarPorId(parseInt(profissionalId, "ID profissional"));
-        if (prof == null) {
-            throw new IllegalArgumentException("ID profissional nao encontrado ou banco indisponivel.");
-        }
+        ProfissionalSaude prof = new ProfissionalSaude();
+        prof.setId(parseInt(profissionalId, "ID profissional"));
         return new Consulta(0, Ui.parseRequiredDateTime(text(dataHora), "Data/hora"), prof, optionalText(tipo), optionalText(motivo), optionalText(diagnostico));
     }
-    protected boolean save(Consulta value) { return controller.adicionarConsulta(value); }
-    protected boolean update(Consulta value) { return controller.atualizarConsulta(value); }
+    protected boolean save(Consulta value) { return controller.adicionarConsulta(withExistingProfissional(value)); }
+    protected boolean update(Consulta value) { return controller.atualizarConsulta(withExistingProfissional(value)); }
     protected boolean remove(Consulta value) { return controller.removerConsulta(value.getId()); }
     protected String entityName() { return "Consulta"; }
     protected int idOf(Consulta value) { return value.getId(); }
@@ -148,6 +146,14 @@ class ConsultasPanel extends DataModulePanel<Consulta> {
         tipo.setText("");
         motivo.setText("");
         diagnostico.setText("");
+    }
+    private Consulta withExistingProfissional(Consulta value) {
+        ProfissionalSaude prof = profissionalController.buscarPorId(value.getProfissional().getId());
+        if (prof == null) {
+            throw new IllegalArgumentException("ID profissional nao encontrado ou banco indisponivel.");
+        }
+        value.setProfissional(prof);
+        return value;
     }
 }
 
@@ -176,18 +182,16 @@ class ProntuariosPanel extends DataModulePanel<ProntuarioMedico> {
     protected String details(ProntuarioMedico p) { return "ID: " + p.getId() + "\nData/hora: " + Ui.value(p.getDataHoraIdosa()) + "\nIdosa: " + (p.getIdosa() != null ? p.getIdosa().getNome() : "") + "\nCPF: " + (p.getIdosa() != null ? p.getIdosa().getCpf() : "") + "\n\n" + p.gerarResumoHistorico(); }
     protected ProntuarioMedico readForm() {
         require(idosaId, "ID idosa");
-        Idosa idosa = idosaController.buscarPorId(parseInt(idosaId, "ID idosa"));
-        if (idosa == null) {
-            throw new IllegalArgumentException("ID idosa nao encontrado ou banco indisponivel.");
-        }
+        Idosa idosa = new Idosa();
+        idosa.setId(parseInt(idosaId, "ID idosa"));
         LocalDateTime when = text(dataHora).isEmpty() ? LocalDateTime.now() : Ui.parseDateTime(text(dataHora), "Data/hora");
         ProntuarioMedico prontuario = new ProntuarioMedico();
         prontuario.setDataHoraIdosa(when);
         prontuario.setIdosa(idosa);
         return prontuario;
     }
-    protected boolean save(ProntuarioMedico value) { return controller.adicionarProntuario(value); }
-    protected boolean update(ProntuarioMedico value) { return controller.atualizarProntuario(value); }
+    protected boolean save(ProntuarioMedico value) { return controller.adicionarProntuario(withExistingIdosa(value)); }
+    protected boolean update(ProntuarioMedico value) { return controller.atualizarProntuario(withExistingIdosa(value)); }
     protected boolean remove(ProntuarioMedico value) { return controller.removerProntuario(value.getId()); }
     protected String entityName() { return "Prontuario"; }
     protected int idOf(ProntuarioMedico value) { return value.getId(); }
@@ -200,11 +204,20 @@ class ProntuariosPanel extends DataModulePanel<ProntuarioMedico> {
         dataHora.setText("");
         idosaId.setText("");
     }
+    private ProntuarioMedico withExistingIdosa(ProntuarioMedico value) {
+        Idosa idosa = idosaController.buscarPorId(value.getIdosa().getId());
+        if (idosa == null) {
+            throw new IllegalArgumentException("ID idosa nao encontrado ou banco indisponivel.");
+        }
+        value.setIdosa(idosa);
+        return value;
+    }
 }
 
 class PrescricoesPanel extends DataModulePanel<Prescricao> {
     private final PrescricaoController controller = new PrescricaoController();
     private final ProntuarioController prontuarioController = new ProntuarioController();
+    private int pendingProntuarioId;
     private JTextField prontuarioId;
     private JTextField medicamento;
     private JTextField posologia;
@@ -234,8 +247,8 @@ class PrescricoesPanel extends DataModulePanel<Prescricao> {
     protected List<Prescricao> loadRows() { return controller.listarPrescricoes(); }
     protected Object[] toColumns(Prescricao p) { return new Object[] {p.getId(), p.getMedicamento(), p.getPosologia(), p.getDuracao()}; }
     protected String details(Prescricao p) { return "ID: " + p.getId() + "\nMedicamento: " + Ui.value(p.getMedicamento()) + "\nPosologia: " + Ui.value(p.getPosologia()) + "\nDuracao: " + Ui.value(p.getDuracao()) + "\nObservacoes: " + Ui.value(p.getObservacoes()); }
-    protected Prescricao readForm() { if (!isEditing()) { require(prontuarioId, "ID prontuario"); } require(medicamento, "Medicamento"); return new Prescricao(0, text(medicamento), optionalText(posologia), optionalText(duracao), optionalText(observacoes)); }
-    protected boolean save(Prescricao value) { return controller.adicionarPrescricao(value, existingProntuarioId()); }
+    protected Prescricao readForm() { if (!isEditing()) { pendingProntuarioId = parseInt(prontuarioId, "ID prontuario"); } require(medicamento, "Medicamento"); return new Prescricao(0, text(medicamento), optionalText(posologia), optionalText(duracao), optionalText(observacoes)); }
+    protected boolean save(Prescricao value) { return controller.adicionarPrescricao(value, existingProntuarioId(pendingProntuarioId)); }
     protected boolean update(Prescricao value) { return controller.atualizarPrescricao(value); }
     protected boolean remove(Prescricao value) { return controller.removerPrescricao(value.getId()); }
     protected String entityName() { return "Prescricao"; }
@@ -255,8 +268,7 @@ class PrescricoesPanel extends DataModulePanel<Prescricao> {
         duracao.setText("");
         observacoes.setText("");
     }
-    private int existingProntuarioId() {
-        int id = parseInt(prontuarioId, "ID prontuario");
+    private int existingProntuarioId(int id) {
         if (prontuarioController.buscarPorId(id) == null) {
             throw new IllegalArgumentException("ID prontuario nao encontrado ou banco indisponivel.");
         }
@@ -311,6 +323,7 @@ class ProfissionaisPanel extends DataModulePanel<ProfissionalSaude> {
 class VacinasPanel extends DataModulePanel<Vacina> {
     private final VacinaController controller = new VacinaController();
     private final ProntuarioController prontuarioController = new ProntuarioController();
+    private int pendingProntuarioId;
     private JTextField prontuarioId;
     private JTextField nome;
     private JTextField data;
@@ -334,8 +347,8 @@ class VacinasPanel extends DataModulePanel<Vacina> {
     protected List<Vacina> loadRows() { return controller.listarVacinas(); }
     protected Object[] toColumns(Vacina v) { return new Object[] {v.getId(), v.getNome(), Ui.value(v.getDataOcorrencia())}; }
     protected String details(Vacina v) { return "ID: " + v.getId() + "\nNome: " + Ui.value(v.getNome()) + "\nData: " + Ui.value(v.getDataOcorrencia()); }
-    protected Vacina readForm() { if (!isEditing()) { require(prontuarioId, "ID prontuario"); } require(nome, "Nome"); return new Vacina(0, text(nome), Ui.parseRequiredDate(text(data), "Data")); }
-    protected boolean save(Vacina value) { return controller.adicionarVacina(value, existingProntuarioId()); }
+    protected Vacina readForm() { if (!isEditing()) { pendingProntuarioId = parseInt(prontuarioId, "ID prontuario"); } require(nome, "Nome"); return new Vacina(0, text(nome), Ui.parseRequiredDate(text(data), "Data")); }
+    protected boolean save(Vacina value) { return controller.adicionarVacina(value, existingProntuarioId(pendingProntuarioId)); }
     protected boolean update(Vacina value) { return controller.atualizarVacina(value); }
     protected boolean remove(Vacina value) { return controller.removerVacina(value.getId()); }
     protected String entityName() { return "Vacina"; }
@@ -351,8 +364,7 @@ class VacinasPanel extends DataModulePanel<Vacina> {
         nome.setText("");
         data.setText("");
     }
-    private int existingProntuarioId() {
-        int id = parseInt(prontuarioId, "ID prontuario");
+    private int existingProntuarioId(int id) {
         if (prontuarioController.buscarPorId(id) == null) {
             throw new IllegalArgumentException("ID prontuario nao encontrado ou banco indisponivel.");
         }
@@ -363,6 +375,7 @@ class VacinasPanel extends DataModulePanel<Vacina> {
 class EventosPanel extends DataModulePanel<EventoSentinela> {
     private final EventoSentinelaController controller = new EventoSentinelaController();
     private final ProntuarioController prontuarioController = new ProntuarioController();
+    private int pendingProntuarioId;
     private JTextField prontuarioId;
     private JComboBox<TipoEventoSentinela> tipo;
     private JTextField data;
@@ -386,8 +399,8 @@ class EventosPanel extends DataModulePanel<EventoSentinela> {
     protected List<EventoSentinela> loadRows() { return controller.listarEventos(); }
     protected Object[] toColumns(EventoSentinela e) { return new Object[] {e.getId(), Ui.value(e.getTipo()), Ui.value(e.getDataOcorrencia())}; }
     protected String details(EventoSentinela e) { return "ID: " + e.getId() + "\nTipo: " + Ui.value(e.getTipo()) + "\nData: " + Ui.value(e.getDataOcorrencia()); }
-    protected EventoSentinela readForm() { if (!isEditing()) { require(prontuarioId, "ID prontuario"); } return new EventoSentinela(0, (TipoEventoSentinela) tipo.getSelectedItem(), Ui.parseRequiredDate(text(data), "Data")); }
-    protected boolean save(EventoSentinela value) { return controller.adicionarEvento(value, existingProntuarioId()); }
+    protected EventoSentinela readForm() { if (!isEditing()) { pendingProntuarioId = parseInt(prontuarioId, "ID prontuario"); } return new EventoSentinela(0, (TipoEventoSentinela) tipo.getSelectedItem(), Ui.parseRequiredDate(text(data), "Data")); }
+    protected boolean save(EventoSentinela value) { return controller.adicionarEvento(value, existingProntuarioId(pendingProntuarioId)); }
     protected boolean update(EventoSentinela value) { return controller.atualizarEvento(value); }
     protected boolean remove(EventoSentinela value) { return controller.removerEvento(value.getId()); }
     protected String entityName() { return "Evento"; }
@@ -403,8 +416,7 @@ class EventosPanel extends DataModulePanel<EventoSentinela> {
         tipo.setSelectedIndex(0);
         data.setText("");
     }
-    private int existingProntuarioId() {
-        int id = parseInt(prontuarioId, "ID prontuario");
+    private int existingProntuarioId(int id) {
         if (prontuarioController.buscarPorId(id) == null) {
             throw new IllegalArgumentException("ID prontuario nao encontrado ou banco indisponivel.");
         }
@@ -415,6 +427,7 @@ class EventosPanel extends DataModulePanel<EventoSentinela> {
 class RelatoriosPanel extends DataModulePanel<Relatorio> {
     private final RelatorioController controller = new RelatorioController();
     private final ProntuarioController prontuarioController = new ProntuarioController();
+    private int pendingProntuarioId;
     private JTextField prontuarioId;
     private JTextField descricao;
     private JTextField tipo;
@@ -438,8 +451,8 @@ class RelatoriosPanel extends DataModulePanel<Relatorio> {
     protected List<Relatorio> loadRows() { return controller.listarRelatorios(); }
     protected Object[] toColumns(Relatorio r) { return new Object[] {r.getId(), r.getTipo(), r.getDescricao()}; }
     protected String details(Relatorio r) { return "ID: " + r.getId() + "\nTipo: " + Ui.value(r.getTipo()) + "\nDescricao: " + Ui.value(r.getDescricao()); }
-    protected Relatorio readForm() { if (!isEditing()) { require(prontuarioId, "ID prontuario"); } require(tipo, "Tipo"); require(descricao, "Descricao"); return new Relatorio(0, text(descricao), text(tipo)); }
-    protected boolean save(Relatorio value) { return controller.adicionarRelatorio(value, existingProntuarioId()); }
+    protected Relatorio readForm() { if (!isEditing()) { pendingProntuarioId = parseInt(prontuarioId, "ID prontuario"); } require(tipo, "Tipo"); require(descricao, "Descricao"); return new Relatorio(0, text(descricao), text(tipo)); }
+    protected boolean save(Relatorio value) { return controller.adicionarRelatorio(value, existingProntuarioId(pendingProntuarioId)); }
     protected boolean update(Relatorio value) { return controller.atualizarRelatorio(value); }
     protected boolean remove(Relatorio value) { return controller.removerRelatorio(value.getId()); }
     protected String entityName() { return "Relatorio"; }
@@ -455,8 +468,7 @@ class RelatoriosPanel extends DataModulePanel<Relatorio> {
         tipo.setText("");
         descricao.setText("");
     }
-    private int existingProntuarioId() {
-        int id = parseInt(prontuarioId, "ID prontuario");
+    private int existingProntuarioId(int id) {
         if (prontuarioController.buscarPorId(id) == null) {
             throw new IllegalArgumentException("ID prontuario nao encontrado ou banco indisponivel.");
         }

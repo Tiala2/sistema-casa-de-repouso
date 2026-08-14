@@ -35,7 +35,8 @@ A interface foi criada em Swing porque nao havia camada visual, classes `main`, 
 - busca local nas listagens carregadas;
 - listagens ordenadas de forma previsivel por nome, data ou identificador conforme o modulo;
 - listagens carregadas em background para reduzir travamentos da interface quando o banco demora a responder;
-- acoes de novo, salvar, remover, filtrar e selecionar ficam bloqueadas durante carregamentos para evitar estado visual inconsistente;
+- operacoes de salvar e remover executadas em background, mantendo a janela responsiva durante chamadas JDBC;
+- acoes de novo, salvar, remover, filtrar e selecionar ficam bloqueadas durante carregamentos e gravacoes para evitar estado visual inconsistente;
 - estados vazios, mensagens de sucesso, erro e confirmacao de remocao;
 - formularios com validacao basica antes de acionar controllers/DAOs;
 - criacao, edicao e remocao integradas aos metodos reais de persistencia.
