@@ -58,7 +58,7 @@ class IdosasPanel extends DataModulePanel<Idosa> {
 
     protected List<Idosa> loadRows() { return controller.listarIdosas(); }
     protected Object[] toColumns(Idosa i) { return new Object[] {i.getId(), i.getNome(), i.getCpf(), Ui.value(i.getDataNascimento()), Ui.value(i.getDataEntrada())}; }
-    protected String details(Idosa i) { return "ID: " + i.getId() + "\nNome: " + i.getNome() + "\nCPF: " + i.getCpf() + "\nNascimento: " + Ui.value(i.getDataNascimento()) + "\nMae: " + Ui.value(i.getNomeMae()) + "\nCartao SUS: " + Ui.value(i.getCartaoSUS()) + "\nEntrada: " + Ui.value(i.getDataEntrada()); }
+    protected String details(Idosa i) { return Ui.details(Ui.detail("ID", i.getId()), Ui.detail("Nome", i.getNome()), Ui.detail("CPF", i.getCpf()), Ui.detail("Nascimento", i.getDataNascimento()), Ui.detail("Mae", i.getNomeMae()), Ui.detail("Cartao SUS", i.getCartaoSUS()), Ui.detail("Entrada", i.getDataEntrada())); }
     protected Idosa readForm() {
         require(nome, "Nome");
         require(cpf, "CPF");
@@ -120,7 +120,7 @@ class ConsultasPanel extends DataModulePanel<Consulta> {
 
     protected List<Consulta> loadRows() { return controller.listarConsultas(); }
     protected Object[] toColumns(Consulta c) { return new Object[] {c.getId(), Ui.value(c.getDataHora()), c.getProfissional() != null ? c.getProfissional().getNome() : "", c.getTipo(), c.getMotivo()}; }
-    protected String details(Consulta c) { return "ID: " + c.getId() + "\nData/hora: " + Ui.value(c.getDataHora()) + "\nProfissional: " + (c.getProfissional() != null ? c.getProfissional().getNome() : "") + "\nTipo: " + Ui.value(c.getTipo()) + "\nMotivo: " + Ui.value(c.getMotivo()) + "\nDiagnostico: " + Ui.value(c.getDiagnostico()); }
+    protected String details(Consulta c) { return Ui.details(Ui.detail("ID", c.getId()), Ui.detail("Data/hora", c.getDataHora()), Ui.detail("Profissional", c.getProfissional() != null ? c.getProfissional().getNome() : ""), Ui.detail("Tipo", c.getTipo()), Ui.detail("Motivo", c.getMotivo()), Ui.detail("Diagnostico", c.getDiagnostico())); }
     protected Consulta readForm() {
         require(dataHora, "Data/hora");
         RefOption selected = selectedOption(profissional, "Profissional");
@@ -192,7 +192,7 @@ class ProntuariosPanel extends DataModulePanel<ProntuarioMedico> {
 
     protected List<ProntuarioMedico> loadRows() { return controller.listarProntuarios(); }
     protected Object[] toColumns(ProntuarioMedico p) { return new Object[] {p.getId(), Ui.value(p.getDataHoraIdosa()), p.getIdosa() != null ? p.getIdosa().getNome() : "", p.getIdosa() != null ? p.getIdosa().getCpf() : ""}; }
-    protected String details(ProntuarioMedico p) { return "ID: " + p.getId() + "\nData/hora: " + Ui.value(p.getDataHoraIdosa()) + "\nIdosa: " + (p.getIdosa() != null ? p.getIdosa().getNome() : "") + "\nCPF: " + (p.getIdosa() != null ? p.getIdosa().getCpf() : "") + "\n\n" + p.gerarResumoHistorico(); }
+    protected String details(ProntuarioMedico p) { return Ui.details(Ui.detail("ID", p.getId()), Ui.detail("Data/hora", p.getDataHoraIdosa()), Ui.detail("Idosa", p.getIdosa() != null ? p.getIdosa().getNome() : ""), Ui.detail("CPF", p.getIdosa() != null ? p.getIdosa().getCpf() : ""), "", "Resumo do historico", p.gerarResumoHistorico()); }
     protected ProntuarioMedico readForm() {
         RefOption selected = selectedOption(idosa, "Idosa");
         Idosa idosa = new Idosa();
@@ -271,7 +271,7 @@ class PrescricoesPanel extends DataModulePanel<Prescricao> {
 
     protected List<Prescricao> loadRows() { return controller.listarPrescricoes(); }
     protected Object[] toColumns(Prescricao p) { return new Object[] {p.getId(), p.getMedicamento(), p.getPosologia(), p.getDuracao()}; }
-    protected String details(Prescricao p) { return "ID: " + p.getId() + "\nMedicamento: " + Ui.value(p.getMedicamento()) + "\nPosologia: " + Ui.value(p.getPosologia()) + "\nDuracao: " + Ui.value(p.getDuracao()) + "\nObservacoes: " + Ui.value(p.getObservacoes()); }
+    protected String details(Prescricao p) { return Ui.details(Ui.detail("ID", p.getId()), Ui.detail("Medicamento", p.getMedicamento()), Ui.detail("Posologia", p.getPosologia()), Ui.detail("Duracao", p.getDuracao()), Ui.detail("Observacoes", p.getObservacoes())); }
     protected Prescricao readForm() { if (!isEditing()) { pendingProntuarioId = selectedOption(prontuario, "Prontuario").id; } require(medicamento, "Medicamento"); return new Prescricao(0, text(medicamento), optionalText(posologia), optionalText(duracao), optionalText(observacoes)); }
     protected boolean save(Prescricao value) { return controller.adicionarPrescricao(value, existingProntuarioId(pendingProntuarioId)); }
     protected boolean update(Prescricao value) { return controller.atualizarPrescricao(value); }
@@ -334,7 +334,7 @@ class ProfissionaisPanel extends DataModulePanel<ProfissionalSaude> {
 
     protected List<ProfissionalSaude> loadRows() { return controller.listarProfissionais(); }
     protected Object[] toColumns(ProfissionalSaude p) { return new Object[] {p.getId(), p.getNome(), p.getEspecialidade(), p.getRegistroProfissional()}; }
-    protected String details(ProfissionalSaude p) { return "ID: " + p.getId() + "\nNome: " + Ui.value(p.getNome()) + "\nEspecialidade: " + Ui.value(p.getEspecialidade()) + "\nRegistro: " + Ui.value(p.getRegistroProfissional()); }
+    protected String details(ProfissionalSaude p) { return Ui.details(Ui.detail("ID", p.getId()), Ui.detail("Nome", p.getNome()), Ui.detail("Especialidade", p.getEspecialidade()), Ui.detail("Registro", p.getRegistroProfissional())); }
     protected ProfissionalSaude readForm() { require(nome, "Nome"); return new ProfissionalSaude(0, text(nome), optionalText(especialidade), optionalText(registro)); }
     protected boolean save(ProfissionalSaude value) { return controller.adicionarProfissional(value); }
     protected boolean update(ProfissionalSaude value) { return controller.atualizarProfissional(value); }
@@ -381,7 +381,7 @@ class VacinasPanel extends DataModulePanel<Vacina> {
 
     protected List<Vacina> loadRows() { return controller.listarVacinas(); }
     protected Object[] toColumns(Vacina v) { return new Object[] {v.getId(), v.getNome(), Ui.value(v.getDataOcorrencia())}; }
-    protected String details(Vacina v) { return "ID: " + v.getId() + "\nNome: " + Ui.value(v.getNome()) + "\nData: " + Ui.value(v.getDataOcorrencia()); }
+    protected String details(Vacina v) { return Ui.details(Ui.detail("ID", v.getId()), Ui.detail("Nome", v.getNome()), Ui.detail("Data", v.getDataOcorrencia())); }
     protected Vacina readForm() { if (!isEditing()) { pendingProntuarioId = selectedOption(prontuario, "Prontuario").id; } require(nome, "Nome"); return new Vacina(0, text(nome), Ui.parseRequiredDate(text(data), "Data")); }
     protected boolean save(Vacina value) { return controller.adicionarVacina(value, existingProntuarioId(pendingProntuarioId)); }
     protected boolean update(Vacina value) { return controller.atualizarVacina(value); }
@@ -443,7 +443,7 @@ class EventosPanel extends DataModulePanel<EventoSentinela> {
 
     protected List<EventoSentinela> loadRows() { return controller.listarEventos(); }
     protected Object[] toColumns(EventoSentinela e) { return new Object[] {e.getId(), Ui.value(e.getTipo()), Ui.value(e.getDataOcorrencia())}; }
-    protected String details(EventoSentinela e) { return "ID: " + e.getId() + "\nTipo: " + Ui.value(e.getTipo()) + "\nData: " + Ui.value(e.getDataOcorrencia()); }
+    protected String details(EventoSentinela e) { return Ui.details(Ui.detail("ID", e.getId()), Ui.detail("Tipo", e.getTipo()), Ui.detail("Data", e.getDataOcorrencia())); }
     protected EventoSentinela readForm() { if (!isEditing()) { pendingProntuarioId = selectedOption(prontuario, "Prontuario").id; } return new EventoSentinela(0, (TipoEventoSentinela) tipo.getSelectedItem(), Ui.parseRequiredDate(text(data), "Data")); }
     protected boolean save(EventoSentinela value) { return controller.adicionarEvento(value, existingProntuarioId(pendingProntuarioId)); }
     protected boolean update(EventoSentinela value) { return controller.atualizarEvento(value); }
@@ -505,7 +505,7 @@ class RelatoriosPanel extends DataModulePanel<Relatorio> {
 
     protected List<Relatorio> loadRows() { return controller.listarRelatorios(); }
     protected Object[] toColumns(Relatorio r) { return new Object[] {r.getId(), r.getTipo(), r.getDescricao()}; }
-    protected String details(Relatorio r) { return "ID: " + r.getId() + "\nTipo: " + Ui.value(r.getTipo()) + "\nDescricao: " + Ui.value(r.getDescricao()); }
+    protected String details(Relatorio r) { return Ui.details(Ui.detail("ID", r.getId()), Ui.detail("Tipo", r.getTipo()), Ui.detail("Descricao", r.getDescricao())); }
     protected Relatorio readForm() { if (!isEditing()) { pendingProntuarioId = selectedOption(prontuario, "Prontuario").id; } require(tipo, "Tipo"); require(descricao, "Descricao"); return new Relatorio(0, text(descricao), text(tipo)); }
     protected boolean save(Relatorio value) { return controller.adicionarRelatorio(value, existingProntuarioId(pendingProntuarioId)); }
     protected boolean update(Relatorio value) { return controller.atualizarRelatorio(value); }

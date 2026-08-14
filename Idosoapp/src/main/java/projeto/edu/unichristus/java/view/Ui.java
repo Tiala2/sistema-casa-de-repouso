@@ -199,6 +199,21 @@ final class Ui {
         return value == null ? "" : String.valueOf(value);
     }
 
+    static String detail(String label, Object value) {
+        return label + ": " + value(value);
+    }
+
+    static String details(String... lines) {
+        StringBuilder builder = new StringBuilder();
+        for (String line : lines) {
+            if (builder.length() > 0) {
+                builder.append('\n');
+            }
+            builder.append(line == null ? "" : line);
+        }
+        return builder.toString();
+    }
+
     static String formatDate(java.time.LocalDate value) {
         return value == null ? "" : DATE.format(value);
     }
