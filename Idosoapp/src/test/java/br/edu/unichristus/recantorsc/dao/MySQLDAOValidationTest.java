@@ -15,6 +15,7 @@ import projeto.edu.unichristus.java.dao.RelatorioDAOMySQL;
 import projeto.edu.unichristus.java.dao.VacinaDAOMySQL;
 import projeto.edu.unichristus.java.model.Consulta;
 import projeto.edu.unichristus.java.model.EventoSentinela;
+import projeto.edu.unichristus.java.model.ProfissionalSaude;
 import projeto.edu.unichristus.java.model.ProntuarioMedico;
 
 class MySQLDAOValidationTest {
@@ -48,6 +49,15 @@ class MySQLDAOValidationTest {
         assertFalse(new VacinaDAOMySQL().salvar(null, 0));
         assertFalse(new EventoSentinelaDAOMySQL().salvar(new EventoSentinela(), 0));
         assertFalse(new RelatorioDAOMySQL().salvar(null, 0));
+    }
+
+    @Test
+    void consultaMysqlRecusaDataObrigatoriaAusenteAntesDaConexao() {
+        Consulta consulta = new Consulta();
+        consulta.setProfissional(new ProfissionalSaude(1, "Dra. Ana", "Geriatria", "CRM-1"));
+
+        assertFalse(new ConsultaDAOMySQL().salvar(consulta));
+        assertFalse(new ConsultaDAOMySQL().atualizar(consulta));
     }
 
     @Test

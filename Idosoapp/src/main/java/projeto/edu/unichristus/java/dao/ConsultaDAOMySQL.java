@@ -3,6 +3,7 @@ package projeto.edu.unichristus.java.dao;
 import projeto.edu.unichristus.java.model.Consulta;
 import projeto.edu.unichristus.java.model.ProfissionalSaude;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class ConsultaDAOMySQL {
 
 
     public boolean salvar(Consulta consulta) {
-        if (consulta == null || consulta.getProfissional() == null) {
+        if (consulta == null || consulta.getDataHora() == null || consulta.getProfissional() == null) {
             return false;
         }
         String sql = "INSERT INTO consulta (data_hora, profissional_id, tipo, motivo, diagnostico, prontuario_id) VALUES (?, ?, ?, ?, ?, ?)";
@@ -49,7 +50,7 @@ public class ConsultaDAOMySQL {
                 );
                 Consulta consulta = new Consulta(
                     rs.getInt("id"),
-                    rs.getTimestamp("data_hora").toLocalDateTime(),
+                    toLocalDateTime(rs.getTimestamp("data_hora")),
                     prof,
                     rs.getString("tipo"),
                     rs.getString("motivo"),
@@ -79,7 +80,7 @@ public class ConsultaDAOMySQL {
                     );
                     return new Consulta(
                         rs.getInt("id"),
-                        rs.getTimestamp("data_hora").toLocalDateTime(),
+                        toLocalDateTime(rs.getTimestamp("data_hora")),
                         prof,
                         rs.getString("tipo"),
                         rs.getString("motivo"),
@@ -94,7 +95,7 @@ public class ConsultaDAOMySQL {
     }
 
     public boolean atualizar(Consulta consulta) {
-        if (consulta == null || consulta.getProfissional() == null) {
+        if (consulta == null || consulta.getDataHora() == null || consulta.getProfissional() == null) {
             return false;
         }
         String sql = "UPDATE consulta SET data_hora = ?, profissional_id = ?, tipo = ?, motivo = ?, diagnostico = ? WHERE id = ?";
@@ -124,5 +125,9 @@ public class ConsultaDAOMySQL {
             DaoErrors.log("Erro de persistencia", e);
             return false;
         }
+    }
+
+    private LocalDateTime toLocalDateTime(Timestamp timestamp) {
+        return timestamp != null ? timestamp.toLocalDateTime() : null;
     }
 }
