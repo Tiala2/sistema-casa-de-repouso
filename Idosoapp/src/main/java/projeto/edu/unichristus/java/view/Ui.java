@@ -15,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -111,6 +112,12 @@ final class Ui {
     }
 
     static void addComponent(JPanel form, int row, String label, java.awt.Component component) {
+        if (component instanceof JComboBox) {
+            JComboBox<?> combo = (JComboBox<?>) component;
+            combo.setFont(AppTheme.BODY);
+            combo.setBackground(AppTheme.SURFACE);
+            combo.setForeground(AppTheme.TEXT);
+        }
         GridBagConstraints left = new GridBagConstraints();
         left.gridx = 0;
         left.gridy = row;

@@ -92,7 +92,7 @@ class ConsultasPanel extends DataModulePanel<Consulta> {
     private final ConsultaController controller = new ConsultaController();
     private final ProfissionalSaudeController profissionalController = new ProfissionalSaudeController();
     private JTextField dataHora;
-    private JTextField profissionalId;
+    private JComboBox<RefOption> profissional;
     private JTextField tipo;
     private JTextField motivo;
     private JTextField diagnostico;
@@ -105,15 +105,16 @@ class ConsultasPanel extends DataModulePanel<Consulta> {
     protected JPanel buildForm() {
         JPanel form = Ui.formPanel();
         dataHora = new JTextField();
-        profissionalId = new JTextField();
+        profissional = new JComboBox<RefOption>();
         tipo = new JTextField();
         motivo = new JTextField();
         diagnostico = new JTextField();
         Ui.addField(form, 0, "Data/hora * yyyy-MM-dd HH:mm", dataHora);
-        Ui.addField(form, 1, "ID profissional *", profissionalId);
+        Ui.addComponent(form, 1, "Profissional *", profissional);
         Ui.addField(form, 2, "Tipo", tipo);
         Ui.addField(form, 3, "Motivo", motivo);
         Ui.addField(form, 4, "Diagnostico", diagnostico);
+        carregarProfissionais();
         return form;
     }
 
@@ -122,9 +123,9 @@ class ConsultasPanel extends DataModulePanel<Consulta> {
     protected String details(Consulta c) { return "ID: " + c.getId() + "\nData/hora: " + Ui.value(c.getDataHora()) + "\nProfissional: " + (c.getProfissional() != null ? c.getProfissional().getNome() : "") + "\nTipo: " + Ui.value(c.getTipo()) + "\nMotivo: " + Ui.value(c.getMotivo()) + "\nDiagnostico: " + Ui.value(c.getDiagnostico()); }
     protected Consulta readForm() {
         require(dataHora, "Data/hora");
-        require(profissionalId, "ID profissional");
+        RefOption selected = selectedOption(profissional, "Profissional");
         ProfissionalSaude prof = new ProfissionalSaude();
-        prof.setId(parsePositiveInt(profissionalId, "ID profissional"));
+        prof.setId(selected.id);
         return new Consulta(0, Ui.parseRequiredDateTime(text(dataHora), "Data/hora"), prof, optionalText(tipo), optionalText(motivo), optionalText(diagnostico));
     }
     protected boolean save(Consulta value) { return controller.adicionarConsulta(withExistingProfissional(value)); }
@@ -134,15 +135,17 @@ class ConsultasPanel extends DataModulePanel<Consulta> {
     protected int idOf(Consulta value) { return value.getId(); }
     protected void setId(Consulta value, int id) { value.setId(id); }
     protected void populateForm(Consulta c) {
+        carregarProfissionais();
         dataHora.setText(Ui.formatDateTime(c.getDataHora()));
-        profissionalId.setText(c.getProfissional() != null ? String.valueOf(c.getProfissional().getId()) : "");
+        selectOption(profissional, c.getProfissional() != null ? c.getProfissional().getId() : 0);
         tipo.setText(Ui.value(c.getTipo()));
         motivo.setText(Ui.value(c.getMotivo()));
         diagnostico.setText(Ui.value(c.getDiagnostico()));
     }
     protected void clearForm() {
+        carregarProfissionais();
         dataHora.setText("");
-        profissionalId.setText("");
+        profissional.setSelectedIndex(0);
         tipo.setText("");
         motivo.setText("");
         diagnostico.setText("");
@@ -155,13 +158,21 @@ class ConsultasPanel extends DataModulePanel<Consulta> {
         value.setProfissional(prof);
         return value;
     }
+
+    private void carregarProfissionais() {
+        profissional.removeAllItems();
+        profissional.addItem(RefOption.empty("Selecione um profissional"));
+        for (ProfissionalSaude item : profissionalController.listarProfissionais()) {
+            profissional.addItem(RefOption.of(item.getId(), item.getNome()));
+        }
+    }
 }
 
 class ProntuariosPanel extends DataModulePanel<ProntuarioMedico> {
     private final ProntuarioController controller = new ProntuarioController();
     private final IdosaController idosaController = new IdosaController();
     private JTextField dataHora;
-    private JTextField idosaId;
+    private JComboBox<RefOption> idosa;
 
     ProntuariosPanel() {
         super("Acompanhamento clinico", "Prontuarios medicos", "Contexto central que conecta idosa, consultas, prescricoes, vacinas e eventos.",
@@ -171,9 +182,10 @@ class ProntuariosPanel extends DataModulePanel<ProntuarioMedico> {
     protected JPanel buildForm() {
         JPanel form = Ui.formPanel();
         dataHora = new JTextField();
-        idosaId = new JTextField();
+        idosa = new JComboBox<RefOption>();
         Ui.addField(form, 0, "Data/hora yyyy-MM-dd HH:mm", dataHora);
-        Ui.addField(form, 1, "ID idosa *", idosaId);
+        Ui.addComponent(form, 1, "Idosa *", idosa);
+        carregarIdosas();
         return form;
     }
 
@@ -181,9 +193,9 @@ class ProntuariosPanel extends DataModulePanel<ProntuarioMedico> {
     protected Object[] toColumns(ProntuarioMedico p) { return new Object[] {p.getId(), Ui.value(p.getDataHoraIdosa()), p.getIdosa() != null ? p.getIdosa().getNome() : "", p.getIdosa() != null ? p.getIdosa().getCpf() : ""}; }
     protected String details(ProntuarioMedico p) { return "ID: " + p.getId() + "\nData/hora: " + Ui.value(p.getDataHoraIdosa()) + "\nIdosa: " + (p.getIdosa() != null ? p.getIdosa().getNome() : "") + "\nCPF: " + (p.getIdosa() != null ? p.getIdosa().getCpf() : "") + "\n\n" + p.gerarResumoHistorico(); }
     protected ProntuarioMedico readForm() {
-        require(idosaId, "ID idosa");
+        RefOption selected = selectedOption(idosa, "Idosa");
         Idosa idosa = new Idosa();
-        idosa.setId(parsePositiveInt(idosaId, "ID idosa"));
+        idosa.setId(selected.id);
         LocalDateTime when = text(dataHora).isEmpty() ? LocalDateTime.now() : Ui.parseDateTime(text(dataHora), "Data/hora");
         ProntuarioMedico prontuario = new ProntuarioMedico();
         prontuario.setDataHoraIdosa(when);
@@ -197,12 +209,14 @@ class ProntuariosPanel extends DataModulePanel<ProntuarioMedico> {
     protected int idOf(ProntuarioMedico value) { return value.getId(); }
     protected void setId(ProntuarioMedico value, int id) { value.setId(id); }
     protected void populateForm(ProntuarioMedico p) {
+        carregarIdosas();
         dataHora.setText(Ui.formatDateTime(p.getDataHoraIdosa()));
-        idosaId.setText(p.getIdosa() != null ? String.valueOf(p.getIdosa().getId()) : "");
+        selectOption(idosa, p.getIdosa() != null ? p.getIdosa().getId() : 0);
     }
     protected void clearForm() {
+        carregarIdosas();
         dataHora.setText("");
-        idosaId.setText("");
+        idosa.setSelectedIndex(0);
     }
     private ProntuarioMedico withExistingIdosa(ProntuarioMedico value) {
         Idosa idosa = idosaController.buscarPorId(value.getIdosa().getId());
@@ -212,13 +226,21 @@ class ProntuariosPanel extends DataModulePanel<ProntuarioMedico> {
         value.setIdosa(idosa);
         return value;
     }
+
+    private void carregarIdosas() {
+        idosa.removeAllItems();
+        idosa.addItem(RefOption.empty("Selecione uma idosa"));
+        for (Idosa item : idosaController.listarIdosas()) {
+            idosa.addItem(RefOption.of(item.getId(), item.getNome()));
+        }
+    }
 }
 
 class PrescricoesPanel extends DataModulePanel<Prescricao> {
     private final PrescricaoController controller = new PrescricaoController();
     private final ProntuarioController prontuarioController = new ProntuarioController();
     private int pendingProntuarioId;
-    private JTextField prontuarioId;
+    private JComboBox<RefOption> prontuario;
     private JTextField medicamento;
     private JTextField posologia;
     private JTextField duracao;
@@ -231,23 +253,24 @@ class PrescricoesPanel extends DataModulePanel<Prescricao> {
 
     protected JPanel buildForm() {
         JPanel form = Ui.formPanel();
-        prontuarioId = new JTextField();
+        prontuario = new JComboBox<RefOption>();
         medicamento = new JTextField();
         posologia = new JTextField();
         duracao = new JTextField();
         observacoes = new JTextField();
-        Ui.addField(form, 0, "ID prontuario *", prontuarioId);
+        Ui.addComponent(form, 0, "Prontuario *", prontuario);
         Ui.addField(form, 1, "Medicamento *", medicamento);
         Ui.addField(form, 2, "Posologia", posologia);
         Ui.addField(form, 3, "Duracao", duracao);
         Ui.addField(form, 4, "Observacoes", observacoes);
+        carregarProntuarios();
         return form;
     }
 
     protected List<Prescricao> loadRows() { return controller.listarPrescricoes(); }
     protected Object[] toColumns(Prescricao p) { return new Object[] {p.getId(), p.getMedicamento(), p.getPosologia(), p.getDuracao()}; }
     protected String details(Prescricao p) { return "ID: " + p.getId() + "\nMedicamento: " + Ui.value(p.getMedicamento()) + "\nPosologia: " + Ui.value(p.getPosologia()) + "\nDuracao: " + Ui.value(p.getDuracao()) + "\nObservacoes: " + Ui.value(p.getObservacoes()); }
-    protected Prescricao readForm() { if (!isEditing()) { pendingProntuarioId = parsePositiveInt(prontuarioId, "ID prontuario"); } require(medicamento, "Medicamento"); return new Prescricao(0, text(medicamento), optionalText(posologia), optionalText(duracao), optionalText(observacoes)); }
+    protected Prescricao readForm() { if (!isEditing()) { pendingProntuarioId = selectedOption(prontuario, "Prontuario").id; } require(medicamento, "Medicamento"); return new Prescricao(0, text(medicamento), optionalText(posologia), optionalText(duracao), optionalText(observacoes)); }
     protected boolean save(Prescricao value) { return controller.adicionarPrescricao(value, existingProntuarioId(pendingProntuarioId)); }
     protected boolean update(Prescricao value) { return controller.atualizarPrescricao(value); }
     protected boolean remove(Prescricao value) { return controller.removerPrescricao(value.getId()); }
@@ -255,14 +278,16 @@ class PrescricoesPanel extends DataModulePanel<Prescricao> {
     protected int idOf(Prescricao value) { return value.getId(); }
     protected void setId(Prescricao value, int id) { value.setId(id); }
     protected void populateForm(Prescricao p) {
-        prontuarioId.setText("");
+        carregarProntuarios();
+        prontuario.setSelectedIndex(0);
         medicamento.setText(Ui.value(p.getMedicamento()));
         posologia.setText(Ui.value(p.getPosologia()));
         duracao.setText(Ui.value(p.getDuracao()));
         observacoes.setText(Ui.value(p.getObservacoes()));
     }
     protected void clearForm() {
-        prontuarioId.setText("");
+        carregarProntuarios();
+        prontuario.setSelectedIndex(0);
         medicamento.setText("");
         posologia.setText("");
         duracao.setText("");
@@ -273,6 +298,15 @@ class PrescricoesPanel extends DataModulePanel<Prescricao> {
             throw new IllegalArgumentException("ID prontuario nao encontrado ou banco indisponivel.");
         }
         return id;
+    }
+
+    private void carregarProntuarios() {
+        prontuario.removeAllItems();
+        prontuario.addItem(RefOption.empty(isEditing() ? "Mantem prontuario atual" : "Selecione um prontuario"));
+        for (ProntuarioMedico item : prontuarioController.listarProntuarios()) {
+            String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
+            prontuario.addItem(RefOption.of(item.getId(), label));
+        }
     }
 }
 
@@ -324,7 +358,7 @@ class VacinasPanel extends DataModulePanel<Vacina> {
     private final VacinaController controller = new VacinaController();
     private final ProntuarioController prontuarioController = new ProntuarioController();
     private int pendingProntuarioId;
-    private JTextField prontuarioId;
+    private JComboBox<RefOption> prontuario;
     private JTextField nome;
     private JTextField data;
 
@@ -335,19 +369,20 @@ class VacinasPanel extends DataModulePanel<Vacina> {
 
     protected JPanel buildForm() {
         JPanel form = Ui.formPanel();
-        prontuarioId = new JTextField();
+        prontuario = new JComboBox<RefOption>();
         nome = new JTextField();
         data = new JTextField();
-        Ui.addField(form, 0, "ID prontuario *", prontuarioId);
+        Ui.addComponent(form, 0, "Prontuario *", prontuario);
         Ui.addField(form, 1, "Nome *", nome);
         Ui.addField(form, 2, "Data * yyyy-MM-dd", data);
+        carregarProntuarios();
         return form;
     }
 
     protected List<Vacina> loadRows() { return controller.listarVacinas(); }
     protected Object[] toColumns(Vacina v) { return new Object[] {v.getId(), v.getNome(), Ui.value(v.getDataOcorrencia())}; }
     protected String details(Vacina v) { return "ID: " + v.getId() + "\nNome: " + Ui.value(v.getNome()) + "\nData: " + Ui.value(v.getDataOcorrencia()); }
-    protected Vacina readForm() { if (!isEditing()) { pendingProntuarioId = parsePositiveInt(prontuarioId, "ID prontuario"); } require(nome, "Nome"); return new Vacina(0, text(nome), Ui.parseRequiredDate(text(data), "Data")); }
+    protected Vacina readForm() { if (!isEditing()) { pendingProntuarioId = selectedOption(prontuario, "Prontuario").id; } require(nome, "Nome"); return new Vacina(0, text(nome), Ui.parseRequiredDate(text(data), "Data")); }
     protected boolean save(Vacina value) { return controller.adicionarVacina(value, existingProntuarioId(pendingProntuarioId)); }
     protected boolean update(Vacina value) { return controller.atualizarVacina(value); }
     protected boolean remove(Vacina value) { return controller.removerVacina(value.getId()); }
@@ -355,12 +390,14 @@ class VacinasPanel extends DataModulePanel<Vacina> {
     protected int idOf(Vacina value) { return value.getId(); }
     protected void setId(Vacina value, int id) { value.setId(id); }
     protected void populateForm(Vacina v) {
-        prontuarioId.setText("");
+        carregarProntuarios();
+        prontuario.setSelectedIndex(0);
         nome.setText(Ui.value(v.getNome()));
         data.setText(Ui.formatDate(v.getDataOcorrencia()));
     }
     protected void clearForm() {
-        prontuarioId.setText("");
+        carregarProntuarios();
+        prontuario.setSelectedIndex(0);
         nome.setText("");
         data.setText("");
     }
@@ -370,13 +407,22 @@ class VacinasPanel extends DataModulePanel<Vacina> {
         }
         return id;
     }
+
+    private void carregarProntuarios() {
+        prontuario.removeAllItems();
+        prontuario.addItem(RefOption.empty(isEditing() ? "Mantem prontuario atual" : "Selecione um prontuario"));
+        for (ProntuarioMedico item : prontuarioController.listarProntuarios()) {
+            String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
+            prontuario.addItem(RefOption.of(item.getId(), label));
+        }
+    }
 }
 
 class EventosPanel extends DataModulePanel<EventoSentinela> {
     private final EventoSentinelaController controller = new EventoSentinelaController();
     private final ProntuarioController prontuarioController = new ProntuarioController();
     private int pendingProntuarioId;
-    private JTextField prontuarioId;
+    private JComboBox<RefOption> prontuario;
     private JComboBox<TipoEventoSentinela> tipo;
     private JTextField data;
 
@@ -387,19 +433,20 @@ class EventosPanel extends DataModulePanel<EventoSentinela> {
 
     protected JPanel buildForm() {
         JPanel form = Ui.formPanel();
-        prontuarioId = new JTextField();
+        prontuario = new JComboBox<RefOption>();
         tipo = new JComboBox<TipoEventoSentinela>(TipoEventoSentinela.values());
         data = new JTextField();
-        Ui.addField(form, 0, "ID prontuario *", prontuarioId);
+        Ui.addComponent(form, 0, "Prontuario *", prontuario);
         Ui.addComponent(form, 1, "Tipo *", tipo);
         Ui.addField(form, 2, "Data * yyyy-MM-dd", data);
+        carregarProntuarios();
         return form;
     }
 
     protected List<EventoSentinela> loadRows() { return controller.listarEventos(); }
     protected Object[] toColumns(EventoSentinela e) { return new Object[] {e.getId(), Ui.value(e.getTipo()), Ui.value(e.getDataOcorrencia())}; }
     protected String details(EventoSentinela e) { return "ID: " + e.getId() + "\nTipo: " + Ui.value(e.getTipo()) + "\nData: " + Ui.value(e.getDataOcorrencia()); }
-    protected EventoSentinela readForm() { if (!isEditing()) { pendingProntuarioId = parsePositiveInt(prontuarioId, "ID prontuario"); } return new EventoSentinela(0, (TipoEventoSentinela) tipo.getSelectedItem(), Ui.parseRequiredDate(text(data), "Data")); }
+    protected EventoSentinela readForm() { if (!isEditing()) { pendingProntuarioId = selectedOption(prontuario, "Prontuario").id; } return new EventoSentinela(0, (TipoEventoSentinela) tipo.getSelectedItem(), Ui.parseRequiredDate(text(data), "Data")); }
     protected boolean save(EventoSentinela value) { return controller.adicionarEvento(value, existingProntuarioId(pendingProntuarioId)); }
     protected boolean update(EventoSentinela value) { return controller.atualizarEvento(value); }
     protected boolean remove(EventoSentinela value) { return controller.removerEvento(value.getId()); }
@@ -407,12 +454,14 @@ class EventosPanel extends DataModulePanel<EventoSentinela> {
     protected int idOf(EventoSentinela value) { return value.getId(); }
     protected void setId(EventoSentinela value, int id) { value.setId(id); }
     protected void populateForm(EventoSentinela e) {
-        prontuarioId.setText("");
+        carregarProntuarios();
+        prontuario.setSelectedIndex(0);
         tipo.setSelectedItem(e.getTipo());
         data.setText(Ui.formatDate(e.getDataOcorrencia()));
     }
     protected void clearForm() {
-        prontuarioId.setText("");
+        carregarProntuarios();
+        prontuario.setSelectedIndex(0);
         tipo.setSelectedIndex(0);
         data.setText("");
     }
@@ -422,13 +471,22 @@ class EventosPanel extends DataModulePanel<EventoSentinela> {
         }
         return id;
     }
+
+    private void carregarProntuarios() {
+        prontuario.removeAllItems();
+        prontuario.addItem(RefOption.empty(isEditing() ? "Mantem prontuario atual" : "Selecione um prontuario"));
+        for (ProntuarioMedico item : prontuarioController.listarProntuarios()) {
+            String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
+            prontuario.addItem(RefOption.of(item.getId(), label));
+        }
+    }
 }
 
 class RelatoriosPanel extends DataModulePanel<Relatorio> {
     private final RelatorioController controller = new RelatorioController();
     private final ProntuarioController prontuarioController = new ProntuarioController();
     private int pendingProntuarioId;
-    private JTextField prontuarioId;
+    private JComboBox<RefOption> prontuario;
     private JTextField descricao;
     private JTextField tipo;
 
@@ -439,19 +497,20 @@ class RelatoriosPanel extends DataModulePanel<Relatorio> {
 
     protected JPanel buildForm() {
         JPanel form = Ui.formPanel();
-        prontuarioId = new JTextField();
+        prontuario = new JComboBox<RefOption>();
         tipo = new JTextField();
         descricao = new JTextField();
-        Ui.addField(form, 0, "ID prontuario *", prontuarioId);
+        Ui.addComponent(form, 0, "Prontuario *", prontuario);
         Ui.addField(form, 1, "Tipo *", tipo);
         Ui.addField(form, 2, "Descricao *", descricao);
+        carregarProntuarios();
         return form;
     }
 
     protected List<Relatorio> loadRows() { return controller.listarRelatorios(); }
     protected Object[] toColumns(Relatorio r) { return new Object[] {r.getId(), r.getTipo(), r.getDescricao()}; }
     protected String details(Relatorio r) { return "ID: " + r.getId() + "\nTipo: " + Ui.value(r.getTipo()) + "\nDescricao: " + Ui.value(r.getDescricao()); }
-    protected Relatorio readForm() { if (!isEditing()) { pendingProntuarioId = parsePositiveInt(prontuarioId, "ID prontuario"); } require(tipo, "Tipo"); require(descricao, "Descricao"); return new Relatorio(0, text(descricao), text(tipo)); }
+    protected Relatorio readForm() { if (!isEditing()) { pendingProntuarioId = selectedOption(prontuario, "Prontuario").id; } require(tipo, "Tipo"); require(descricao, "Descricao"); return new Relatorio(0, text(descricao), text(tipo)); }
     protected boolean save(Relatorio value) { return controller.adicionarRelatorio(value, existingProntuarioId(pendingProntuarioId)); }
     protected boolean update(Relatorio value) { return controller.atualizarRelatorio(value); }
     protected boolean remove(Relatorio value) { return controller.removerRelatorio(value.getId()); }
@@ -459,12 +518,14 @@ class RelatoriosPanel extends DataModulePanel<Relatorio> {
     protected int idOf(Relatorio value) { return value.getId(); }
     protected void setId(Relatorio value, int id) { value.setId(id); }
     protected void populateForm(Relatorio r) {
-        prontuarioId.setText("");
+        carregarProntuarios();
+        prontuario.setSelectedIndex(0);
         tipo.setText(Ui.value(r.getTipo()));
         descricao.setText(Ui.value(r.getDescricao()));
     }
     protected void clearForm() {
-        prontuarioId.setText("");
+        carregarProntuarios();
+        prontuario.setSelectedIndex(0);
         tipo.setText("");
         descricao.setText("");
     }
@@ -473,5 +534,36 @@ class RelatoriosPanel extends DataModulePanel<Relatorio> {
             throw new IllegalArgumentException("ID prontuario nao encontrado ou banco indisponivel.");
         }
         return id;
+    }
+
+    private void carregarProntuarios() {
+        prontuario.removeAllItems();
+        prontuario.addItem(RefOption.empty(isEditing() ? "Mantem prontuario atual" : "Selecione um prontuario"));
+        for (ProntuarioMedico item : prontuarioController.listarProntuarios()) {
+            String label = item.getIdosa() != null ? item.getIdosa().getNome() : "Prontuario";
+            prontuario.addItem(RefOption.of(item.getId(), label));
+        }
+    }
+}
+
+class RefOption {
+    final int id;
+    private final String label;
+
+    private RefOption(int id, String label) {
+        this.id = id;
+        this.label = label;
+    }
+
+    static RefOption empty(String label) {
+        return new RefOption(0, label);
+    }
+
+    static RefOption of(int id, String label) {
+        return new RefOption(id, "#" + id + " - " + Ui.value(label));
+    }
+
+    public String toString() {
+        return label;
     }
 }

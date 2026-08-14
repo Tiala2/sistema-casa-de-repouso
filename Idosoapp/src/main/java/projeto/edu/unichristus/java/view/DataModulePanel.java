@@ -13,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -578,5 +579,24 @@ abstract class DataModulePanel<T> extends JPanel {
             throw new IllegalArgumentException(name + " deve ser maior que zero.");
         }
         return value;
+    }
+
+    protected RefOption selectedOption(JComboBox<RefOption> combo, String name) {
+        Object selected = combo.getSelectedItem();
+        if (!(selected instanceof RefOption) || ((RefOption) selected).id <= 0) {
+            throw new IllegalArgumentException(name + " e obrigatorio.");
+        }
+        return (RefOption) selected;
+    }
+
+    protected void selectOption(JComboBox<RefOption> combo, int id) {
+        for (int i = 0; i < combo.getItemCount(); i++) {
+            RefOption item = combo.getItemAt(i);
+            if (item != null && item.id == id) {
+                combo.setSelectedIndex(i);
+                return;
+            }
+        }
+        combo.setSelectedIndex(0);
     }
 }
